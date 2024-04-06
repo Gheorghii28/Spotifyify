@@ -4,7 +4,7 @@ import { LayoutComponent } from './layout/layout.component';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '**', redirectTo: '' },
   { path: '', component: LayoutComponent, canActivate: [authGuard] },
-  { path: 'login', component: LoginComponent }
+  { path: 'login', component: LoginComponent },
+  { path: '**', redirectTo: '' },
 ];
