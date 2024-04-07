@@ -1,0 +1,50 @@
+<section class="header">
+  <div class="page-flows">
+    <span class="flow">
+      <button mat-icon-button class="hover-effect-on-icons">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+    </span>
+    <span class="flow">
+      <button mat-icon-button class="disabled">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </span>
+  </div>
+
+  <div class="search">
+    <input type="text" [(ngModel)]="searchText" placeholder="Search" />
+  </div>
+
+  <div class="user">
+    <div class="user-notifications">
+      <button mat-icon-button class="hover-effect-on-icons">
+        <mat-icon>notifications</mat-icon>
+      </button>
+    </div>
+
+    <div class="user-inbox">
+      <button mat-icon-button class="hover-effect-on-icons">
+        <mat-icon>archives</mat-icon>
+      </button>
+    </div>
+
+    <div class="user-info">
+      <span class="user-info-img">
+        <img src="../../../assets/img/altfoto.jpg" alt="Profile Picture" />
+      </span>
+
+      <span class="user-info-name">
+        <span class="first mr-5">Adam</span>
+
+        <span class="last">Lowenthal</span>
+      </span>
+    </div>
+
+    <div class="user__actions">
+      <button mat-icon-button class="hover-effect-on-icons">
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+    </div>
+  </div>
+</section>

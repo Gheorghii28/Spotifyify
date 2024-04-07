@@ -1,0 +1,44 @@
+.header {
+  background: #282828;
+  padding: 10px;
+  color: #aaaaaa;
+  border-bottom: 1px solid #181818;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  .search {
+    margin-left: 1%;
+    input {
+      border-radius: 15px;
+      border: none;
+      background: white;
+      color: #181818;
+      padding: 5px 0px 5px 30px;
+      outline: none;
+      background-image: url("../../../assets/svg/search.svg");
+      background-repeat: no-repeat;
+      background-size: 10%;
+      background-position: 5px;
+    }
+  }
+  .user {
+    width: 300px;
+    margin-left: auto;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: center;
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: inline-block;
+        object-fit: cover;
+      }
+    }
+  }
+}

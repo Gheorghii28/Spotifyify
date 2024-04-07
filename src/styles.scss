@@ -3,4 +3,17 @@ body {
   background-color: #181818;
   font-family: "Roboto", sans-serif;
   box-sizing: border-box;
+  margin: 0;
+  height: 100%;
+}
+.disabled {
+  color: #5e5e5e !important;
+}
+.hover-effect-on-icons {
+  &:hover {
+    color: white;
+  }
+}
+.mr-5 {
+  margin-right: 5px;
 }
