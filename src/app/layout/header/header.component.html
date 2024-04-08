@@ -29,16 +29,12 @@
       </button>
     </div>
 
-    <div class="user-info">
+    <div *ngIf="user" class="user-info">
       <span class="user-info-img">
-        <img src="../../../assets/img/altfoto.jpg" alt="Profile Picture" />
+        <img src="{{ user.images[0].url }}" alt="Profile Picture" />
       </span>
 
-      <span class="user-info-name">
-        <span class="first mr-5">Adam</span>
-
-        <span class="last">Lowenthal</span>
-      </span>
+      <span class="user-info-name">{{ user.display_name }}</span>
     </div>
 
     <div class="user__actions">
