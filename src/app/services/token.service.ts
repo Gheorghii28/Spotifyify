@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BrowserStorageService } from './browser-storage.service';
 import { CookieService } from 'ngx-cookie-service';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +10,8 @@ import { CookieService } from 'ngx-cookie-service';
 export class TokenService {
   constructor(
     private browserStorageService: BrowserStorageService,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private http: HttpClient
   ) {}
 
   setAccessToken(token: string): void {
@@ -46,5 +49,11 @@ export class TokenService {
     if (refreshToken) {
       this.setRefreshToken(refreshToken);
     }
+  }
+
+ refreshAccessToken(): Observable<any> {
+    const url = 'http://localhost:3000/refresh_token';
+    const refreshToken = this.getRefreshToken() as string;
+    return this.http.get(url, { params: { refresh_token: refreshToken } });
   }
 }

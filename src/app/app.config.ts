@@ -4,11 +4,14 @@ import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { BrowserStorageService } from './services/browser-storage.service';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideClientHydration(),
-    BrowserStorageService, provideAnimationsAsync(),
+    BrowserStorageService,
+    provideAnimationsAsync(),
+    provideHttpClient(withFetch()),
   ],
 };
