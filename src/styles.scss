@@ -17,3 +17,30 @@ body {
 .mr-5 {
   margin-right: 5px;
 }
+.cdk-overlay-container {
+  .cdk-overlay-connected-position-bounding-box {
+    top: 75px !important;
+    .mat-mdc-menu-panel {
+      background-color: #282828 !important;
+      .mat-mdc-menu-content {
+        padding: 0 !important;
+        .mat-mdc-menu-item {
+          padding: 0 32px !important;
+          &:hover {
+            background-color: #aaaaaa !important;
+            .mat-mdc-menu-item-text {
+              color: #181818 !important;
+            }
+          }
+          .mat-mdc-menu-item-text {
+            color: #aaaaaa !important;
+          }
+        }
+        .mat-divider {
+          margin: 0 16px !important;
+          border-top-color: #aaaaaa !important;
+        }
+      }
+    }
+  }
+}
