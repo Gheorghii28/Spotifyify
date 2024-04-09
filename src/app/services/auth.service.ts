@@ -1,6 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { TokenService } from './token.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -8,11 +9,16 @@ import { TokenService } from './token.service';
 export class AuthService {
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private router: Router
   ) {}
 
   login(): void {
     window.location.href = 'http://localhost:3000/login';
+  }
+
+  logout(): void {
+    this.router.navigate(['/login']);
   }
 
   async getProfile(accessToken: string | null): Promise<any | null> {
