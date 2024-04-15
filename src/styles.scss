@@ -17,6 +17,7 @@ body {
 .mr-5 {
   margin-right: 5px;
 }
+/* user-menu styles */
 .cdk-overlay-container {
   .cdk-overlay-connected-position-bounding-box {
     top: 75px !important;
@@ -44,3 +45,31 @@ body {
     }
   }
 }
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background: #373737;
+}
+/* Start of sidenav menu styles */
+.mat-expansion-panel:not([class*="mat-elevation-z"]) {
+  box-shadow: none !important;
+}
+.mat-expansion-panel,
+.mat-expansion-panel-content,
+.mat-expansion-panel-header {
+  background-color: #282828 !important;
+}
+.mat-expansion-panel-header.mat-expanded {
+  height: 30px !important;
+}
+.mat-expansion-panel-header-title,
+.mdc-list-item__primary-text {
+  color: #aaaaaa !important;
+  &:hover {
+    color: white !important;
+    cursor: pointer !important;
+  }
+}
+/* End of sidenav menu styles */

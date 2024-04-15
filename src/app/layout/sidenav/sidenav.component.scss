@@ -1,0 +1,87 @@
+@media (max-width: 768px) {
+  .content-left {
+    width: 100%;
+  }
+}
+.navigation {
+  padding: 15px;
+  background: #282828;
+  color: #aaaaaa;
+  overflow-y: scroll;
+}
+.navigation-list-item:hover {
+  border-right: 3px solid #1ed760;
+}
+@media (max-width: 768px) {
+  .navigation {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+  }
+}
+.playlist {
+  padding: 15px;
+  background: #282828;
+  border-top: 1px solid #181818;
+  border-bottom: 1px solid #181818;
+}
+.playlist:hover {
+  background: #424242;
+}
+.playlist:hover a {
+  color: white;
+}
+.playlist a {
+  color: #aaaaaa;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+.playlist a:hover {
+  text-decoration: none;
+}
+.playlist a i {
+  font-size: 24px;
+  color: white;
+  margin-right: 15px;
+}
+
+@media (max-width: 768px) {
+  .playlist {
+    display: none;
+  }
+}
+.playing {
+  background: #282828;
+  border-bottom: 1px solid #181818;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+.playing-art img {
+  width: 50px;
+  height: 50px;
+}
+.playing-song {
+  color: #aaaaaa;
+  padding-left: 15px;
+  display: flex;
+  flex-flow: column wrap;
+}
+.playing-song a {
+  color: #aaaaaa;
+}
+.playing-song a:hover {
+  color: white;
+  cursor: pointer;
+}
+.playing-add {
+  margin-left: auto;
+  padding-right: 15px;
+  color: #aaaaaa;
+}
+@media (max-width: 768px) {
+  .playing {
+    border-top: 1px solid #181818;
+  }
+}
