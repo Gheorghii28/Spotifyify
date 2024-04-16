@@ -1,14 +1,17 @@
 import { Component } from '@angular/core';
 import { SpotifyService } from '../../services/spotify.service';
+import { CardComponent } from '../../components/card/card.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-songs',
   standalone: true,
-  imports: [],
+  imports: [CardComponent, CommonModule],
   templateUrl: './songs.component.html',
   styleUrl: './songs.component.scss',
 })
 export class SongsComponent {
+  topTracks!: any;
   constructor(private spotifyService: SpotifyService) {
     this.loadTopTracks();
   }
@@ -25,6 +28,7 @@ export class SongsComponent {
               .join(', ')}`
         );
         console.log('formattedTracks:', formattedTracks);
+        this.topTracks = topTracks;
       } else {
         console.log('Keine Top-Tracks gefunden.');
       }
