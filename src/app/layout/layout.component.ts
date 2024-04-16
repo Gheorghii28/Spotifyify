@@ -7,10 +7,12 @@ import { UserProfile } from '../models/user-profile.model';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { Subscription, fromEvent } from 'rxjs';
 import { HeightService } from '../services/height.service';
+import { RouterOutlet } from '@angular/router';
+
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [HeaderComponent, SidenavComponent],
+  imports: [HeaderComponent, SidenavComponent, RouterOutlet],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
 })

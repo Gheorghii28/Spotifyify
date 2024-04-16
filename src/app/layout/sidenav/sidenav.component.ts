@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidenav',
@@ -47,10 +48,9 @@ export class SidenavComponent {
     },
   ];
 
-  constructor() {}
+  constructor(private router: Router) {}
 
   navigateTo(route: string) {
-    // Implement navigation to the specified route here
-    console.log('Navigating to:', route);
+    this.router.navigateByUrl(route);
   }
 }
