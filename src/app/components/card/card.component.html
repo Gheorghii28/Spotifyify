@@ -1,12 +1,12 @@
 <mat-card class="card">
   <img
     mat-card-image
-    src="{{track.album?.images[1].url}}"
+    src="{{ track.album.images[1].url }}"
     alt="Photo of a Shiba Inu"
   />
   <mat-card-content>
-    <span>{{track.artists[0].name}}</span>
-    <br>
-    <span>{{track.name}}</span>
+    <span>{{ track.artists[0].name }}</span>
+    <br />
+    <span>{{ track.name }}</span>
   </mat-card-content>
 </mat-card>

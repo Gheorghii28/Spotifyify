@@ -1,5 +1,9 @@
 <app-header [user]="userProfile"></app-header>
 <div class="content">
+  <div class="content-left">
     <app-sidenav></app-sidenav>
+  </div>
+  <div class="content-middle scroll-y">
     <router-outlet></router-outlet>
+  </div>
 </div>

@@ -1,13 +1,7 @@
-@media (max-width: 768px) {
-  .content-left {
-    width: 100%;
-  }
-}
 .navigation {
   padding: 15px;
   background: #282828;
   color: #aaaaaa;
-  overflow-y: scroll;
 }
 .navigation-list-item:hover {
   border-right: 3px solid #1ed760;

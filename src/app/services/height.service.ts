@@ -30,16 +30,13 @@ export class HeightService {
     const navHeight =
       totalHeight -
       (headerHeight + footerHeight + playlistHeight + nowPlayingHeight);
-    const artistHeight = totalHeight - (headerHeight + footerHeight);
+    const content = totalHeight + 30 - (headerHeight + footerHeight);
 
     document
       .querySelector('.navigation')
       ?.setAttribute('style', `height: ${navHeight}px`);
     document
-      .querySelector('.artist')
-      ?.setAttribute('style', `height: ${artistHeight}px`);
-    document
-      .querySelector('.social')
-      ?.setAttribute('style', `height: ${artistHeight}px`);
+      .querySelector('.content-middle')
+      ?.setAttribute('style', `height: ${content}px`);
   }
 }
