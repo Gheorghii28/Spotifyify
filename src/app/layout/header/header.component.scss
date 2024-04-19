@@ -7,7 +7,10 @@
   flex-flow: row wrap;
   align-items: center;
   .search {
-    margin-left: 1%;
+    margin-left: calc(15% - 48px);
+    @media (max-width: 1400px) {
+      margin-left: calc(20% - 48px);
+    }
     input {
       border-radius: 15px;
       border: none;
@@ -41,4 +44,8 @@
       }
     }
   }
+}
+.btn-home {
+  display: flex !important;
+  padding-left: 24px !important;
 }

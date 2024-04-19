@@ -1,13 +1,13 @@
 <section class="header">
   <div class="page-flows">
     <span class="flow">
-      <button mat-icon-button class="hover-effect-on-icons">
-        <span class="material-symbols-outlined"> chevron_left </span>
-      </button>
-    </span>
-    <span class="flow">
-      <button mat-icon-button class="disabled">
-        <span class="material-symbols-outlined"> chevron_right </span>
+      <button
+        mat-icon-button
+        class="hover-effect-on-icons btn-home"
+        (click)="navigateTo('home')"
+      >
+        <span class="material-symbols-outlined"> home </span>
+        <span>Home</span>
       </button>
     </span>
   </div>
