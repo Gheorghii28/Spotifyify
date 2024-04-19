@@ -47,6 +47,7 @@ body {
 }
 ::-webkit-scrollbar {
   width: 8px;
+  height: 0;
 }
 ::-webkit-scrollbar-thumb {
   border-radius: 4px;
@@ -75,4 +76,8 @@ body {
 /* End of sidenav menu styles */
 .scroll-y {
   overflow-y: scroll;
+}
+.mat-mdc-icon-button:hover .mat-mdc-button-persistent-ripple::before {
+  opacity: 1 !important;
+  background-color: transparent !important;
 }
