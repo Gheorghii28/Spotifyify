@@ -7,7 +7,7 @@ import { TokenService } from './token.service';
 export class SpotifyService {
   constructor(private tokenService: TokenService) {}
 
-  async fetchWebApi(endpoint: any, method: any) {
+  async fetchWebApi(endpoint: string, method: string) {
     const token = this.tokenService.getAccessToken();
     const res = await fetch(`https://api.spotify.com/${endpoint}`, {
       headers: {
@@ -18,7 +18,12 @@ export class SpotifyService {
     return await res.json();
   }
 
-  async getTopTracks() {
-    return (await this.fetchWebApi('v1/me/top/tracks', 'GET')).items;
+  async getSpotifyData(endpoint:string) {
+    return (
+      await this.fetchWebApi(
+        `v1/${endpoint}`,
+        'GET'
+      )
+    );
   }
 }
