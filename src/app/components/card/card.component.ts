@@ -1,19 +1,19 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
+import { CommonModule } from '@angular/common';
+import { Playlist } from '../../models/spotify.model';
 
 @Component({
   selector: 'app-card',
   standalone: true,
-  imports: [MatCardModule],
+  imports: [MatCardModule, CommonModule],
   templateUrl: './card.component.html',
   styleUrl: './card.component.scss',
 })
 export class CardComponent implements OnInit {
-  @Input() track!: any;
-  constructor() {
+  @Input() data!: Playlist;
 
-  }
-  ngOnInit() {
-    console.log('track:', this.track);
-  }
+  constructor() {}
+
+  ngOnInit() {}
 }
