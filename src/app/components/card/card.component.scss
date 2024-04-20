@@ -7,7 +7,7 @@
   box-shadow: none !important;
   transition: all 400ms ease-in-out;
   &:hover {
-    background-color: #252525;
+    background-color: var(--hover-background-color);
     .overlayer {
       visibility: visible;
       .play-circle {

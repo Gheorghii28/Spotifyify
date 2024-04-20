@@ -22,20 +22,20 @@
     }
   }
   .info-type {
-    color: white;
+    color: var(--white-color);
     text-transform: uppercase;
     font-size: 11px;
     letter-spacing: 1px;
     margin-bottom: 10px;
   }
   .info-name {
-    color: white;
+    color: var(--white-color);
     font-size: 36px;
     font-weight: 700;
     padding: 0 0 10px 0;
   }
   .info-description {
-    color: white;
+    color: var(--white-color);
     font-size: 12px;
     padding: 0 0 10px 0;
   }
@@ -49,7 +49,7 @@
     z-index: 1;
     padding: 15px;
     text-align: right;
-    color: #aaaaaa;
+    color: var(--light-grey-color);
     font-weight: 100;
     font-size: 16px;
     letter-spacing: 1px;
