@@ -3,11 +3,13 @@ import { ActivatedRoute } from '@angular/router';
 import { SpotifyService } from '../../services/spotify.service';
 import { Playlist } from '../../models/spotify.model';
 import { ViewHeaderComponent } from '../../components/view-header/view-header.component';
+import { TrackListComponent } from '../../components/track-list/track-list.component';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-playlist',
   standalone: true,
-  imports: [ViewHeaderComponent],
+  imports: [ViewHeaderComponent, TrackListComponent, CommonModule],
   templateUrl: './playlist.component.html',
   styleUrl: './playlist.component.scss',
 })
@@ -31,7 +33,6 @@ export class PlaylistComponent implements OnInit {
       this.playlistData = await this.spotifyService.getSpotifyData(
         `playlists/${id}`
       );
-      console.log('PlaylistData:', this.playlistData);
     } catch (error) {
       console.error('Error fetching data:', error);
     }

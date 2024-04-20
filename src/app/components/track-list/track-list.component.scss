@@ -1,0 +1,52 @@
+.track {
+  border-top: 1px solid #282828;
+  height: 42px;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  &:hover {
+    background: #282828;
+  }
+  &:last-child {
+    border-bottom: 1px solid #282828;
+  }
+  .track-number {
+    margin-left: 10px;
+    color: #aaaaaa;
+    width: 12px;
+  }
+  .track-title {
+    width: 45%;
+    margin-left: 30px;
+    color: white;
+  }
+  .featured .title:after {
+    content: "-";
+    margin: 0 5px;
+  }
+  .featured .feature {
+    color: #aaaaaa;
+  }
+  .featured .feature:after {
+    content: ",";
+    margin-right: 5px;
+  }
+  .featured .feature:last-child:after {
+    content: "";
+    margin-right: 0;
+  }
+  .featured .feature:hover {
+    cursor: pointer;
+    color: #c8c8c8;
+    text-decoration: underline;
+  }
+  .track-length {
+    margin-left: auto;
+    color: #aaaaaa;
+  }
+}
+@media (max-width: 1200px) {
+  .track-title {
+    width: auto !important;
+  }
+}

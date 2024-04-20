@@ -1,1 +1,26 @@
 <app-view-header [data]="playlistData"></app-view-header>
+<div class="tracks">
+  <div class="tracks-heading">
+    <div class="tracks-heading-number">#</div>
+    <div class="tracks-heading-title">Song</div>
+    <div class="tracks-heading-length">
+      <button class="btn-non-style">
+        <span class="material-symbols-outlined c-pointer hover-effect-on-icons">
+          pace
+        </span>
+      </button>
+    </div>
+    <div class="tracks-heading-popularity">
+      <button class="btn-non-style">
+        <span class="material-symbols-outlined c-pointer hover-effect-on-icons">
+          recommend
+        </span>
+      </button>
+    </div>
+  </div>
+  <ng-container
+    *ngFor="let trackInfo of playlistData?.tracks?.items; let i = index"
+  >
+    <app-track-list [data]="trackInfo" [trackNr]="i"></app-track-list>
+  </ng-container>
+</div>

@@ -1,0 +1,10 @@
+<div *ngIf="trackData" class="track c-pointer">
+  <div class="track-number">{{ trackNr + 1 }}</div>
+  <div class="track-title featured">
+    <span class="title">{{ trackData.name }}</span>
+    <ng-container *ngFor="let artist of trackData.artists">
+      <span class="feature">{{ artist.name }}</span>
+    </ng-container>
+  </div>
+  <div class="track-length">{{ trackData.duration_ms | date : "mm:ss" }}</div>
+</div>
