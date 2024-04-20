@@ -1,8 +1,16 @@
-<mat-card class="card">
+<mat-card class="card c-pointer">
+  <button class="btn-non-style overlayer">
+    <span class="material-symbols-outlined play-circle c-pointer">
+      play_circle
+    </span>
+  </button>
   <img mat-card-image src="{{ data.images[0].url }}" />
   <mat-card-content>
-    <span style="font-weight: bold">{{ data.name }}</span>
-    <br />
-    <span>{{ data.description }}</span>
+    <span class="mt-10 card-name" style="font-weight: bold; color: white">{{
+      data.name
+    }}</span>
+    <span class="mt-10 card-description" style="color: #aaaaaa">{{
+      truncateText(data.description, 45)
+    }}</span>
   </mat-card-content>
 </mat-card>

@@ -16,4 +16,11 @@ export class CardComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {}
+
+  truncateText(text: string, maxTextLength: number): string {
+    if (text.length > maxTextLength) {
+      return text.substring(0, maxTextLength) + '...';
+    }
+    return text;
+  }
 }

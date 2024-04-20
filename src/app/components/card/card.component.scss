@@ -1,3 +1,53 @@
 .card {
-  max-width: 200px;
+  width: 200px;
+  position: relative;
+  background: transparent;
+  border-radius: 6px;
+  padding: 10px;
+  box-shadow: none !important;
+  transition: all 400ms ease-in-out;
+  &:hover {
+    background-color: #252525;
+    .overlayer {
+      visibility: visible;
+      .play-circle {
+        opacity: 1;
+        transform: translateY(-20px);
+      }
+    }
+  }
+  .overlayer {
+    top: 145px;
+    right: 10px;
+    position: absolute;
+    visibility: hidden;
+    z-index: 1;
+    .play-circle {
+      color: #34c94a;
+      font-size: 60px;
+      opacity: 0;
+      transition: all 225ms ease-in-out;
+      &:hover {
+        color: #2aa03b;
+      }
+    }
+  }
+  .card-name {
+    height: 24px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-description {
+    height: 43px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+.mat-mdc-card-content {
+  padding: 0 !important;
+  display: flex;
+  flex-direction: column;
+}
+.mdc-card__media {
+  border-radius: 6px !important;
 }
