@@ -35,6 +35,7 @@ export interface Owner {
     collaborative: boolean;
     description: string;
     external_urls: { spotify: string };
+    followers?: {href: string, total: number}
     href: string;
     id: string;
     images: Image[];
