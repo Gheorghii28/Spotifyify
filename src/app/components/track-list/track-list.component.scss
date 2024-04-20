@@ -1,31 +1,31 @@
 .track {
-  border-top: 1px solid #282828;
+  border-top: 1px solid var(--dark-grey-color);
   height: 42px;
   display: flex;
   flex-flow: row wrap;
   align-items: center;
   &:hover {
-    background: #282828;
+    background: var(--dark-grey-color);
   }
   &:last-child {
-    border-bottom: 1px solid #282828;
+    border-bottom: 1px solid var(--dark-grey-color);
   }
   .track-number {
     margin-left: 10px;
-    color: #aaaaaa;
+    color: var(--light-grey-color);
     width: 12px;
   }
   .track-title {
     width: 45%;
     margin-left: 30px;
-    color: white;
+    color: var(--white-color);
   }
   .featured .title:after {
     content: "-";
     margin: 0 5px;
   }
   .featured .feature {
-    color: #aaaaaa;
+    color: var(--light-grey-color);
   }
   .featured .feature:after {
     content: ",";
@@ -37,12 +37,12 @@
   }
   .featured .feature:hover {
     cursor: pointer;
-    color: #c8c8c8;
+    color: var(--light-grey-color);
     text-decoration: underline;
   }
   .track-length {
     margin-left: auto;
-    color: #aaaaaa;
+    color: var(--light-grey-color);
   }
 }
 @media (max-width: 1200px) {

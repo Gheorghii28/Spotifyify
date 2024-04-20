@@ -1,10 +1,10 @@
 .navigation {
   padding: 15px;
-  background: #282828;
-  color: #aaaaaa;
+  background: var(--dark-grey-color);
+  color: var(--light-grey-color);
 }
 .navigation-list-item:hover {
-  border-right: 3px solid #1ed760;
+  border-right: 3px solid var(--green-color);
 }
 @media (max-width: 768px) {
   .navigation {
@@ -15,18 +15,18 @@
 }
 .playlist {
   padding: 15px;
-  background: #282828;
-  border-top: 1px solid #181818;
-  border-bottom: 1px solid #181818;
+  background: var(--dark-grey-color);
+  border-top: 1px solid var(--black-color);
+  border-bottom: 1px solid var(--black-color);
 }
 .playlist:hover {
-  background: #424242;
+  background: var(--hover-background-color);
 }
 .playlist:hover a {
-  color: white;
+  color: var(--white-color);
 }
 .playlist a {
-  color: #aaaaaa;
+  color: var(--light-grey-color);
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -36,7 +36,7 @@
 }
 .playlist a i {
   font-size: 24px;
-  color: white;
+  color: var(--white-color);
   margin-right: 15px;
 }
 
@@ -46,8 +46,8 @@
   }
 }
 .playing {
-  background: #282828;
-  border-bottom: 1px solid #181818;
+  background: var(--dark-grey-color);
+  border-bottom: 1px solid var(--black-color);
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
@@ -57,25 +57,25 @@
   height: 50px;
 }
 .playing-song {
-  color: #aaaaaa;
+  color: var(--light-grey-color);
   padding-left: 15px;
   display: flex;
   flex-flow: column wrap;
 }
 .playing-song a {
-  color: #aaaaaa;
+  color: var(--light-grey-color);
 }
 .playing-song a:hover {
-  color: white;
+  color: var(--white-color);
   cursor: pointer;
 }
 .playing-add {
   margin-left: auto;
   padding-right: 15px;
-  color: #aaaaaa;
+  color: var(--light-grey-color);
 }
 @media (max-width: 768px) {
   .playing {
-    border-top: 1px solid #181818;
+    border-top: 1px solid var(--black-color);
   }
 }

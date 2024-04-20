@@ -19,8 +19,8 @@
 }
 
 #login-container .login {
-  background-color: #282828;
-  color: #ffffff;
+  background-color: var(--dark-grey-color);
+  color: var(--white-color);
   text-align: center;
   padding: 70px;
   border-radius: 8px;
@@ -36,8 +36,8 @@
 }
 
 .big-btn {
-  color: #181818;
-  background-color: #1ED760;
+  color: var(--black-color);
+  background-color: var(--green-color);
   font-size: 14px;
   font-weight: 700;
   line-height: 1;
@@ -53,5 +53,5 @@
 }
 
 .big-btn:hover {
-  background-color: #17A84B;
+  background-color: var(--hover-green-color);
 }

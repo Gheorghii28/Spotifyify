@@ -1,4 +1,4 @@
-<div *ngIf="data" class="header" [ngStyle]="{ 'background-image': 'linear-gradient(to bottom, ' + data.primary_color + ', #181818)' }">
+<div *ngIf="data" class="header" [ngStyle]="{ 'background-image': 'linear-gradient(to bottom, ' + data.primary_color + ', var(--black-color))' }">
   <div class="info">
     <div class="profile-img">
       <img src="{{ data.images[0].url }}" />
