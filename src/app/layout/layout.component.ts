@@ -3,7 +3,7 @@ import { TokenService } from '../services/token.service';
 import { HeaderComponent } from './header/header.component';
 import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../services/auth.service';
-import { UserProfile } from '../models/user-profile.model';
+import { UserProfile } from '../models/spotify.model';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { Subscription, fromEvent } from 'rxjs';
 import { HeightService } from '../services/height.service';
