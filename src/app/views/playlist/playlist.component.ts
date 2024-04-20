@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SpotifyService } from '../../services/spotify.service';
 import { Playlist } from '../../models/spotify.model';
+import { ViewHeaderComponent } from '../../components/view-header/view-header.component';
 
 @Component({
   selector: 'app-playlist',
   standalone: true,
-  imports: [],
+  imports: [ViewHeaderComponent],
   templateUrl: './playlist.component.html',
   styleUrl: './playlist.component.scss',
 })

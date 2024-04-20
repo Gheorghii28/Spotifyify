@@ -1,0 +1,30 @@
+<div *ngIf="data" class="header" [ngStyle]="{ 'background-image': 'linear-gradient(to bottom, ' + data.primary_color + ', #181818)' }">
+  <div class="info">
+    <div class="profile-img">
+      <img src="{{ data.images[0].url }}" />
+    </div>
+
+    <div class="info-meta">
+      <div class="info-type">{{ data.type }}</div>
+      <div class="info-name">{{ data.name }}</div>
+      <div class="info-description">{{ data.description }}</div>
+
+      <div class="info-actions">
+        <button class="btn-non-style mr-10">
+          <span class="material-symbols-outlined play-circle c-pointer">
+            play_circle
+          </span>
+        </button>
+        <button class="button-light c-pointer">Follow</button>
+        <button mat-icon-button class="hover-effect-on-icons btn-non-style">
+          <span class="material-symbols-outlined"> more_vert </span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="followers">
+    <div class="followers-count">{{ data.followers?.total }}</div>
+    <div class="followers-label">Followers</div>
+  </div>
+</div>
