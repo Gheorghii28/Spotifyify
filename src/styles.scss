@@ -17,6 +17,9 @@ body {
 .mr-5 {
   margin-right: 5px;
 }
+.mr-10 {
+  margin-right: 10px;
+}
 .mt-10 {
   margin-top: 10px;
 }
@@ -90,4 +93,24 @@ body {
 .btn-non-style {
   background-color: transparent;
   border: none;
+}
+.play-circle {
+  color: #34c94a;
+  font-size: 60px;
+  transition: all 225ms ease-in-out;
+  &:hover {
+    color: #2aa03b;
+  }
+}
+.button-light {
+  background: none;
+  color: #c8c8c8;
+  border: 1px solid #c8c8c8;
+  height: fit-content;
+  border-radius: 20px;
+  padding: 10px 20px;
+  &:hover {
+    border-color: white;
+    color: white;
+  }
 }

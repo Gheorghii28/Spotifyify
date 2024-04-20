@@ -22,14 +22,8 @@
     position: absolute;
     visibility: hidden;
     z-index: 1;
-    .play-circle {
-      color: #34c94a;
-      font-size: 60px;
+    button {
       opacity: 0;
-      transition: all 225ms ease-in-out;
-      &:hover {
-        color: #2aa03b;
-      }
     }
   }
   .card-name {
