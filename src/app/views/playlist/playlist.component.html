@@ -1,4 +1,6 @@
-<app-view-header [data]="playlistData"></app-view-header>
+<ng-container *ngIf="playlistData"
+  ><app-view-header [data]="playlistData"></app-view-header
+></ng-container>
 <div class="tracks">
   <div class="tracks-heading">
     <div class="tracks-heading-number">#</div>
