@@ -7,3 +7,4 @@
     <router-outlet></router-outlet>
   </div>
 </div>
+<app-player *ngIf="files" [files]="files" [playListId]="files.id"></app-player>

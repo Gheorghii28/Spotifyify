@@ -1,0 +1,108 @@
+<div class="current-track">
+  <div class="song-bar">
+    <div class="song-infos">
+      <div class="image-container">
+        <img src="{{ files.imageUrl }}" alt="" />
+      </div>
+      <div class="song-description">
+        <span
+          class="title m-3 overflow-ellipsis hover-effect-underline c-pointer"
+          >{{ files.tracks[trackIndex].name }}</span
+        >
+        <span
+          class="artist m-3 overflow-ellipsis hover-effect-underline c-pointer"
+        >
+          <ng-container
+            *ngFor="
+              let artist of files.tracks[trackIndex].artists;
+              let last = last
+            "
+          >
+            {{ artist }}
+            <ng-container *ngIf="!last">,</ng-container>
+          </ng-container>
+        </span>
+      </div>
+    </div>
+    <button mat-icon-button class="hover-effect-on-icons">
+      <span class="material-symbols-outlined"> favorite </span>
+    </button>
+  </div>
+  <div class="progress-controller">
+    <div class="control-buttons">
+      <button mat-icon-button class="hover-effect-on-icons">
+        <span class="material-symbols-outlined"> shuffle </span>
+      </button>
+      <button
+        mat-icon-button
+        class="hover-effect-on-icons"
+        [disabled]="isFirstPlaying()"
+        (click)="previous()"
+      >
+        <span class="material-symbols-outlined"> skip_previous </span>
+      </button>
+      <button
+        class="btn-non-style"
+        *ngIf="state"
+        [disabled]="state.error"
+        (click)="togglePlayPause($event)"
+      >
+        <ng-container *ngIf="state.playing; else playIcon">
+          <span
+            class="material-symbols-outlined play-circle c-pointer"
+            style="font-size: 24px"
+          >
+            pause
+          </span></ng-container
+        >
+        <ng-template #playIcon>
+          <span
+            class="material-symbols-outlined play-circle c-pointer"
+            style="font-size: 24px"
+          >
+            play_arrow
+          </span></ng-template
+        >
+      </button>
+      <button
+        mat-icon-button
+        class="hover-effect-on-icons"
+        [disabled]="isLastPlaying()"
+        (click)="next()"
+      >
+        <span class="material-symbols-outlined"> skip_next </span>
+      </button>
+      <button mat-icon-button class="hover-effect-on-icons">
+        <span class="material-symbols-outlined"> undo </span>
+      </button>
+    </div>
+    <div class="progress-container">
+      <span>{{ state.readableCurrentTime }}</span>
+      <mat-slider
+        class="progress-bar"
+        [disabled]="state.error"
+        [max]="state.duration"
+        [min]="0"
+        [step]="0.001">
+      <input matSliderThumb (input)="onSliderChangeEnd()" [(ngModel)]="state.currentTime" #slider>
+    </mat-slider>
+      <span>{{ state.readableDuration }}</span>
+    </div>
+  </div>
+  <div class="other-features">
+    <button mat-icon-button class="hover-effect-on-icons">
+      <span class="material-symbols-outlined"> list </span>
+    </button>
+    <div class="volume-bar">
+      <button mat-icon-button class="hover-effect-on-icons">
+        <span class="material-symbols-outlined"> volume_up </span>
+      </button>
+      <div class="progress-bar">
+        <div class="progress" style="width: 30%"></div>
+      </div>
+    </div>
+    <button mat-icon-button class="hover-effect-on-icons">
+      <span class="material-symbols-outlined"> open_in_full </span>
+    </button>
+  </div>
+</div>

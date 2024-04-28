@@ -1,46 +1,71 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit,
+  PLATFORM_ID,
+} from '@angular/core';
 import { TokenService } from '../services/token.service';
 import { HeaderComponent } from './header/header.component';
-import { isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../services/auth.service';
 import { UserProfile } from '../models/spotify.model';
 import { SidenavComponent } from './sidenav/sidenav.component';
-import { Subscription, fromEvent } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { HeightService } from '../services/height.service';
 import { RouterOutlet } from '@angular/router';
+import { PlayerComponent } from '../components/player/player.component';
+import { CloudFiles } from '../models/cloud.model';
+import { CloudService } from '../services/cloud.service';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [HeaderComponent, SidenavComponent, RouterOutlet],
+  imports: [
+    HeaderComponent,
+    SidenavComponent,
+    RouterOutlet,
+    PlayerComponent,
+    CommonModule,
+  ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
 })
-export class LayoutComponent implements OnInit {
+export class LayoutComponent implements OnInit, OnDestroy {
   userProfile!: UserProfile;
   loadSubscription!: Subscription;
   resizeSubscription!: Subscription;
+  files!: CloudFiles;
+  trackIndex!: number;
+  private cloudSubscription!: Subscription;
 
   constructor(
     private tokenService: TokenService,
     private authService: AuthService,
     private heightService: HeightService,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private cloudService: CloudService
   ) {
     this.tokenService.saveTokensToLocalStorage();
     this.tokenService.clearTokensFromCookies();
     this.getProfile();
+    this.subscribeTo();
   }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      this.loadSubscription = fromEvent(window, 'load').subscribe(() => {
-        this.heightService.adjustElementHeights();
-      });
-      this.resizeSubscription = fromEvent(window, 'resize').subscribe(() => {
-        this.heightService.adjustElementHeights();
-      });
+      this.heightService.adjustHeightOnWindowResize();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.cloudSubscription.unsubscribe();
+  }
+
+  private subscribeTo(): void {
+    this.cloudSubscription = this.cloudService.getFiles().subscribe((files) => {
+      this.files = files;
+    });
   }
 
   async getProfile(): Promise<void> {

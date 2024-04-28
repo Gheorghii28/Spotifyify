@@ -1,10 +1,20 @@
 import { Injectable } from '@angular/core';
+import { fromEvent } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HeightService {
   constructor() {}
+
+  adjustHeightOnWindowResize(): void {
+    fromEvent(window, 'load').subscribe(() => {
+      this.adjustElementHeights();
+    });
+    fromEvent(window, 'resize').subscribe(() => {
+      this.adjustElementHeights();
+    });
+  }
 
   adjustElementHeights(): void {
     const totalHeight = window.innerHeight - 30;
