@@ -10,11 +10,7 @@
       <div class="info-description">{{ data.description }}</div>
 
       <div class="info-actions">
-        <button class="btn-non-style mr-10">
-          <span class="material-symbols-outlined play-circle c-pointer">
-            play_circle
-          </span>
-        </button>
+        <app-btn-play class="mr-10" [playListId]="data.id"></app-btn-play>
         <button class="button-light c-pointer">Follow</button>
         <button mat-icon-button class="hover-effect-on-icons btn-non-style">
           <span class="material-symbols-outlined"> more_vert </span>

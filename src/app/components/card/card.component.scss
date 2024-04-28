@@ -5,15 +5,13 @@
   border-radius: 6px;
   padding: 10px;
   box-shadow: none !important;
-  transition: all 400ms ease-in-out;
+  transition: all 225ms ease-in-out;
   &:hover {
     background-color: var(--hover-background-color);
     .overlayer {
       visibility: visible;
-      .play-circle {
-        opacity: 1;
-        transform: translateY(-20px);
-      }
+      opacity: 1;
+      transform: translateY(-20px);
     }
   }
   .overlayer {
@@ -22,9 +20,8 @@
     position: absolute;
     visibility: hidden;
     z-index: 1;
-    button {
-      opacity: 0;
-    }
+    opacity: 0;
+    transition: all 225ms ease-in-out;
   }
   .card-name {
     height: 24px;

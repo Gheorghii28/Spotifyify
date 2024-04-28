@@ -3,11 +3,12 @@ import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { Playlist } from '../../models/spotify.model';
 import { Router } from '@angular/router';
+import { BtnPlayComponent } from '../btn-play/btn-play.component';
 
 @Component({
   selector: 'app-card',
   standalone: true,
-  imports: [MatCardModule, CommonModule],
+  imports: [MatCardModule, CommonModule, BtnPlayComponent],
   templateUrl: './card.component.html',
   styleUrl: './card.component.scss',
 })
