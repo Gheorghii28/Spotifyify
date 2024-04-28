@@ -28,7 +28,6 @@ export class HomeComponent implements OnInit {
         this.spotifyService.getSpotifyData(endpoint)
       );
       this.shelvesData = await Promise.all(requests);
-      console.log('shelvesData:', this.shelvesData);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
