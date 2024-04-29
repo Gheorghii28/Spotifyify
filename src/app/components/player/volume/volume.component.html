@@ -1,0 +1,26 @@
+<div class="volume-bar">
+  <button
+    mat-icon-button
+    class="hover-effect-on-icons"
+    *ngIf="volume > 0"
+    (click)="mute()"
+  >
+    <span class="material-symbols-outlined"> volume_up </span>
+  </button>
+  <button
+    mat-icon-button
+    class="hover-effect-on-icons"
+    *ngIf="volume == 0"
+    (click)="unmute()"
+  >
+    <span class="material-symbols-outlined"> volume_off </span>
+  </button>
+  <mat-slider class="progress-bar" [min]="0" [max]="1" [step]="0.01">
+    <input
+      matSliderThumb
+      (input)="onVolumeChange()"
+      [(ngModel)]="volume"
+      #sliderVolume
+    />
+  </mat-slider>
+</div>

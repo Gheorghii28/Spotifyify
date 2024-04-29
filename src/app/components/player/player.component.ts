@@ -16,6 +16,7 @@ import { CommonModule } from '@angular/common';
 import { StreamState } from '../../models/stream-state.model';
 import { MatSliderModule } from '@angular/material/slider';
 import { FormsModule } from '@angular/forms';
+import { VolumeComponent } from './volume/volume.component';
 
 @Component({
   selector: 'app-player',
@@ -26,6 +27,7 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     MatSliderModule,
     FormsModule,
+    VolumeComponent,
   ],
   templateUrl: './player.component.html',
   styleUrl: './player.component.scss',

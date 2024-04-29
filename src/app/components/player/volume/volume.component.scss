@@ -1,0 +1,8 @@
+.volume-bar {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  .progress-bar {
+    width: 96px;
+  }
+}
