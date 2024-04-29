@@ -4,7 +4,7 @@
       <div class="image-container">
         <img src="{{ files.imageUrl }}" alt="" />
       </div>
-      <div class="song-description">
+      <div class="song-description" *ngIf="files.tracks[trackIndex]">
         <span
           class="title m-3 overflow-ellipsis hover-effect-underline c-pointer"
           >{{ files.tracks[trackIndex].name }}</span
@@ -30,7 +30,12 @@
   </div>
   <div class="progress-controller">
     <div class="control-buttons">
-      <button mat-icon-button class="hover-effect-on-icons">
+      <button
+        mat-icon-button
+        class="hover-effect-on-icons"
+        [style.color]="isShuffled ? 'var(--green-color)' : ''"
+        (click)="toggleShuffle()"
+      >
         <span class="material-symbols-outlined"> shuffle </span>
       </button>
       <button

@@ -37,6 +37,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
   @Input() files!: CloudFiles;
   @Input() playListId!: string;
   public trackIndex: number = 0;
+  public isShuffled: boolean = false;
   public state!: StreamState;
   private trackIndexSubscription!: Subscription;
   private stateSubscription!: Subscription;
@@ -63,7 +64,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
     this.trackIndexSubscription = this.audioService
       .getTrackIndex()
       .subscribe((trackIndex) => {
-        if (trackIndex === undefined) {
+        if (trackIndex === undefined || !this.files.tracks[trackIndex]) {
           trackIndex = 0;
         }
         this.playAudio(trackIndex, this.files);
@@ -79,7 +80,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
     const url = this.audioService.getFileUrl(files, trackIndex);
     this.audioService.playStream(url, this.playListId).subscribe((events) => {
       if (events.type === 'ended') {
-        this.audioService.setTrackIndex(this.trackIndex + 1);
+        this.updateTrackIndex();
       }
     });
   }
@@ -108,5 +109,22 @@ export class PlayerComponent implements OnInit, OnDestroy {
   public onSliderChangeEnd(): void {
     const seconds: number = this.slider.nativeElement.value;
     this.audioService.seekTo(seconds);
+  }
+
+  public toggleShuffle(): void {
+    this.isShuffled = !this.isShuffled;
+  }
+
+  private updateTrackIndex(): void {
+    if (this.isShuffled) {
+      const trackIndex = this.getRandomTrackIndex();
+      this.audioService.setTrackIndex(trackIndex);
+    } else {
+      this.audioService.setTrackIndex(this.trackIndex + 1);
+    }
+  }
+
+  private getRandomTrackIndex(): number {
+    return Math.floor(Math.random() * this.files.tracks.length);
   }
 }
