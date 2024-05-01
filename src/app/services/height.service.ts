@@ -1,11 +1,16 @@
-import { Injectable } from '@angular/core';
-import { fromEvent } from 'rxjs';
+import { DOCUMENT } from '@angular/common';
+import { Inject, Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, fromEvent } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HeightService {
-  constructor() {}
+  private isFullScreen: boolean = false;
+  private isFullSreen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
+    this.isFullScreen
+  );
+  constructor(@Inject(DOCUMENT) private document: any) {}
 
   adjustHeightOnWindowResize(): void {
     fromEvent(window, 'load').subscribe(() => {
@@ -48,5 +53,44 @@ export class HeightService {
     document
       .querySelector('.content-middle')
       ?.setAttribute('style', `height: ${content}px`);
+  }
+
+  public chkScreenMode(): void {
+    if (this.document.fullscreenElement) {
+      this.isFullSreen$.next(true);
+    } else {
+      this.isFullSreen$.next(false);
+      setTimeout(() => {
+        this.adjustElementHeights();
+      });
+    }
+  }
+
+  public openFullscreen(elem: any): void {
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.mozRequestFullScreen) {
+      elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      elem.msRequestFullscreen();
+    }
+  }
+
+  public closeFullscreen(): void {
+    if (this.document.exitFullscreen) {
+      this.document.exitFullscreen();
+    } else if (this.document.mozCancelFullScreen) {
+      this.document.mozCancelFullScreen();
+    } else if (this.document.webkitExitFullscreen) {
+      this.document.webkitExitFullscreen();
+    } else if (this.document.msExitFullscreen) {
+      this.document.msExitFullscreen();
+    }
+  }
+
+  public isFullscreen$(): Observable<boolean> {
+    return this.isFullSreen$.asObservable();
   }
 }

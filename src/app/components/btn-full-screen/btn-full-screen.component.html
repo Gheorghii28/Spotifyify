@@ -1,0 +1,16 @@
+<button
+  mat-icon-button
+  class="hover-effect-on-icons"
+  *ngIf="!isFullScreen"
+  (click)="openFullscreen()"
+>
+  <span class="material-symbols-outlined"> open_in_full </span>
+</button>
+<button
+  mat-icon-button
+  class="hover-effect-on-icons"
+  *ngIf="isFullScreen"
+  (click)="closeFullscreen()"
+>
+  <span class="material-symbols-outlined"> close_fullscreen </span>
+</button>

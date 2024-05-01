@@ -17,6 +17,7 @@ import { StreamState } from '../../models/stream-state.model';
 import { MatSliderModule } from '@angular/material/slider';
 import { FormsModule } from '@angular/forms';
 import { VolumeComponent } from './volume/volume.component';
+import { BtnFullScreenComponent } from '../btn-full-screen/btn-full-screen.component';
 
 @Component({
   selector: 'app-player',
@@ -28,6 +29,7 @@ import { VolumeComponent } from './volume/volume.component';
     MatSliderModule,
     FormsModule,
     VolumeComponent,
+    BtnFullScreenComponent,
   ],
   templateUrl: './player.component.html',
   styleUrl: './player.component.scss',
@@ -41,15 +43,22 @@ export class PlayerComponent implements OnInit, OnDestroy {
   public state!: StreamState;
   private trackIndexSubscription!: Subscription;
   private stateSubscription!: Subscription;
+  public elem: any;
+  public isFullScreen: boolean = false;
 
   constructor(
     private heightService: HeightService,
-    public audioService: AudioService
+    public audioService: AudioService,
+    private elementRef: ElementRef
   ) {}
 
   ngOnInit(): void {
     this.heightService.adjustElementHeights();
     this.subscribeTo();
+    this.heightService.isFullscreen$().subscribe((isFullScreen: boolean) => {
+      this.isFullScreen = isFullScreen;
+    });
+    this.elem = this.elementRef.nativeElement;
   }
 
   ngOnDestroy(): void {

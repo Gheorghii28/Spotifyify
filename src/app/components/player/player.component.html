@@ -1,4 +1,8 @@
-<div class="current-track">
+<div
+  class="current-track"
+  [ngClass]="{ fullscreen: isFullScreen }"
+  [style.background-color]="!isFullScreen ? '#111' : ''"
+>
   <div class="song-bar">
     <div class="song-infos">
       <div class="image-container">
@@ -88,9 +92,15 @@
         [disabled]="state.error"
         [max]="state.duration"
         [min]="0"
-        [step]="0.001">
-      <input matSliderThumb (input)="onSliderChangeEnd()" [(ngModel)]="state.currentTime" #slider>
-    </mat-slider>
+        [step]="0.001"
+      >
+        <input
+          matSliderThumb
+          (input)="onSliderChangeEnd()"
+          [(ngModel)]="state.currentTime"
+          #slider
+        />
+      </mat-slider>
       <span>{{ state.readableDuration }}</span>
     </div>
   </div>
@@ -99,8 +109,14 @@
       <span class="material-symbols-outlined"> list </span>
     </button>
     <app-volume></app-volume>
-    <button mat-icon-button class="hover-effect-on-icons">
-      <span class="material-symbols-outlined"> open_in_full </span>
-    </button>
+    <app-btn-full-screen [elem]="elem"></app-btn-full-screen>
   </div>
 </div>
+<div
+  class="overlay"
+  *ngIf="isFullScreen"
+  [style.background-image]="
+    isFullScreen ? 'url(' + files.tracks[trackIndex].img + ')' : ''
+  "
+></div>
+<div class="shadow" *ngIf="isFullScreen"></div>

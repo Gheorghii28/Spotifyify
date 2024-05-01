@@ -1,5 +1,4 @@
 .current-track {
-  background-color: #111;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -68,4 +67,47 @@
     flex-direction: row;
     gap: 16px;
   }
+}
+.fullscreen {
+  height: 100%;
+  flex-direction: column;
+  justify-content: flex-end;
+  .song-bar {
+    position: inherit;
+    width: 100%;
+  }
+  .progress-controller {
+    flex-direction: column-reverse;
+    gap: 20px;
+    margin-bottom: 40px;
+    .progress-container {
+      justify-content: space-between;
+      .progress-bar {
+        width: 80% !important;
+      }
+    }
+  }
+  .other-features {
+    bottom: 40px;
+  }
+}
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
+}
+.shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(transparent, var(--black-color));
+  z-index: -1;
 }

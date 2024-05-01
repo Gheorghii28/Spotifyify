@@ -16,7 +16,8 @@ export interface TrackFile {
   durationMs: number;
   id: string;
   previewUrl: string;
-  index: number
+  index: number;
+  img: string;
 }
 
 export class CloudFilesClass implements CloudFiles {
@@ -44,7 +45,8 @@ export class TrackFileClass implements TrackFile {
   durationMs: number;
   id: string;
   previewUrl: string;
-  index: number
+  index: number;
+  img: string;
 
   constructor(track: Track, index: number) {
     this.name = track.name;
@@ -53,7 +55,8 @@ export class TrackFileClass implements TrackFile {
     this.durationMs = track.duration_ms;
     this.id = track.id;
     this.previewUrl = track.preview_url;
-    this.index = index
+    this.index = index;
+    this.img = track.album.images[0].url;
   }
 
   private getArtists(artists: Artist[]): string[] {
