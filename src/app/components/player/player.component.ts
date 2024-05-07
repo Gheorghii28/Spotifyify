@@ -13,7 +13,7 @@ import { CloudFiles } from '../../models/cloud.model';
 import { Subscription } from 'rxjs';
 import { AudioService } from '../../services/audio.service';
 import { CommonModule } from '@angular/common';
-import { StreamState } from '../../models/stream-state.model';
+import { PlayingTrack, StreamState } from '../../models/stream-state.model';
 import { MatSliderModule } from '@angular/material/slider';
 import { FormsModule } from '@angular/forms';
 import { VolumeComponent } from './volume/volume.component';
@@ -38,11 +38,11 @@ export class PlayerComponent implements OnInit, OnDestroy {
   @ViewChild('slider') slider!: ElementRef;
   @Input() files!: CloudFiles;
   @Input() playListId!: string;
-  public trackIndex: number = 0;
   public isShuffled: boolean = false;
   public state!: StreamState;
-  private trackIndexSubscription!: Subscription;
   private stateSubscription!: Subscription;
+  public playingTrack!: PlayingTrack;
+  private playingTrackSubscription!: Subscription;
   public elem: any;
   public isFullScreen: boolean = false;
 
@@ -62,22 +62,22 @@ export class PlayerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.trackIndexSubscription.unsubscribe();
     this.stateSubscription.unsubscribe();
+    this.playingTrackSubscription.unsubscribe();
   }
 
   private subscribeTo(): void {
-    this.stateSubscription = this.audioService.getState().subscribe((state) => {
-      this.state = state;
-    });
-    this.trackIndexSubscription = this.audioService
-      .getTrackIndex()
-      .subscribe((trackIndex) => {
-        if (trackIndex === undefined || !this.files.tracks[trackIndex]) {
-          trackIndex = 0;
-        }
-        this.playAudio(trackIndex, this.files);
-        this.trackIndex = trackIndex;
+    this.stateSubscription = this.audioService
+      .observeStreamState()
+      .subscribe((state: StreamState) => {
+        this.state = state;
+      });
+
+    this.playingTrackSubscription = this.audioService
+      .observePlayingTrack()
+      .subscribe((track: PlayingTrack) => {
+        this.playingTrack = track;
+        this.playAudio(track.index, this.files);
       });
   }
 
@@ -86,33 +86,39 @@ export class PlayerComponent implements OnInit, OnDestroy {
     files: CloudFiles
   ): Promise<void> {
     this.audioService.stop();
-    const url = this.audioService.getFileUrl(files, trackIndex);
-    this.audioService.playStream(url, this.playListId).subscribe((events) => {
+    const url: string = this.audioService.getFileUrl(files, trackIndex);
+    this.audioService.playStream(url).subscribe((events) => {
       if (events.type === 'ended') {
-        this.updateTrackIndex();
+        this.updatePlayingTrack();
       }
     });
   }
 
   public next(): void {
-    this.audioService.setTrackIndex(this.trackIndex + 1);
+    this.changeTrackIndex('next');
   }
 
   public previous(): void {
-    this.audioService.setTrackIndex(this.trackIndex - 1);
+    this.changeTrackIndex('previous');
   }
 
+  private changeTrackIndex(direction: 'next' | 'previous'): void {
+    const playingTrack: PlayingTrack = { ...this.playingTrack };
+    playingTrack.index += direction === 'next' ? 1 : -1;
+    this.audioService.setPlayingTrack(playingTrack);
+  }
+  
   public togglePlayPause(event: Event): void {
     event.stopPropagation();
     this.audioService.togglePlayPause();
   }
 
   public isFirstPlaying(): boolean {
-    return this.trackIndex === 0;
+    return this.playingTrack.index === 0;
   }
 
   public isLastPlaying(): boolean {
-    return this.trackIndex === this.files.tracks.length - 1;
+    return this.playingTrack.index === this.files.tracks.length - 1;
   }
 
   public onSliderChangeEnd(): void {
@@ -124,12 +130,14 @@ export class PlayerComponent implements OnInit, OnDestroy {
     this.isShuffled = !this.isShuffled;
   }
 
-  private updateTrackIndex(): void {
+  private updatePlayingTrack(): void {
     if (this.isShuffled) {
-      const trackIndex = this.getRandomTrackIndex();
-      this.audioService.setTrackIndex(trackIndex);
+      const playingTrack: PlayingTrack = { ...this.playingTrack };
+      const trackIndex: number = this.getRandomTrackIndex();
+      playingTrack.index = trackIndex;
+      this.audioService.setPlayingTrack(playingTrack);
     } else {
-      this.audioService.setTrackIndex(this.trackIndex + 1);
+      this.next();
     }
   }
 

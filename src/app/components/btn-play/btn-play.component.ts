@@ -1,18 +1,11 @@
 import { Component, Input, OnDestroy } from '@angular/core';
-import { StreamState } from '../../models/stream-state.model';
+import { PlayingTrack, StreamState } from '../../models/stream-state.model';
 import { CommonModule } from '@angular/common';
 import { AudioService } from '../../services/audio.service';
 import { MatButtonModule } from '@angular/material/button';
 import { Subscription } from 'rxjs';
-import { SpotifyService } from '../../services/spotify.service';
 import { CloudService } from '../../services/cloud.service';
-import {
-  CloudFiles,
-  CloudFilesClass,
-  TrackFile,
-  TrackFileClass,
-} from '../../models/cloud.model';
-import { Playlist } from '../../models/spotify.model';
+import { CloudFiles } from '../../models/cloud.model';
 
 @Component({
   selector: 'app-btn-play',
@@ -24,37 +17,32 @@ import { Playlist } from '../../models/spotify.model';
 export class BtnPlayComponent implements OnDestroy {
   @Input() playListId!: string;
   public state!: StreamState;
-  public currentPlaylistId!: string;
-  private files!: CloudFiles;
-  private cloudSubscription!: Subscription;
+  public playingTrack!: PlayingTrack;
   private stateSubscription!: Subscription;
-  private currentPlaylistIdSubscription!: Subscription;
+  private playingTrackSubscription!: Subscription;
 
   constructor(
     public audioService: AudioService,
-    private spotifyService: SpotifyService,
     private cloudService: CloudService
   ) {
     this.subscribeTo();
   }
 
   ngOnDestroy(): void {
-    this.cloudSubscription.unsubscribe();
     this.stateSubscription.unsubscribe();
-    this.currentPlaylistIdSubscription.unsubscribe();
+    this.playingTrackSubscription.unsubscribe();
   }
 
   private subscribeTo(): void {
-    this.cloudSubscription = this.cloudService.getFiles().subscribe((files) => {
-      this.files = files;
-    });
-    this.stateSubscription = this.audioService.getState().subscribe((state) => {
-      this.state = state;
-    });
-    this.currentPlaylistIdSubscription = this.audioService
-      .getCurrentPlaylistId()
-      .subscribe((playListId) => {
-        this.currentPlaylistId = playListId;
+    this.stateSubscription = this.audioService
+      .observeStreamState()
+      .subscribe((state: StreamState) => {
+        this.state = state;
+      });
+    this.playingTrackSubscription = this.audioService
+      .observePlayingTrack()
+      .subscribe((track: PlayingTrack) => {
+        this.playingTrack = track;
       });
   }
 
@@ -70,28 +58,21 @@ export class BtnPlayComponent implements OnDestroy {
   private async openPlayList(): Promise<void> {
     await this.setCloudFiles();
     this.audioService.stop();
-    const url: string = this.audioService.getFileUrl(this.files, 0);
-    this.audioService
-      .playStream(url, this.playListId)
-      .subscribe((events) => {});
+    const files: CloudFiles = await this.cloudService.getFiles(this.playListId);
+    const track: PlayingTrack = await this.audioService.getPlayingTrack(
+      files,
+      this.playListId,
+      0
+    );
+    this.audioService.setPlayingTrack(track);
   }
 
   private async setCloudFiles(): Promise<void> {
-    const playList: Playlist = await this.spotifyService.getSpotifyData(
-      `playlists/${this.playListId}`
-    );
-    const tracks: TrackFile[] = this.extractPlayableTracks(playList);
-    const currentFiles: CloudFiles = new CloudFilesClass(playList, tracks);
-    this.cloudService.setFiles(currentFiles);
-  }
-
-  private extractPlayableTracks(playList: Playlist): TrackFile[] {
-    return playList.tracks.items
-      .filter((item) => item.track && item.track.preview_url)
-      .map((item, index) => new TrackFileClass(item.track, index));
+    const files: CloudFiles = await this.cloudService.getFiles(this.playListId);
+    this.cloudService.setFiles(files);
   }
 
   private isCurrentPlayList(): boolean {
-    return this.currentPlaylistId === this.playListId;
+    return this.playingTrack.playListId === this.playListId;
   }
 }

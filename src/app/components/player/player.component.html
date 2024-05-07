@@ -8,17 +8,17 @@
       <div class="image-container">
         <img src="{{ files.imageUrl }}" alt="" />
       </div>
-      <div class="song-description" *ngIf="files.tracks[trackIndex]">
+      <div class="song-description" *ngIf="files.tracks[playingTrack.index]">
         <span
           class="title m-3 overflow-ellipsis hover-effect-underline c-pointer"
-          >{{ files.tracks[trackIndex].name }}</span
+          >{{ files.tracks[playingTrack.index].name }}</span
         >
         <span
           class="artist m-3 overflow-ellipsis hover-effect-underline c-pointer"
         >
           <ng-container
             *ngFor="
-              let artist of files.tracks[trackIndex].artists;
+              let artist of files.tracks[playingTrack.index].artists;
               let last = last
             "
           >
@@ -116,7 +116,7 @@
   class="overlay"
   *ngIf="isFullScreen"
   [style.background-image]="
-    isFullScreen ? 'url(' + files.tracks[trackIndex].img + ')' : ''
+    isFullScreen ? 'url(' + files.tracks[playingTrack.index].img + ')' : ''
   "
 ></div>
 <div class="shadow" *ngIf="isFullScreen"></div>

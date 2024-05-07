@@ -23,6 +23,10 @@
   <ng-container
     *ngFor="let trackInfo of playlistData?.tracks?.items; let i = index"
   >
-    <app-track-list [data]="trackInfo" [trackNr]="i"></app-track-list>
+    <app-track-list
+      [trackData]="trackInfo.track"
+      [trackIndex]="i"
+      [playListId]="playlistData.id"
+    ></app-track-list>
   </ng-container>
 </div>

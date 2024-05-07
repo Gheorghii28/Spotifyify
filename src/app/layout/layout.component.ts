@@ -63,9 +63,11 @@ export class LayoutComponent implements OnInit, OnDestroy {
   }
 
   private subscribeTo(): void {
-    this.cloudSubscription = this.cloudService.getFiles().subscribe((files) => {
-      this.files = files;
-    });
+    this.cloudSubscription = this.cloudService
+      .observeFiles()
+      .subscribe((files: CloudFiles) => {
+        this.files = files;
+      });
   }
 
   async getProfile(): Promise<void> {

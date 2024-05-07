@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import moment from 'moment';
-import { StreamState } from '../models/stream-state.model';
-import { CloudFiles } from '../models/cloud.model';
+import { PlayingTrack, PlayingTrackClass, StreamState } from '../models/stream-state.model';
+import { CloudFiles, TrackFile } from '../models/cloud.model';
 
 @Injectable({
   providedIn: 'root',
@@ -23,13 +23,13 @@ export class AudioService {
   private state$: BehaviorSubject<StreamState> = new BehaviorSubject(
     this.state
   );
-  private currentPlaylistId!: string;
-  private currentPlaylistId$: BehaviorSubject<string> = new BehaviorSubject(
-    this.currentPlaylistId
-  );
-  private trackIndex!: number;
-  private trackIndex$: BehaviorSubject<number> = new BehaviorSubject(
-    this.trackIndex
+  private currentPlayingTrack: PlayingTrack = {
+    playListId: '',
+    id: '',
+    index: 0,
+  };
+  private currentPlayingTrack$: BehaviorSubject<PlayingTrack> = new BehaviorSubject(
+    this.currentPlayingTrack
   );
   private audioEvents = [
     'ended',
@@ -115,8 +115,7 @@ export class AudioService {
     });
   }
 
-  public playStream(url: string, playListId: string): Observable<any> {
-    this.currentPlaylistId$.next(playListId);
+  public playStream(url: string): Observable<any> {
     return this.streamObservable(url).pipe(takeUntil(this.stop$));
   }
 
@@ -133,6 +132,13 @@ export class AudioService {
       trackIndex = 0;
     }
     return files.tracks[trackIndex].previewUrl;
+  }
+
+  getTrackId(files: CloudFiles, trackIndex: number): string {
+    if (trackIndex === undefined) {
+      trackIndex = 0;
+    }
+    return files.tracks[trackIndex].id;
   }
 
   public play(): void {
@@ -156,20 +162,30 @@ export class AudioService {
     return moment.utc(momentTime).format(format);
   }
 
-  public getState(): Observable<StreamState> {
+  public observeStreamState(): Observable<StreamState> {
     return this.state$.asObservable();
   }
 
-  public getCurrentPlaylistId(): Observable<string> {
-    return this.currentPlaylistId$.asObservable();
+  public observePlayingTrack(): Observable<PlayingTrack> {
+    return this.currentPlayingTrack$.asObservable();
   }
 
-  public getTrackIndex(): Observable<number> {
-    return this.trackIndex$.asObservable();
+  public async setPlayingTrack(track: PlayingTrack): Promise<void> {
+    this.currentPlayingTrack$.next(track);
   }
 
-  public async setTrackIndex(index: number): Promise<void> {
-    this.trackIndex$.next(index);
+  public async getPlayingTrack(
+    files: CloudFiles,
+    playListId: string,
+    index: number
+  ): Promise<PlayingTrack> {
+    const track: TrackFile = files.tracks[index];
+    const playingTrack = new PlayingTrackClass(
+      playListId,
+      track.id,
+      track.index
+    );
+    return playingTrack;
   }
 
   public getVolume(): number {

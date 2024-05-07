@@ -1,5 +1,51 @@
 <div *ngIf="trackData" class="track c-pointer">
-  <div class="track-number">{{ trackNr + 1 }}</div>
+  <div class="track-number">
+    <div class="not-hover-actions">
+      <ng-container
+        *ngIf="
+          state.playing &&
+            playingTrack.index === trackIndex &&
+            playingTrack.playListId === playListId;
+          else soundNr
+        "
+      >
+        <app-soundwave></app-soundwave
+      ></ng-container>
+      <ng-template #soundNr>
+        <span>{{ trackIndex + 1 }}</span></ng-template
+      >
+    </div>
+    <button
+      class="btn-non-style hover-actions"
+      *ngIf="state"
+      [disabled]="state.error"
+      (click)="togglePlayPause($event)"
+    >
+      <ng-container
+        *ngIf="
+          state.playing &&
+            playingTrack.index === trackIndex &&
+            playingTrack.playListId === playListId;
+          else playIcon
+        "
+      >
+        <span
+          class="material-symbols-outlined play-circle c-pointer"
+          style="font-size: 24px"
+        >
+          pause
+        </span></ng-container
+      >
+      <ng-template #playIcon>
+        <span
+          class="material-symbols-outlined play-circle c-pointer"
+          style="font-size: 24px"
+        >
+          play_arrow
+        </span></ng-template
+      >
+    </button>
+  </div>
   <div class="track-title featured">
     <span class="title">{{ trackData.name }}</span>
     <ng-container *ngFor="let artist of trackData.artists">

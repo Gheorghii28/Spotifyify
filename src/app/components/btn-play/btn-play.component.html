@@ -6,7 +6,7 @@
 >
   <ng-container
     *ngIf="
-      state.playing && currentPlaylistId === playListId;
+      state.playing && playingTrack.playListId === playListId;
       else playIcon
     "
   >
