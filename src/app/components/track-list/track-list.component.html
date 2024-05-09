@@ -46,6 +46,7 @@
       >
     </button>
   </div>
+  <img [src]="track.img">
   <div class="track-title featured">
     <span class="title">{{ track.name }}</span>
     <ng-container *ngFor="let artistName of track.artists">

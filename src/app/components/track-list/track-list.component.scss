@@ -39,9 +39,16 @@
     color: var(--light-grey-color);
     width: 12px;
   }
+  img {
+    width: 30px;
+    height: 30px;
+    margin-left: 25px;
+    border-radius: 3px;
+    object-fit: cover;
+  }
   .track-title {
     width: 45%;
-    margin-left: 30px;
+    margin-left: 15px;
     color: var(--white-color);
   }
   .featured .title:after {
