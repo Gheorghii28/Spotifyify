@@ -1,4 +1,4 @@
-<div *ngIf="trackData" class="track c-pointer">
+<div *ngIf="track" class="track c-pointer">
   <div class="track-number">
     <div class="not-hover-actions">
       <ng-container
@@ -47,10 +47,10 @@
     </button>
   </div>
   <div class="track-title featured">
-    <span class="title">{{ trackData.name }}</span>
-    <ng-container *ngFor="let artist of trackData.artists">
-      <span class="feature">{{ artist.name }}</span>
+    <span class="title">{{ track.name }}</span>
+    <ng-container *ngFor="let artistName of track.artists">
+      <span class="feature">{{ artistName }}</span>
     </ng-container>
   </div>
-  <div class="track-length">{{ trackData.duration_ms | date : "mm:ss" }}</div>
+  <div class="track-length">{{ track.durationMs | date : "mm:ss" }}</div>
 </div>

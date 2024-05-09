@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { Playlist } from '../../models/spotify.model';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { BtnPlayComponent } from '../btn-play/btn-play.component';
+import { CloudFiles } from '../../models/cloud.model';
 
 @Component({
   selector: 'app-view-header',
@@ -12,5 +12,5 @@ import { BtnPlayComponent } from '../btn-play/btn-play.component';
   styleUrl: './view-header.component.scss',
 })
 export class ViewHeaderComponent {
-  @Input() data!: Playlist;
+  @Input() data!: CloudFiles;
 }

@@ -7,6 +7,8 @@ export interface CloudFiles {
   id: string;
   imageUrl: string;
   tracks: TrackFile[];
+  type: string;
+  color: string;
 }
 
 export interface TrackFile {
@@ -27,6 +29,8 @@ export class CloudFilesClass implements CloudFiles {
   id: string;
   imageUrl: string;
   tracks: TrackFile[];
+  type: string;
+  color: string;
 
   constructor(file: Playlist, tracks: TrackFile[]) {
     this.name = file.name;
@@ -35,6 +39,8 @@ export class CloudFilesClass implements CloudFiles {
     this.id = file.id;
     this.imageUrl = file.images[0].url;
     this.tracks = tracks;
+    this.type = file.type;
+    this.color = file.primary_color;
   }
 }
 

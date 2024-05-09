@@ -1,5 +1,4 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Track } from '../../models/spotify.model';
 import { CommonModule } from '@angular/common';
 import {
   PlayingTrack,
@@ -20,7 +19,7 @@ import { SoundwaveComponent } from '../soundwave/soundwave.component';
   styleUrl: './track-list.component.scss',
 })
 export class TrackListComponent implements OnInit, OnDestroy {
-  @Input() trackData!: Track;
+  @Input() track!: TrackFile;
   @Input() trackIndex!: number;
   @Input() playListId!: string;
   public state!: StreamState;
@@ -104,7 +103,7 @@ export class TrackListComponent implements OnInit, OnDestroy {
   }
 
   private isCurrentPlayingTrack(): boolean {
-    return this.playingTrack.id === this.trackData.id;
+    return this.playingTrack.id === this.track.id;
   }
 
   private isCurrentPlayList(): boolean {
