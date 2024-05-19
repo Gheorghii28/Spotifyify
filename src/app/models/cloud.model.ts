@@ -20,6 +20,8 @@ export interface TrackFile {
   previewUrl: string;
   index: number;
   img: string;
+  playListId: string;
+  likedStatus: boolean;
 }
 
 export class CloudFilesClass implements CloudFiles {
@@ -53,8 +55,10 @@ export class TrackFileClass implements TrackFile {
   previewUrl: string;
   index: number;
   img: string;
+  playListId: string;
+  likedStatus: boolean;
 
-  constructor(track: Track, index: number) {
+  constructor(track: Track, index: number, playListId: string) {
     this.name = track.name;
     this.albumName = track.album.name;
     this.artists = this.getArtists(track.artists);
@@ -63,6 +67,8 @@ export class TrackFileClass implements TrackFile {
     this.previewUrl = track.preview_url;
     this.index = index;
     this.img = track.album.images[0].url;
+    this.playListId = playListId;
+    this.likedStatus = false;
   }
 
   private getArtists(artists: Artist[]): string[] {
