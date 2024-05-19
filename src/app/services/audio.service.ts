@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import moment from 'moment';
-import { PlayingTrack, PlayingTrackClass, StreamState } from '../models/stream-state.model';
+import { StreamState } from '../models/stream-state.model';
 import { CloudFiles, TrackFile } from '../models/cloud.model';
 
 @Injectable({
@@ -23,14 +23,9 @@ export class AudioService {
   private state$: BehaviorSubject<StreamState> = new BehaviorSubject(
     this.state
   );
-  private currentPlayingTrack: PlayingTrack = {
-    playListId: '',
-    id: '',
-    index: 0,
-  };
-  private currentPlayingTrack$: BehaviorSubject<PlayingTrack> = new BehaviorSubject(
-    this.currentPlayingTrack
-  );
+  private currentPlayingTrack!: TrackFile;
+  private currentPlayingTrack$: BehaviorSubject<TrackFile> =
+    new BehaviorSubject(this.currentPlayingTrack);
   private audioEvents = [
     'ended',
     'error',
@@ -166,26 +161,20 @@ export class AudioService {
     return this.state$.asObservable();
   }
 
-  public observePlayingTrack(): Observable<PlayingTrack> {
+  public observePlayingTrack(): Observable<TrackFile> {
     return this.currentPlayingTrack$.asObservable();
   }
 
-  public async setPlayingTrack(track: PlayingTrack): Promise<void> {
+  public async setPlayingTrack(track: TrackFile): Promise<void> {
     this.currentPlayingTrack$.next(track);
   }
 
   public async getPlayingTrack(
     files: CloudFiles,
-    playListId: string,
     index: number
-  ): Promise<PlayingTrack> {
+  ): Promise<TrackFile> {
     const track: TrackFile = files.tracks[index];
-    const playingTrack = new PlayingTrackClass(
-      playListId,
-      track.id,
-      track.index
-    );
-    return playingTrack;
+    return track;
   }
 
   public getVolume(): number {
