@@ -9,15 +9,16 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { HeightService } from '../../services/height.service';
-import { CloudFiles } from '../../models/cloud.model';
+import { CloudFiles, TrackFile } from '../../models/cloud.model';
 import { Subscription } from 'rxjs';
 import { AudioService } from '../../services/audio.service';
 import { CommonModule } from '@angular/common';
-import { PlayingTrack, StreamState } from '../../models/stream-state.model';
+import { StreamState } from '../../models/stream-state.model';
 import { MatSliderModule } from '@angular/material/slider';
 import { FormsModule } from '@angular/forms';
 import { VolumeComponent } from './volume/volume.component';
 import { BtnFullScreenComponent } from '../btn-full-screen/btn-full-screen.component';
+import { LikeButtonComponent } from '../like-button/like-button.component';
 
 @Component({
   selector: 'app-player',
@@ -30,6 +31,7 @@ import { BtnFullScreenComponent } from '../btn-full-screen/btn-full-screen.compo
     FormsModule,
     VolumeComponent,
     BtnFullScreenComponent,
+    LikeButtonComponent,
   ],
   templateUrl: './player.component.html',
   styleUrl: './player.component.scss',
@@ -41,7 +43,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
   public isShuffled: boolean = false;
   public state!: StreamState;
   private stateSubscription!: Subscription;
-  public playingTrack!: PlayingTrack;
+  public playingTrack!: TrackFile;
   private playingTrackSubscription!: Subscription;
   public elem: any;
   public isFullScreen: boolean = false;
@@ -75,9 +77,11 @@ export class PlayerComponent implements OnInit, OnDestroy {
 
     this.playingTrackSubscription = this.audioService
       .observePlayingTrack()
-      .subscribe((track: PlayingTrack) => {
-        this.playingTrack = track;
-        this.playAudio(track.index, this.files);
+      .subscribe((track: TrackFile) => {
+        if (track) {
+          this.playingTrack = track;
+          this.playAudio(track.index, this.files);
+        }
       });
   }
 
@@ -102,12 +106,18 @@ export class PlayerComponent implements OnInit, OnDestroy {
     this.changeTrackIndex('previous');
   }
 
-  private changeTrackIndex(direction: 'next' | 'previous'): void {
-    const playingTrack: PlayingTrack = { ...this.playingTrack };
-    playingTrack.index += direction === 'next' ? 1 : -1;
-    this.audioService.setPlayingTrack(playingTrack);
+  private async changeTrackIndex(
+    direction: 'next' | 'previous'
+  ): Promise<void> {
+    let trackIndex: number = this.playingTrack.index;
+    trackIndex += direction === 'next' ? 1 : -1;
+    const track: TrackFile = await this.audioService.getPlayingTrack(
+      this.files,
+      trackIndex
+    );
+    this.audioService.setPlayingTrack(track);
   }
-  
+
   public togglePlayPause(event: Event): void {
     event.stopPropagation();
     this.audioService.togglePlayPause();
@@ -130,12 +140,14 @@ export class PlayerComponent implements OnInit, OnDestroy {
     this.isShuffled = !this.isShuffled;
   }
 
-  private updatePlayingTrack(): void {
+  private async updatePlayingTrack(): Promise<void> {
     if (this.isShuffled) {
-      const playingTrack: PlayingTrack = { ...this.playingTrack };
       const trackIndex: number = this.getRandomTrackIndex();
-      playingTrack.index = trackIndex;
-      this.audioService.setPlayingTrack(playingTrack);
+      const track: TrackFile = await this.audioService.getPlayingTrack(
+        this.files,
+        trackIndex
+      );
+      this.audioService.setPlayingTrack(track);
     } else {
       this.next();
     }

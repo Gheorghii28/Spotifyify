@@ -20,13 +20,7 @@
       </button>
     </div>
   </div>
-  <ng-container
-    *ngFor="let track of playListFile?.tracks; let i = index"
-  >
-    <app-track-list
-      [track]="track"
-      [trackIndex]="i"
-      [playListId]="playListFile.id"
-    ></app-track-list>
+  <ng-container *ngFor="let track of playListFile?.tracks; let i = index">
+    <app-track-list [track]="track"></app-track-list>
   </ng-container>
 </div>

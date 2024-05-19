@@ -2,6 +2,7 @@
   class="current-track"
   [ngClass]="{ fullscreen: isFullScreen }"
   [style.background-color]="!isFullScreen ? '#111' : ''"
+  *ngIf="playingTrack"
 >
   <div class="song-bar">
     <div class="song-infos">
@@ -28,9 +29,10 @@
         </span>
       </div>
     </div>
-    <button mat-icon-button class="hover-effect-on-icons">
-      <span class="material-symbols-outlined"> favorite </span>
-    </button>
+    <app-like-button
+      [trackId]="playingTrack.id"
+      [likedStatus]="files.tracks[playingTrack.index].likedStatus"
+    ></app-like-button>
   </div>
   <div class="progress-controller">
     <div class="control-buttons">

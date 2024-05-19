@@ -1,30 +1,25 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  PlayingTrack,
-  PlayingTrackClass,
-  StreamState,
-} from '../../models/stream-state.model';
+import { StreamState } from '../../models/stream-state.model';
 import { Subscription } from 'rxjs';
 import { AudioService } from '../../services/audio.service';
 import { CloudFiles, TrackFile } from '../../models/cloud.model';
 import { CloudService } from '../../services/cloud.service';
 import { SoundwaveComponent } from '../soundwave/soundwave.component';
+import { LikeButtonComponent } from '../like-button/like-button.component';
 
 @Component({
   selector: 'app-track-list',
   standalone: true,
-  imports: [CommonModule, SoundwaveComponent],
+  imports: [CommonModule, SoundwaveComponent, LikeButtonComponent],
   templateUrl: './track-list.component.html',
   styleUrl: './track-list.component.scss',
 })
 export class TrackListComponent implements OnInit, OnDestroy {
   @Input() track!: TrackFile;
-  @Input() trackIndex!: number;
-  @Input() playListId!: string;
   public state!: StreamState;
-  private files!: CloudFiles;
-  public playingTrack!: PlayingTrack;
+  public files!: CloudFiles;
+  public playingTrack!: TrackFile;
   private stateSubscription!: Subscription;
   private cloudSubscription!: Subscription;
   private playingTrackSubscription!: Subscription;
@@ -57,7 +52,7 @@ export class TrackListComponent implements OnInit, OnDestroy {
       });
     this.playingTrackSubscription = this.audioService
       .observePlayingTrack()
-      .subscribe((track: PlayingTrack) => {
+      .subscribe((track: TrackFile) => {
         this.playingTrack = track;
       });
   }
@@ -68,13 +63,8 @@ export class TrackListComponent implements OnInit, OnDestroy {
       this.audioService.togglePlayPause();
     } else {
       if (this.isCurrentPlayList()) {
-        const track: TrackFile = this.files.tracks[this.trackIndex];
-        const playingTrack = new PlayingTrackClass(
-          this.playListId,
-          track.id,
-          track.index
-        );
-        this.audioService.setPlayingTrack(playingTrack);
+        const track: TrackFile = this.files.tracks[this.track.index];
+        this.audioService.setPlayingTrack(track);
       } else {
         this.openPlayList();
       }
@@ -84,25 +74,20 @@ export class TrackListComponent implements OnInit, OnDestroy {
   private async openPlayList(): Promise<void> {
     await this.setCloudFiles();
     this.audioService.stop();
-    const files: CloudFiles = await this.cloudService.getFiles(
-      this.playListId
-    );
-    const playingTrack: PlayingTrack = await this.audioService.getPlayingTrack(
-      files,
-      this.playListId,
-      this.trackIndex
-    );
-    this.audioService.setPlayingTrack(playingTrack);
+    this.audioService.setPlayingTrack(this.track);
   }
 
   private async setCloudFiles(): Promise<void> {
     const files: CloudFiles = await this.cloudService.getFiles(
-      this.playListId
+      this.track.playListId
     );
     this.cloudService.setFiles(files);
   }
 
   private isCurrentPlayingTrack(): boolean {
+    if (!this.playingTrack) {
+      return false;
+    }
     return this.playingTrack.id === this.track.id;
   }
 
@@ -110,6 +95,6 @@ export class TrackListComponent implements OnInit, OnDestroy {
     if (!this.files) {
       return false;
     }
-    return this.files.id === this.playListId;
+    return this.files.id === this.track.playListId;
   }
 }

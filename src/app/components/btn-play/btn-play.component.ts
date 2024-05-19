@@ -1,11 +1,11 @@
 import { Component, Input, OnDestroy } from '@angular/core';
-import { PlayingTrack, StreamState } from '../../models/stream-state.model';
+import { StreamState } from '../../models/stream-state.model';
 import { CommonModule } from '@angular/common';
 import { AudioService } from '../../services/audio.service';
 import { MatButtonModule } from '@angular/material/button';
 import { Subscription } from 'rxjs';
 import { CloudService } from '../../services/cloud.service';
-import { CloudFiles } from '../../models/cloud.model';
+import { CloudFiles, TrackFile } from '../../models/cloud.model';
 
 @Component({
   selector: 'app-btn-play',
@@ -17,7 +17,7 @@ import { CloudFiles } from '../../models/cloud.model';
 export class BtnPlayComponent implements OnDestroy {
   @Input() playListId!: string;
   public state!: StreamState;
-  public playingTrack!: PlayingTrack;
+  public playingTrack!: TrackFile;
   private stateSubscription!: Subscription;
   private playingTrackSubscription!: Subscription;
 
@@ -41,7 +41,7 @@ export class BtnPlayComponent implements OnDestroy {
       });
     this.playingTrackSubscription = this.audioService
       .observePlayingTrack()
-      .subscribe((track: PlayingTrack) => {
+      .subscribe((track: TrackFile) => {
         this.playingTrack = track;
       });
   }
@@ -59,11 +59,7 @@ export class BtnPlayComponent implements OnDestroy {
     await this.setCloudFiles();
     this.audioService.stop();
     const files: CloudFiles = await this.cloudService.getFiles(this.playListId);
-    const track: PlayingTrack = await this.audioService.getPlayingTrack(
-      files,
-      this.playListId,
-      0
-    );
+    const track: TrackFile = await this.audioService.getPlayingTrack(files, 0);
     this.audioService.setPlayingTrack(track);
   }
 
@@ -73,6 +69,9 @@ export class BtnPlayComponent implements OnDestroy {
   }
 
   private isCurrentPlayList(): boolean {
+    if (!this.playingTrack) {
+      return false;
+    }
     return this.playingTrack.playListId === this.playListId;
   }
 }

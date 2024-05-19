@@ -4,15 +4,15 @@
       <ng-container
         *ngIf="
           state.playing &&
-            playingTrack.index === trackIndex &&
-            playingTrack.playListId === playListId;
+            playingTrack.index === track.index &&
+            playingTrack.playListId === track.playListId;
           else soundNr
         "
       >
         <app-soundwave></app-soundwave
       ></ng-container>
       <ng-template #soundNr>
-        <span>{{ trackIndex + 1 }}</span></ng-template
+        <span>{{ track.index + 1 }}</span></ng-template
       >
     </div>
     <button
@@ -24,8 +24,8 @@
       <ng-container
         *ngIf="
           state.playing &&
-            playingTrack.index === trackIndex &&
-            playingTrack.playListId === playListId;
+            playingTrack.index === track.index &&
+            playingTrack.playListId === track.playListId;
           else playIcon
         "
       >
@@ -46,12 +46,13 @@
       >
     </button>
   </div>
-  <img [src]="track.img">
+  <img [src]="track.img" />
   <div class="track-title featured">
     <span class="title">{{ track.name }}</span>
     <ng-container *ngFor="let artistName of track.artists">
       <span class="feature">{{ artistName }}</span>
     </ng-container>
   </div>
+  <app-like-button [trackId]="track.id" [likedStatus]="track.likedStatus"></app-like-button>
   <div class="track-length">{{ track.durationMs | date : "mm:ss" }}</div>
 </div>
