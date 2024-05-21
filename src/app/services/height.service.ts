@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, fromEvent } from 'rxjs';
+import { getWindow, getDocument } from 'ssr-window';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +14,7 @@ export class HeightService {
   constructor(@Inject(DOCUMENT) private document: any) {}
 
   adjustHeightOnWindowResize(): void {
+    const window = getWindow();
     fromEvent(window, 'load').subscribe(() => {
       this.adjustElementHeights();
     });
@@ -22,6 +24,8 @@ export class HeightService {
   }
 
   adjustElementHeights(): void {
+    const window = getWindow();
+    const document = getDocument();
     const totalHeight = window.innerHeight - 30;
 
     const headerElement = document.querySelector('.header');

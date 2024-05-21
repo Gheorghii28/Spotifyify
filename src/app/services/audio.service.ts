@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject, Subject } from 'rxjs';
+import { Observable, BehaviorSubject, Subject, of } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import moment from 'moment';
 import { StreamState } from '../models/stream-state.model';
@@ -186,4 +186,43 @@ export class AudioService {
       this.audioObj.volume = volume;
     }
   }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class NullAudioService {
+  observeStreamState(): Observable<StreamState> {
+    return of({
+      playing: false,
+      readableCurrentTime: '',
+      readableDuration: '',
+      duration: 0,
+      currentTime: 0,
+      canplay: false,
+      error: false,
+    });
+  }
+
+  observePlayingTrack(): Observable<TrackFile> {
+    return of(null as unknown as TrackFile);
+  }
+
+  playStream(url: string): Observable<any> {
+    return of(null);
+  }
+
+  togglePlayPause(): void {}
+  play(): void {}
+  pause(): void {}
+  stop(): void {}
+  seekTo(seconds: number): void {}
+  setPlayingTrack(track: TrackFile): void {}
+  getPlayingTrack(files: CloudFiles, index: number): TrackFile {
+    return null as unknown as TrackFile;
+  }
+  getVolume(): number {
+    return 0;
+  }
+  setVolume(volume: number): void {}
 }
