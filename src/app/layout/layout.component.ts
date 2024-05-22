@@ -17,6 +17,8 @@ import { RouterOutlet } from '@angular/router';
 import { PlayerComponent } from '../components/player/player.component';
 import { CloudFiles } from '../models/cloud.model';
 import { CloudService } from '../services/cloud.service';
+import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
+import { PlayingInfoComponent } from '../components/playing-info/playing-info.component';
 
 @Component({
   selector: 'app-layout',
@@ -26,7 +28,10 @@ import { CloudService } from '../services/cloud.service';
     SidenavComponent,
     RouterOutlet,
     PlayerComponent,
+    PlayingInfoComponent,
     CommonModule,
+    MatDrawer,
+    MatSidenavModule
   ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',

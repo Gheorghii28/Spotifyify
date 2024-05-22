@@ -26,37 +26,19 @@ export class HeightService {
   adjustElementHeights(): void {
     const window = getWindow();
     const document = getDocument();
-    const totalHeight = window.innerHeight - 30;
-
-    const headerElement = document.querySelector('.header');
+    const totalHeight = window.innerHeight - 16;
     const footerElement = document.querySelector('.current-track');
-    const playlistElement = document.querySelector('.playlist');
-    const nowPlayingElement = document.querySelector('.playing');
-
-    const headerHeight = headerElement
-      ? headerElement.getBoundingClientRect().height
-      : 0;
     const footerHeight = footerElement
       ? footerElement.getBoundingClientRect().height
       : 0;
-    const playlistHeight = playlistElement
-      ? playlistElement.getBoundingClientRect().height
-      : 0;
-    const nowPlayingHeight = nowPlayingElement
-      ? nowPlayingElement.getBoundingClientRect().height
-      : 0;
-
-    const navHeight =
-      totalHeight -
-      (headerHeight + footerHeight + playlistHeight + nowPlayingHeight);
-    const content = totalHeight + 30 - (headerHeight + footerHeight);
+    const contentHeight = totalHeight - footerHeight;
 
     document
-      .querySelector('.navigation')
-      ?.setAttribute('style', `height: ${navHeight}px`);
+      .querySelector('.main-content')
+      ?.setAttribute('style', `height: ${contentHeight}px`);
     document
-      .querySelector('.content-middle')
-      ?.setAttribute('style', `height: ${content}px`);
+      .querySelector('.mat-drawer-container')
+      ?.setAttribute('style', `height: ${contentHeight}px`);
   }
 
   public chkScreenMode(): void {

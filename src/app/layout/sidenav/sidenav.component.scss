@@ -1,7 +1,26 @@
+.sidebar-navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidenav-header {
+  height: 112px;
+  padding: 8px 12px;
+  background-color: var(--dark-grey-color);
+  display: flex;
+  flex-direction: column;
+  button {
+    display: flex !important;
+    padding-left: 24px !important;
+  }
+}
+
 .navigation {
   padding: 15px;
   background: var(--dark-grey-color);
   color: var(--light-grey-color);
+  height: calc(100% - 30px);
 }
 .navigation-list-item:hover {
   border-right: 3px solid var(--green-color);

@@ -1,38 +1,36 @@
-<nav #navigation class="navigation scroll-y">
-  <mat-expansion-panel *ngFor="let category of navigationData" hideToggle>
-    <mat-expansion-panel-header>
-      <mat-panel-title>{{ category.title }}</mat-panel-title>
-    </mat-expansion-panel-header>
-    <mat-list>
-      <mat-list-item
-        *ngFor="let item of category.items"
-        class="navigation-list-item"
-      >
-        <span (click)="navigateTo(item.route)">{{ item.label }}</span>
-      </mat-list-item>
-    </mat-list>
-  </mat-expansion-panel>
-</nav>
+<div class="sidebar-navigation h-100">
+  <div class="sidenav-header round-8">
+    <button
+      mat-icon-button
+      class="hover-effect-on-icons"
+      (click)="navigateTo('home')"
+    >
+      <span class="material-symbols-outlined"> home </span>
+      <span>Home</span>
+    </button>
+    <button
+      mat-icon-button
+      class="hover-effect-on-icons"
+      (click)="navigateTo('search')"
+    >
+      <span class="material-symbols-outlined"> search </span>
+      <span>Search</span>
+    </button>
+  </div>
 
-<section class="playlist">
-  <a href="#">
-    <i class="ion-ios-plus-outline"></i>
-    New Playlist
-  </a>
-</section>
-
-<section class="playing">
-  <div class="playing-art">
-    <img
-      src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/7022/cputh.jpg"
-      alt="Album Art"
-    />
-  </div>
-  <div class="playing-song">
-    <a class="playing-song-name">Some Type of Love</a>
-    <a class="playing-song-artist">Charlie Puth</a>
-  </div>
-  <div class="playing-add">
-    <i class="ion-checkmark"></i>
-  </div>
-</section>
+  <nav #navigation class="navigation scroll-y round-8">
+    <mat-expansion-panel *ngFor="let category of navigationData" hideToggle>
+      <mat-expansion-panel-header>
+        <mat-panel-title>{{ category.title }}</mat-panel-title>
+      </mat-expansion-panel-header>
+      <mat-list>
+        <mat-list-item
+          *ngFor="let item of category.items"
+          class="navigation-list-item"
+        >
+          <span (click)="navigateTo(item.route)">{{ item.label }}</span>
+        </mat-list-item>
+      </mat-list>
+    </mat-expansion-panel>
+  </nav>
+</div>

@@ -1,18 +1,15 @@
-.content {
-  display: flex;
-  flex-flow: row wrap;
-}
-.content-left {
-  width: 15%;
-}
-.content-middle {
-  width: 70%;
-}
-@media (max-width: 1400px) {
-  .content-left {
-    width: 20%;
+.page {
+  padding: 8px;
+  .mat-drawer-container {
+    background-color: transparent;
   }
-  .content-middle {
-    width: 80%;
+  .router-outlet-area {
+    background-color: var(--dark-grey-color);
+  }
+  .mat-drawer-side {
+    background-color: transparent;
+  }
+  app-sidenav {
+    display: block;
   }
 }

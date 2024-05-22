@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './views/login/login.component';
 import { LayoutComponent } from './layout/layout.component';
-import { SongsComponent } from './views/songs/songs.component';
 import { authGuard } from './guards/auth.guard';
 import { HomeComponent } from './views/home/home.component';
 import { PlaylistComponent } from './views/playlist/playlist.component';
@@ -18,7 +17,6 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'home', component: HomeComponent },
-      { path: 'songs', component: SongsComponent },
       { path: 'playlist/:id', component: PlaylistComponent },
     ],
   },
