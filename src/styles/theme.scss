@@ -1,0 +1,26 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+// Define custom theme colors
+$my-palette-primary: mat.define-palette(mat.$indigo-palette);
+$my-palette-accent: mat.define-palette(mat.$green-palette);
+$my-palette-warn: mat.define-palette(mat.$red-palette);
+
+// Override default typography
+$my-typography: mat.define-typography-config(
+  $font-family: 'Montserrat, sans-serif',
+);
+
+// Create custom theme using the defined colors
+$my-theme: mat.define-light-theme((
+  color: (
+    primary: $my-palette-primary,
+    accent: $my-palette-accent,
+    warn: $my-palette-warn,
+  ),
+  typography: $my-typography,
+));
+
+// Include custom theme in app
+@include mat.all-component-themes($my-theme);
