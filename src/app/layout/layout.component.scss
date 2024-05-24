@@ -4,6 +4,7 @@
     background-color: transparent;
   }
   .router-outlet-area {
+    height: 100%;
     background-color: var(--dark-grey-color);
   }
   .mat-drawer-side {
@@ -11,5 +12,9 @@
   }
   app-sidenav {
     display: block;
+  }
+  .mat-drawer-left {
+    display: flex;
+    justify-content: end;
   }
 }

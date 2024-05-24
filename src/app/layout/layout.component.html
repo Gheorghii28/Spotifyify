@@ -1,21 +1,19 @@
 <div class="page">
   <div class="main-content">
     <mat-drawer-container class="mat-drawer-container" autosize>
-      <mat-drawer
-        #drawerSidenav
-        [opened]="true"
-        class="round-8"
-        mode="side"
-      >
+      <mat-drawer #drawerSidenav [opened]="true" class="round-8" style="width: 289px;" mode="side">
         <app-sidenav class="h-100"></app-sidenav>
       </mat-drawer>
-      <div class="router-outlet-area scroll-y round-8">
-        <router-outlet></router-outlet>
-      </div>
+      <mat-drawer-content class="round-8">
+        <div class="router-outlet-area scroll-y">
+          <router-outlet></router-outlet>
+        </div>
+      </mat-drawer-content>
       <mat-drawer
         #drawerInfo
         [opened]="true"
-        class="round-8"
+        class="round-8 mat-drawer-left"
+        style="width: 289px;"
         mode="side"
         position="end"
       >
