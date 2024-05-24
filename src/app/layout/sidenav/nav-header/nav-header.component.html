@@ -1,0 +1,67 @@
+<div class="nav-header">
+  <button
+    mat-icon-button
+    class="hover-effect-on-icons"
+    (click)="toggleDrawer()"
+  >
+    <span class="material-symbols-outlined"> library_music </span>
+    <span
+      *ngIf="sidenavExpanded"
+      class="encore-text font-montserrat"
+      style="transform: translateY(3px)"
+      >Your</span
+    >
+    <span
+      *ngIf="sidenavExpanded"
+      class="encore-text font-montserrat"
+      style="transform: translateY(3px)"
+      >Library</span
+    >
+  </button>
+  <div class="n-h-right">
+    <button
+      mat-icon-button
+      *ngIf="sidenavExpanded"
+      [matMenuTriggerFor]="menu"
+      class="hover-effect-on-icons"
+    >
+      <span class="material-symbols-outlined"> add </span>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button
+        mat-icon-button
+        class="hover-effect-on-icons"
+        style="display: flex; gap: 12px; width: 202px"
+      >
+        <span class="material-symbols-outlined"> playlist_add </span>
+        <span
+          class="encore-text font-montserrat"
+          style="transform: translateY(3px); font-size: 12px"
+          >Create a new playlist</span
+        >
+      </button>
+      <button
+        mat-icon-button
+        class="hover-effect-on-icons"
+        style="display: flex; gap: 12px; width: 202px"
+      >
+        <span class="material-symbols-outlined"> folder </span>
+        <span
+          class="encore-text font-montserrat"
+          style="transform: translateY(3px); font-size: 12px"
+          >Create a playlist folder</span
+        >
+      </button>
+    </mat-menu>
+    <button
+      mat-menu-item
+      *ngIf="sidenavExpanded"
+      class="hover-effect-on-icons"
+      (click)="toggleSidenavWidth()"
+    >
+      <span class="material-symbols-outlined">
+        {{ sidenavWidth === 631 ? "arrow_back" : "arrow_forward" }}
+      </span>
+    </button>
+  </div>
+</div>

@@ -19,6 +19,7 @@ import { CloudFiles } from '../models/cloud.model';
 import { CloudService } from '../services/cloud.service';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { PlayingInfoComponent } from '../components/playing-info/playing-info.component';
+import { DrawerService } from '../services/drawer.service';
 
 @Component({
   selector: 'app-layout',
@@ -31,7 +32,7 @@ import { PlayingInfoComponent } from '../components/playing-info/playing-info.co
     PlayingInfoComponent,
     CommonModule,
     MatDrawer,
-    MatSidenavModule
+    MatSidenavModule,
   ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
@@ -42,14 +43,19 @@ export class LayoutComponent implements OnInit, OnDestroy {
   resizeSubscription!: Subscription;
   files!: CloudFiles;
   trackIndex!: number;
+  sidenavExpanded!: boolean;
+  sidenavWidth!: number;
   private cloudSubscription!: Subscription;
+  private sidenavExpandedSubscription!: Subscription;
+  private sidenavWidthSubscription!: Subscription;
 
   constructor(
     private tokenService: TokenService,
     private authService: AuthService,
     private heightService: HeightService,
     @Inject(PLATFORM_ID) private platformId: Object,
-    private cloudService: CloudService
+    private cloudService: CloudService,
+    private drawerService: DrawerService
   ) {
     this.tokenService.saveTokensToLocalStorage();
     this.tokenService.clearTokensFromCookies();
@@ -65,6 +71,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.cloudSubscription.unsubscribe();
+    this.sidenavExpandedSubscription.unsubscribe();
+    this.sidenavWidthSubscription.unsubscribe();
   }
 
   private subscribeTo(): void {
@@ -72,6 +80,16 @@ export class LayoutComponent implements OnInit, OnDestroy {
       .observeFiles()
       .subscribe((files: CloudFiles) => {
         this.files = files;
+      });
+    this.sidenavExpandedSubscription = this.drawerService
+      .observeSidenavExpanded()
+      .subscribe((expanded: boolean) => {
+        this.sidenavExpanded = expanded;
+      });
+    this.sidenavWidthSubscription = this.drawerService
+      .observeSidenavWidth()
+      .subscribe((width: number) => {
+        this.sidenavWidth = width;
       });
   }
 

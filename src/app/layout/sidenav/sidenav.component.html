@@ -7,6 +7,7 @@
     >
       <span class="material-symbols-outlined"> home </span>
       <span
+        *ngIf="sidenavExpanded"
         class="encore-text font-montserrat"
         style="transform: translateY(3px)"
         >Home</span
@@ -19,6 +20,7 @@
     >
       <span class="material-symbols-outlined"> search </span>
       <span
+        *ngIf="sidenavExpanded"
         class="encore-text font-montserrat"
         style="transform: translateY(-2px)"
         >Search</span
@@ -27,6 +29,10 @@
   </div>
 
   <nav #navigation class="navigation scroll-y round-8">
+    <app-nav-header
+      [drawerSidenav]="drawerSidenav"
+      [sidenavExpanded]="sidenavExpanded"
+    ></app-nav-header>
     <mat-expansion-panel *ngFor="let category of navigationData" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>{{ category.title }}</mat-panel-title>
