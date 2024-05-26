@@ -114,3 +114,13 @@ export interface Artist {
   type: string;
   uri: string;
 }
+
+export interface PlaylistsObject {
+  href: string;
+  items: Playlist[];
+  limit: number;
+  next: string;
+  offset: number;
+  previous: string;
+  total: number;
+}

@@ -1,0 +1,46 @@
+<button mat-button mat-button (contextmenu)="onContextMenu($event)" (click)="navigateToPlaylist()">
+  <ng-container
+    *ngIf="playlist.images && playlist.images.length > 0; else noImage"
+  >
+    <img [src]="playlist.images[0].url" />
+  </ng-container>
+  <ng-template #noImage>
+    <div class="div-no-img">
+      <span class="material-symbols-outlined"> audio_file </span>
+    </div>
+  </ng-template>
+  <div class="text">
+    <span>
+      {{
+        sidenavWidth === 631 ? playlist.name : truncateText(playlist.name, 22)
+      }}</span
+    >
+    <span
+      >Playlist <span class="material-symbols-outlined"> adjust </span>
+      {{ playlist.tracks.total }} songs</span
+    >
+  </div>
+</button>
+<div
+  style="visibility: hidden; position: fixed"
+  [style.left]="contextMenuPosition.x"
+  [style.top]="contextMenuPosition.y"
+  [matMenuTriggerFor]="contextMenu"
+></div>
+<mat-menu #contextMenu="matMenu">
+  <ng-template matMenuContent let-item="item">
+    <button
+      mat-icon-button
+      class="hover-effect-on-icons"
+      style="display: flex; gap: 12px; width: 120px"
+      (click)="openDialog()"
+    >
+      <span class="material-symbols-outlined"> playlist_remove </span>
+      <span
+        class="encore-text font-montserrat"
+        style="transform: translateY(-1px); font-size: 12px"
+        >Delete</span
+      >
+    </button>
+  </ng-template>
+</mat-menu>

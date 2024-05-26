@@ -8,6 +8,9 @@ import { NavHeaderComponent } from './nav-header/nav-header.component';
 import { MatDrawer } from '@angular/material/sidenav';
 import { Subscription } from 'rxjs';
 import { DrawerService } from '../../services/drawer.service';
+import { ListItemComponent } from './list-item/list-item.component';
+import { PlaylistsObject } from '../../models/spotify.model';
+import { CloudService } from '../../services/cloud.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -18,14 +21,18 @@ import { DrawerService } from '../../services/drawer.service';
     MatListModule,
     MatButtonModule,
     NavHeaderComponent,
+    ListItemComponent,
   ],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss',
 })
 export class SidenavComponent implements OnDestroy {
   @Input() drawerSidenav!: MatDrawer;
+  @Input() userId!: string;
   sidenavExpanded!: boolean;
+  myPlaylists!: PlaylistsObject;
   private sidenavExpandedSubscription!: Subscription;
+  private myPlaylistsSubscription!: Subscription;
   navigationData = [
     {
       title: 'Main',
@@ -62,12 +69,17 @@ export class SidenavComponent implements OnDestroy {
     },
   ];
 
-  constructor(private router: Router, private drawerService: DrawerService) {
+  constructor(
+    private router: Router,
+    private drawerService: DrawerService,
+    private cloudService: CloudService
+  ) {
     this.subscribeTo();
   }
 
   ngOnDestroy(): void {
     this.sidenavExpandedSubscription.unsubscribe();
+    this.myPlaylistsSubscription.unsubscribe();
   }
 
   private subscribeTo(): void {
@@ -76,9 +88,14 @@ export class SidenavComponent implements OnDestroy {
       .subscribe((expanded: boolean) => {
         this.sidenavExpanded = expanded;
       });
+    this.myPlaylistsSubscription = this.cloudService
+      .observeMyPlaylists()
+      .subscribe((playlists: PlaylistsObject) => {
+        this.myPlaylists = playlists;
+      });
   }
 
-  navigateTo(route: string) {
+  public navigateTo(route: string): void {
     this.router.navigateByUrl(route);
   }
 }

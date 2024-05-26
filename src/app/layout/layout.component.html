@@ -8,8 +8,9 @@
         [style.width.px]="sidenavExpanded ? sidenavWidth : 100"
         mode="side"
       >
-        <app-sidenav
+        <app-sidenav *ngIf="userProfile"
           [drawerSidenav]="drawerSidenav"
+          [userId]="userProfile.id"
           class="h-100"
         ></app-sidenav>
       </mat-drawer>
@@ -33,6 +34,6 @@
   <app-player
     *ngIf="files"
     [files]="files"
-    [playListId]="files.id"
+    [playlistId]="files.id"
   ></app-player>
 </div>

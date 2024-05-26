@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import {
   CloudFiles,
   CloudFilesClass,
   TrackFile,
   TrackFileClass,
 } from '../models/cloud.model';
-import { Playlist } from '../models/spotify.model';
+import { Playlist, PlaylistsObject } from '../models/spotify.model';
 import { SpotifyService } from './spotify.service';
 
 @Injectable({
@@ -24,6 +24,7 @@ export class CloudService {
     color: '',
   };
   private files$: BehaviorSubject<any> = new BehaviorSubject(this.initialFiles);
+  private myPlaylists$: BehaviorSubject<any> = new BehaviorSubject({});
 
   constructor(private spotifyService: SpotifyService) {}
 
@@ -35,24 +36,32 @@ export class CloudService {
     this.files$.next(newFiles);
   }
 
-  public async getFiles(playListId: string): Promise<CloudFiles> {
-    const playList: Playlist = await this.spotifyService.getSpotifyData(
-      `playlists/${playListId}`
+  public observeMyPlaylists(): Observable<PlaylistsObject> {
+    return this.myPlaylists$.asObservable();
+  }
+
+  public setMyPlaylists(newPlaylists: PlaylistsObject): void {
+    this.myPlaylists$.next(newPlaylists);
+  }
+
+  public async getFiles(playlistId: string): Promise<CloudFiles> {
+    const playlist: Playlist = await this.spotifyService.getSpotifyData(
+      `playlists/${playlistId}`
     );
-    const tracks: TrackFile[] = this.extractPlayableTracks(playList);
+    const tracks: TrackFile[] = this.extractPlayableTracks(playlist);
     tracks.forEach(async (track: TrackFile) => {
       track.likedStatus = await this.spotifyService.fetchLikedStatusForTrack(
         track.id
       );
     });
-    const files: CloudFiles = new CloudFilesClass(playList, tracks);
+    const files: CloudFiles = new CloudFilesClass(playlist, tracks);
     return files;
   }
 
-  private extractPlayableTracks(playList: Playlist): TrackFile[] {
-    return playList.tracks.items
+  private extractPlayableTracks(playlist: Playlist): TrackFile[] {
+    return playlist.tracks.items
       .filter((item) => item.track && item.track.preview_url)
-      .map((item, index) => new TrackFileClass(item.track, index, playList.id));
+      .map((item, index) => new TrackFileClass(item.track, index, playlist.id));
   }
 
   public async updateLikedStatus(

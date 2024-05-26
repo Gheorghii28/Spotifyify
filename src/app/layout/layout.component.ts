@@ -9,7 +9,7 @@ import { TokenService } from '../services/token.service';
 import { HeaderComponent } from './header/header.component';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../services/auth.service';
-import { UserProfile } from '../models/spotify.model';
+import { PlaylistsObject, UserProfile } from '../models/spotify.model';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { Subscription } from 'rxjs';
 import { HeightService } from '../services/height.service';
@@ -20,6 +20,7 @@ import { CloudService } from '../services/cloud.service';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { PlayingInfoComponent } from '../components/playing-info/playing-info.component';
 import { DrawerService } from '../services/drawer.service';
+import { SpotifyService } from '../services/spotify.service';
 
 @Component({
   selector: 'app-layout',
@@ -55,11 +56,13 @@ export class LayoutComponent implements OnInit, OnDestroy {
     private heightService: HeightService,
     @Inject(PLATFORM_ID) private platformId: Object,
     private cloudService: CloudService,
-    private drawerService: DrawerService
+    private drawerService: DrawerService,
+    private spotifyService: SpotifyService
   ) {
     this.tokenService.saveTokensToLocalStorage();
     this.tokenService.clearTokensFromCookies();
     this.getProfile();
+    this.setMyPlaylists();
     this.subscribeTo();
   }
 
@@ -101,5 +104,11 @@ export class LayoutComponent implements OnInit, OnDestroy {
     } else {
       console.error('Failed to fetch user profile.');
     }
+  }
+
+  private async setMyPlaylists(): Promise<void> {
+    const playlists: PlaylistsObject =
+      await this.spotifyService.fetchMyPlaylists();
+    this.cloudService.setMyPlaylists(playlists);
   }
 }

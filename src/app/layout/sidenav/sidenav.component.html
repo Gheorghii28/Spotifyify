@@ -32,7 +32,14 @@
     <app-nav-header
       [drawerSidenav]="drawerSidenav"
       [sidenavExpanded]="sidenavExpanded"
+      [userId]="userId"
+      [myPlaylists]="myPlaylists"
     ></app-nav-header>
+    <ul>
+      <li *ngFor="let playlist of myPlaylists.items">
+        <app-list-item [playlist]="playlist"></app-list-item>
+      </li>
+    </ul>
     <mat-expansion-panel *ngFor="let category of navigationData" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>{{ category.title }}</mat-panel-title>
