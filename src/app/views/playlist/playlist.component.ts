@@ -21,7 +21,7 @@ import { Subscription } from 'rxjs';
   styleUrl: './playlist.component.scss',
 })
 export class PlaylistComponent implements OnInit, OnDestroy {
-  playListFile!: CloudFiles;
+  playlistFile!: CloudFiles;
   private cloudSubscription!: Subscription;
 
   constructor(
@@ -34,9 +34,9 @@ export class PlaylistComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.route.params.subscribe(async (params) => {
-      const playListId = params['id'];
+      const playlistId = params['id'];
       if (isPlatformBrowser(this.platformId)) {
-        const files: CloudFiles = await this.cloudService.getFiles(playListId);
+        const files: CloudFiles = await this.cloudService.getFiles(playlistId);
         this.cloudService.setFiles(files);
       }
     });
@@ -50,7 +50,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     this.cloudSubscription = this.cloudService
       .observeFiles()
       .subscribe((files: CloudFiles) => {
-        this.playListFile = files;
+        this.playlistFile = files;
       });
   }
 }

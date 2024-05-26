@@ -15,7 +15,7 @@ import { CloudFiles, TrackFile } from '../../models/cloud.model';
   styleUrl: './btn-play.component.scss',
 })
 export class BtnPlayComponent implements OnDestroy {
-  @Input() playListId!: string;
+  @Input() playlistId!: string;
   public state!: StreamState;
   public playingTrack!: TrackFile;
   private stateSubscription!: Subscription;
@@ -48,30 +48,30 @@ export class BtnPlayComponent implements OnDestroy {
 
   public togglePlayPause(event: Event): void {
     event.stopPropagation();
-    if (this.isCurrentPlayList()) {
+    if (this.isCurrentPlaylist()) {
       this.audioService.togglePlayPause();
     } else {
-      this.openPlayList();
+      this.openPlaylist();
     }
   }
 
-  private async openPlayList(): Promise<void> {
+  private async openPlaylist(): Promise<void> {
     await this.setCloudFiles();
     this.audioService.stop();
-    const files: CloudFiles = await this.cloudService.getFiles(this.playListId);
+    const files: CloudFiles = await this.cloudService.getFiles(this.playlistId);
     const track: TrackFile = await this.audioService.getPlayingTrack(files, 0);
     this.audioService.setPlayingTrack(track);
   }
 
   private async setCloudFiles(): Promise<void> {
-    const files: CloudFiles = await this.cloudService.getFiles(this.playListId);
+    const files: CloudFiles = await this.cloudService.getFiles(this.playlistId);
     this.cloudService.setFiles(files);
   }
 
-  private isCurrentPlayList(): boolean {
+  private isCurrentPlaylist(): boolean {
     if (!this.playingTrack) {
       return false;
     }
-    return this.playingTrack.playListId === this.playListId;
+    return this.playingTrack.playlistId === this.playlistId;
   }
 }

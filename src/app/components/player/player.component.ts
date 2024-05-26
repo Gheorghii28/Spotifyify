@@ -39,7 +39,7 @@ import { LikeButtonComponent } from '../like-button/like-button.component';
 export class PlayerComponent implements OnInit, OnDestroy {
   @ViewChild('slider') slider!: ElementRef;
   @Input() files!: CloudFiles;
-  @Input() playListId!: string;
+  @Input() playlistId!: string;
   public isShuffled: boolean = false;
   public state!: StreamState;
   private stateSubscription!: Subscription;

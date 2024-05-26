@@ -5,7 +5,7 @@
         *ngIf="
           state.playing &&
             playingTrack.index === track.index &&
-            playingTrack.playListId === track.playListId;
+            playingTrack.playlistId === track.playlistId;
           else soundNr
         "
       >
@@ -25,7 +25,7 @@
         *ngIf="
           state.playing &&
             playingTrack.index === track.index &&
-            playingTrack.playListId === track.playListId;
+            playingTrack.playlistId === track.playlistId;
           else playIcon
         "
       >

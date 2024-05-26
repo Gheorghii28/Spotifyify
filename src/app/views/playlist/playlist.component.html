@@ -1,5 +1,5 @@
-<ng-container *ngIf="playListFile"
-  ><app-view-header [data]="playListFile"></app-view-header
+<ng-container *ngIf="playlistFile"
+  ><app-view-header [data]="playlistFile"></app-view-header
 ></ng-container>
 <div class="tracks">
   <div class="tracks-heading">
@@ -20,7 +20,7 @@
       </button>
     </div>
   </div>
-  <ng-container *ngFor="let track of playListFile?.tracks; let i = index">
+  <ng-container *ngFor="let track of playlistFile?.tracks; let i = index">
     <app-track-list [track]="track"></app-track-list>
   </ng-container>
 </div>

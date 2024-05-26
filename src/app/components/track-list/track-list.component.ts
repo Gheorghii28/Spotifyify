@@ -62,16 +62,16 @@ export class TrackListComponent implements OnInit, OnDestroy {
     if (this.isCurrentPlayingTrack()) {
       this.audioService.togglePlayPause();
     } else {
-      if (this.isCurrentPlayList()) {
+      if (this.isCurrentPlaylist()) {
         const track: TrackFile = this.files.tracks[this.track.index];
         this.audioService.setPlayingTrack(track);
       } else {
-        this.openPlayList();
+        this.openPlaylist();
       }
     }
   }
 
-  private async openPlayList(): Promise<void> {
+  private async openPlaylist(): Promise<void> {
     await this.setCloudFiles();
     this.audioService.stop();
     this.audioService.setPlayingTrack(this.track);
@@ -79,7 +79,7 @@ export class TrackListComponent implements OnInit, OnDestroy {
 
   private async setCloudFiles(): Promise<void> {
     const files: CloudFiles = await this.cloudService.getFiles(
-      this.track.playListId
+      this.track.playlistId
     );
     this.cloudService.setFiles(files);
   }
@@ -91,10 +91,10 @@ export class TrackListComponent implements OnInit, OnDestroy {
     return this.playingTrack.id === this.track.id;
   }
 
-  private isCurrentPlayList(): boolean {
+  private isCurrentPlaylist(): boolean {
     if (!this.files) {
       return false;
     }
-    return this.files.id === this.track.playListId;
+    return this.files.id === this.track.playlistId;
   }
 }
