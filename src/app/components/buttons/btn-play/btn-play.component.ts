@@ -1,11 +1,11 @@
 import { Component, Input, OnDestroy } from '@angular/core';
-import { StreamState } from '../../models/stream-state.model';
+import { StreamState } from '../../../models/stream-state.model';
 import { CommonModule } from '@angular/common';
-import { AudioService } from '../../services/audio.service';
+import { AudioService } from '../../../services/audio.service';
 import { MatButtonModule } from '@angular/material/button';
 import { Subscription } from 'rxjs';
-import { CloudService } from '../../services/cloud.service';
-import { CloudFiles, TrackFile } from '../../models/cloud.model';
+import { CloudService } from '../../../services/cloud.service';
+import { CloudFiles, TrackFile } from '../../../models/cloud.model';
 
 @Component({
   selector: 'app-btn-play',

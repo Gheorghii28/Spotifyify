@@ -6,7 +6,7 @@ import { AudioService } from '../../services/audio.service';
 import { CloudFiles, TrackFile } from '../../models/cloud.model';
 import { CloudService } from '../../services/cloud.service';
 import { SoundwaveComponent } from '../soundwave/soundwave.component';
-import { LikeButtonComponent } from '../like-button/like-button.component';
+import { LikeButtonComponent } from '../buttons/like-button/like-button.component';
 
 @Component({
   selector: 'app-track-list',

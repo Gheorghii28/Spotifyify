@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
-import { SpotifyService } from '../../services/spotify.service';
+import { SpotifyService } from '../../../services/spotify.service';
 import { CommonModule } from '@angular/common';
-import { CloudService } from '../../services/cloud.service';
+import { CloudService } from '../../../services/cloud.service';
 
 @Component({
   selector: 'app-like-button',

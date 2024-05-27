@@ -17,8 +17,8 @@ import { StreamState } from '../../models/stream-state.model';
 import { MatSliderModule } from '@angular/material/slider';
 import { FormsModule } from '@angular/forms';
 import { VolumeComponent } from './volume/volume.component';
-import { BtnFullScreenComponent } from '../btn-full-screen/btn-full-screen.component';
-import { LikeButtonComponent } from '../like-button/like-button.component';
+import { BtnFullScreenComponent } from '../buttons/btn-full-screen/btn-full-screen.component';
+import { LikeButtonComponent } from '../buttons/like-button/like-button.component';
 
 @Component({
   selector: 'app-player',

@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { BtnPlayComponent } from '../btn-play/btn-play.component';
+import { BtnPlayComponent } from '../buttons/btn-play/btn-play.component';
 import { CloudFiles } from '../../models/cloud.model';
 
 @Component({
