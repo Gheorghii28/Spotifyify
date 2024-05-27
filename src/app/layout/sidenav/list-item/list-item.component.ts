@@ -7,11 +7,12 @@ import { DrawerService } from '../../../services/drawer.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRemovePlaylistComponent } from '../../../components/dialog/dialog-remove-playlist/dialog-remove-playlist.component';
+import { CustomButtonComponent } from '../../../components/buttons/custom-button/custom-button.component';
 
 @Component({
   selector: 'app-list-item',
   standalone: true,
-  imports: [CommonModule, MatMenuModule],
+  imports: [CommonModule, MatMenuModule, CustomButtonComponent],
   templateUrl: './list-item.component.html',
   styleUrl: './list-item.component.scss',
 })

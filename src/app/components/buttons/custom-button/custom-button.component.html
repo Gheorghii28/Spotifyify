@@ -1,0 +1,15 @@
+<button
+  mat-icon-button
+  [ngClass]="customClass"
+  class="hover-effect-on-icons"
+  (click)="handleClick()"
+>
+  <span class="material-symbols-outlined"> {{ icon }} </span>
+  <p
+    *ngIf="sidenavExpanded"
+    class="font-montserrat"
+    style="transform: translateY(3px)"
+  >
+    {{ text }}
+  </p>
+</button>

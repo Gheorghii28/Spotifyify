@@ -1,33 +1,20 @@
 <div class="sidebar-navigation h-100">
   <div class="sidenav-header round-8">
-    <button
-      mat-icon-button
-      class="hover-effect-on-icons"
-      (click)="navigateTo('home')"
-    >
-      <span class="material-symbols-outlined"> home </span>
-      <span
-        *ngIf="sidenavExpanded"
-        class="encore-text font-montserrat"
-        style="transform: translateY(3px)"
-        >Home</span
-      >
-    </button>
-    <button
-      mat-icon-button
-      class="hover-effect-on-icons"
-      (click)="navigateTo('search')"
-    >
-      <span class="material-symbols-outlined"> search </span>
-      <span
-        *ngIf="sidenavExpanded"
-        class="encore-text font-montserrat"
-        style="transform: translateY(-2px)"
-        >Search</span
-      >
-    </button>
+    <app-custom-button
+      [icon]="'home'"
+      [text]="'Home'"
+      [customClass]="'primary'"
+      [sidenavExpanded]="sidenavExpanded"
+      (clickEvent)="navigateTo('home')"
+    ></app-custom-button>
+    <app-custom-button
+      [icon]="'search'"
+      [text]="'Search'"
+      [customClass]="'primary'"
+      [sidenavExpanded]="sidenavExpanded"
+      (clickEvent)="navigateTo('search')"
+    ></app-custom-button>
   </div>
-
   <nav #navigation class="navigation scroll-y round-8">
     <app-nav-header
       [drawerSidenav]="drawerSidenav"

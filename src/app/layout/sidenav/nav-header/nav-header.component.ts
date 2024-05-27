@@ -8,11 +8,17 @@ import { CommonModule } from '@angular/common';
 import { SpotifyService } from '../../../services/spotify.service';
 import { Playlist, PlaylistsObject } from '../../../models/spotify.model';
 import { CloudService } from '../../../services/cloud.service';
+import { CustomButtonComponent } from '../../../components/buttons/custom-button/custom-button.component';
 
 @Component({
   selector: 'app-nav-header',
   standalone: true,
-  imports: [MatButtonModule, MatMenuModule, CommonModule],
+  imports: [
+    MatButtonModule,
+    MatMenuModule,
+    CommonModule,
+    CustomButtonComponent,
+  ],
   templateUrl: './nav-header.component.html',
   styleUrl: './nav-header.component.scss',
 })

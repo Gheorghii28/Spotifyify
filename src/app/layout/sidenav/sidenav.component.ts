@@ -11,6 +11,7 @@ import { DrawerService } from '../../services/drawer.service';
 import { ListItemComponent } from './list-item/list-item.component';
 import { PlaylistsObject } from '../../models/spotify.model';
 import { CloudService } from '../../services/cloud.service';
+import { CustomButtonComponent } from '../../components/buttons/custom-button/custom-button.component';
 
 @Component({
   selector: 'app-sidenav',
@@ -22,6 +23,7 @@ import { CloudService } from '../../services/cloud.service';
     MatButtonModule,
     NavHeaderComponent,
     ListItemComponent,
+    CustomButtonComponent,
   ],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss',

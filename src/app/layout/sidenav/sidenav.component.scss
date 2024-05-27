@@ -10,11 +10,6 @@
   background-color: var(--dark-grey-color);
   display: flex;
   flex-direction: column;
-  button {
-    display: flex !important;
-    padding-left: 24px !important;
-    gap: 20px;
-  }
 }
 
 .navigation {
