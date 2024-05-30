@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { TokenService } from './token.service';
-import { PlaylistsObject } from '../models/spotify.model';
 
 @Injectable({
   providedIn: 'root',
@@ -27,17 +26,17 @@ export class SpotifyService {
     }
   }
 
-  public async postToSpotify(endpoint: string, body:any): Promise<any> {
+  public async postToSpotify(endpoint: string, body: any): Promise<any> {
     const token = this.tokenService.getAccessToken();
     const response = await fetch(`https://api.spotify.com/v1/${endpoint}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
-  
+
     if (response.ok) {
       return await response.json();
     } else {
@@ -65,8 +64,8 @@ export class SpotifyService {
     return likedStatusArr[0];
   }
 
-  public async fetchMyPlaylists(): Promise<PlaylistsObject> {
-    const response = await this.getSpotifyData(`me/playlists`);
+  public async retrieveSpotifyData<T>(endpoint: string): Promise<T> {
+    const response = await this.getSpotifyData(endpoint);
     return response;
-  }  
+  }
 }

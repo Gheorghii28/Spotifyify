@@ -9,9 +9,10 @@ import { MatDrawer } from '@angular/material/sidenav';
 import { Subscription } from 'rxjs';
 import { DrawerService } from '../../services/drawer.service';
 import { ListItemComponent } from './list-item/list-item.component';
-import { PlaylistsObject } from '../../models/spotify.model';
+import { PlaylistsObject, TracksObject } from '../../models/spotify.model';
 import { CloudService } from '../../services/cloud.service';
 import { CustomButtonComponent } from '../../components/buttons/custom-button/custom-button.component';
+import { ListLikedSongsComponent } from './list-liked-songs/list-liked-songs.component';
 
 @Component({
   selector: 'app-sidenav',
@@ -24,6 +25,7 @@ import { CustomButtonComponent } from '../../components/buttons/custom-button/cu
     NavHeaderComponent,
     ListItemComponent,
     CustomButtonComponent,
+    ListLikedSongsComponent,
   ],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss',
@@ -33,8 +35,10 @@ export class SidenavComponent implements OnDestroy {
   @Input() userId!: string;
   sidenavExpanded!: boolean;
   myPlaylists!: PlaylistsObject;
+  myTracks!: TracksObject;
   private sidenavExpandedSubscription!: Subscription;
   private myPlaylistsSubscription!: Subscription;
+  private myTracksSubscription!: Subscription;
   navigationData = [
     {
       title: 'Main',
@@ -82,6 +86,7 @@ export class SidenavComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.sidenavExpandedSubscription.unsubscribe();
     this.myPlaylistsSubscription.unsubscribe();
+    this.myTracksSubscription.unsubscribe();
   }
 
   private subscribeTo(): void {
@@ -94,6 +99,11 @@ export class SidenavComponent implements OnDestroy {
       .observeMyPlaylists()
       .subscribe((playlists: PlaylistsObject) => {
         this.myPlaylists = playlists;
+      });
+    this.myTracksSubscription = this.cloudService
+      .observeMyTracks()
+      .subscribe((tracks: TracksObject) => {
+        this.myTracks = tracks;
       });
   }
 

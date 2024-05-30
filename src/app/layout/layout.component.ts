@@ -9,7 +9,11 @@ import { TokenService } from '../services/token.service';
 import { HeaderComponent } from './header/header.component';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../services/auth.service';
-import { PlaylistsObject, UserProfile } from '../models/spotify.model';
+import {
+  PlaylistsObject,
+  TracksObject,
+  UserProfile,
+} from '../models/spotify.model';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { Subscription } from 'rxjs';
 import { HeightService } from '../services/height.service';
@@ -63,6 +67,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
     this.tokenService.clearTokensFromCookies();
     this.getProfile();
     this.setMyPlaylists();
+    this.setMyTracks();
     this.subscribeTo();
   }
 
@@ -108,7 +113,14 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   private async setMyPlaylists(): Promise<void> {
     const playlists: PlaylistsObject =
-      await this.spotifyService.fetchMyPlaylists();
+      await this.spotifyService.retrieveSpotifyData(`me/playlists`);
     this.cloudService.setMyPlaylists(playlists);
+  }
+
+  private async setMyTracks(): Promise<void> {
+    const tracks: TracksObject = await this.spotifyService.retrieveSpotifyData(
+      `me/tracks`
+    );
+    this.cloudService.setMyTracks(tracks);
   }
 }

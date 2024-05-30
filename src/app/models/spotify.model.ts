@@ -124,3 +124,18 @@ export interface PlaylistsObject {
   previous: string;
   total: number;
 }
+
+export interface TracksObject {
+  href: string;
+  items: TracksObjectItem[];
+  limit: number;
+  next: string;
+  offset: number;
+  previous: string;
+  total: number;
+}
+
+interface TracksObjectItem {
+  added_at: string;
+  track: Track;
+}

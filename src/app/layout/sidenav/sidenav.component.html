@@ -23,6 +23,9 @@
       [myPlaylists]="myPlaylists"
     ></app-nav-header>
     <ul>
+      <li>
+        <app-list-liked-songs [myTracks]="myTracks"></app-list-liked-songs>
+      </li>
       <li *ngFor="let playlist of myPlaylists.items">
         <app-list-item [playlist]="playlist"></app-list-item>
       </li>

@@ -6,6 +6,7 @@ import { DialogRemovePlaylistData } from '../../../models/dialog.model';
 import { CloudService } from '../../../services/cloud.service';
 import { SpotifyService } from '../../../services/spotify.service';
 import { Router } from '@angular/router';
+import { PlaylistsObject } from '../../../models/spotify.model';
 
 @Component({
   selector: 'app-dialog-remove-playlist',
@@ -40,7 +41,8 @@ export class DialogRemovePlaylistComponent {
   }
 
   private async updatePlaylists(): Promise<void> {
-    const updatedPlaylists = await this.spotifyService.fetchMyPlaylists();
+    const updatedPlaylists: PlaylistsObject =
+      await this.spotifyService.retrieveSpotifyData(`me/playlists`);
     this.cloudService.setMyPlaylists(updatedPlaylists);
   }
 

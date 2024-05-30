@@ -6,7 +6,7 @@ import {
   TrackFile,
   TrackFileClass,
 } from '../models/cloud.model';
-import { Playlist, PlaylistsObject } from '../models/spotify.model';
+import { Playlist, PlaylistsObject, TracksObject } from '../models/spotify.model';
 import { SpotifyService } from './spotify.service';
 
 @Injectable({
@@ -25,6 +25,7 @@ export class CloudService {
   };
   private files$: BehaviorSubject<any> = new BehaviorSubject(this.initialFiles);
   private myPlaylists$: BehaviorSubject<any> = new BehaviorSubject({});
+  private myTracks$: BehaviorSubject<any> = new BehaviorSubject({});
 
   constructor(private spotifyService: SpotifyService) {}
 
@@ -42,6 +43,14 @@ export class CloudService {
 
   public setMyPlaylists(newPlaylists: PlaylistsObject): void {
     this.myPlaylists$.next(newPlaylists);
+  }
+
+  public observeMyTracks(): Observable<TracksObject> {
+    return this.myTracks$.asObservable();
+  }
+
+  public setMyTracks(newTracks: TracksObject): void {
+    this.myTracks$.next(newTracks);
   }
 
   public async getFiles(playlistId: string): Promise<CloudFiles> {
