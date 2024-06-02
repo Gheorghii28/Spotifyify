@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { SpotifyService } from '../../../services/spotify.service';
 import { CommonModule } from '@angular/common';
 import { CloudService } from '../../../services/cloud.service';
+import { TracksObject } from '../../../models/spotify.model';
 
 @Component({
   selector: 'app-like-button',
@@ -25,7 +26,8 @@ export class LikeButtonComponent {
     } else {
       await this.saveTrack(this.trackId);
     }
-    this.updateLikedStatus(this.trackId);
+    await this.updateLikedStatus(this.trackId);
+    await this.setMyTracks();
   }
 
   private async updateLikedStatus(id: string): Promise<void> {
@@ -51,5 +53,12 @@ export class LikeButtonComponent {
     } catch (error) {
       console.error('Error removing track:', error);
     }
+  }
+
+  private async setMyTracks(): Promise<void> {
+    const tracks: TracksObject = await this.spotifyService.retrieveSpotifyData(
+      `me/tracks`
+    );
+    this.cloudService.setMyTracks(tracks);
   }
 }
