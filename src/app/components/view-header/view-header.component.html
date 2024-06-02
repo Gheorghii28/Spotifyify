@@ -1,7 +1,23 @@
-<div *ngIf="data" class="header" [ngStyle]="{ 'background-image': 'linear-gradient(to bottom, ' + data.color + ', var(--black-color))' }">
+<div
+  *ngIf="data"
+  class="header"
+  [ngStyle]="{
+    'background-image':
+      'linear-gradient(to bottom, ' +
+      (data.color ? data.color : '#545454') +
+      ', var(--black-color))'
+  }"
+>
   <div class="info">
     <div class="profile-img">
-      <img src="{{ data.imageUrl }}" />
+      <ng-container *ngIf="data.imageUrl; else noImage">
+        <img src="{{ data.imageUrl }}" />
+      </ng-container>
+      <ng-template #noImage>
+        <div class="div-no-img">
+          <span class="material-symbols-outlined"> audio_file </span>
+        </div>
+      </ng-template>
     </div>
 
     <div class="info-meta">

@@ -5,7 +5,7 @@ export interface CloudFiles {
   description: string;
   followers: number | undefined;
   id: string;
-  imageUrl: string;
+  imageUrl: string | null;
   tracks: TrackFile[];
   type: string;
   color: string;
@@ -29,7 +29,7 @@ export class CloudFilesClass implements CloudFiles {
   description: string;
   followers: number | undefined;
   id: string;
-  imageUrl: string;
+  imageUrl: string | null;
   tracks: TrackFile[];
   type: string;
   color: string;
@@ -39,10 +39,14 @@ export class CloudFilesClass implements CloudFiles {
     this.description = file.description;
     this.followers = file.followers?.total;
     this.id = file.id;
-    this.imageUrl = file.images[0].url;
+    this.imageUrl = this.getImgUrl(file);
     this.tracks = tracks;
     this.type = file.type;
     this.color = file.primary_color;
+  }
+
+  private getImgUrl(file: Playlist): string | null {
+    return file.images?.[0]?.url || null;
   }
 }
 

@@ -19,6 +19,19 @@
         height: 160px;
         border-radius: 6px;
       }
+      .div-no-img {
+        width: 160px;
+        height: 160px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #282828;
+        border-radius: 4px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        span {
+          color: #b2b2b2;
+        }
+      }
     }
   }
   .info-type {
