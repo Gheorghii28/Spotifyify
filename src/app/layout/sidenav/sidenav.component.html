@@ -15,22 +15,24 @@
       (clickEvent)="navigateTo('search')"
     ></app-custom-button>
   </div>
-  <nav #navigation class="navigation scroll-y round-8">
+  <nav #navigation class="navigation round-8">
     <app-nav-header
       [drawerSidenav]="drawerSidenav"
       [sidenavExpanded]="sidenavExpanded"
       [userId]="userId"
       [myPlaylists]="myPlaylists"
     ></app-nav-header>
-    <ul>
-      <li>
-        <app-list-liked-songs [myTracks]="myTracks"></app-list-liked-songs>
-      </li>
-      <li *ngFor="let playlist of myPlaylists.items">
-        <app-list-item [playlist]="playlist"></app-list-item>
-      </li>
-    </ul>
-    <mat-expansion-panel *ngFor="let category of navigationData" hideToggle>
+    <div style="position: relative; height: calc(100% - 33px)">
+      <ul scrollable style="height: 100%">
+        <li>
+          <app-list-liked-songs [myTracks]="myTracks"></app-list-liked-songs>
+        </li>
+        <li *ngFor="let playlist of myPlaylists.items">
+          <app-list-item [playlist]="playlist"></app-list-item>
+        </li>
+      </ul>
+    </div>
+    <!--     <mat-expansion-panel *ngFor="let category of navigationData" hideToggle>
       <mat-expansion-panel-header>
         <mat-panel-title>{{ category.title }}</mat-panel-title>
       </mat-expansion-panel-header>
@@ -42,6 +44,6 @@
           <span (click)="navigateTo(item.route)">{{ item.label }}</span>
         </mat-list-item>
       </mat-list>
-    </mat-expansion-panel>
+    </mat-expansion-panel> -->
   </nav>
 </div>

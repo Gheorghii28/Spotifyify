@@ -12,11 +12,17 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { CloudFiles } from '../../models/cloud.model';
 import { CloudService } from '../../services/cloud.service';
 import { Subscription } from 'rxjs';
+import { CustomScrollbarDirective } from '../../directives/custom-scrollbar.directive';
 
 @Component({
   selector: 'app-playlist',
   standalone: true,
-  imports: [ViewHeaderComponent, TrackListComponent, CommonModule],
+  imports: [
+    ViewHeaderComponent,
+    TrackListComponent,
+    CommonModule,
+    CustomScrollbarDirective,
+  ],
   templateUrl: './playlist.component.html',
   styleUrl: './playlist.component.scss',
 })

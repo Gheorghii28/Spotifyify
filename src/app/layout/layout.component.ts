@@ -25,6 +25,7 @@ import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { PlayingInfoComponent } from '../components/playing-info/playing-info.component';
 import { DrawerService } from '../services/drawer.service';
 import { SpotifyService } from '../services/spotify.service';
+import { CustomScrollbarDirective } from '../directives/custom-scrollbar.directive';
 
 @Component({
   selector: 'app-layout',
@@ -38,6 +39,7 @@ import { SpotifyService } from '../services/spotify.service';
     CommonModule,
     MatDrawer,
     MatSidenavModule,
+    CustomScrollbarDirective
   ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',

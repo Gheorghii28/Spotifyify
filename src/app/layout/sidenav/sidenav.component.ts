@@ -13,6 +13,7 @@ import { PlaylistsObject, TracksObject } from '../../models/spotify.model';
 import { CloudService } from '../../services/cloud.service';
 import { CustomButtonComponent } from '../../components/buttons/custom-button/custom-button.component';
 import { ListLikedSongsComponent } from './list-liked-songs/list-liked-songs.component';
+import { CustomScrollbarDirective } from '../../directives/custom-scrollbar.directive';
 
 @Component({
   selector: 'app-sidenav',
@@ -26,6 +27,7 @@ import { ListLikedSongsComponent } from './list-liked-songs/list-liked-songs.com
     ListItemComponent,
     CustomButtonComponent,
     ListLikedSongsComponent,
+    CustomScrollbarDirective
   ],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss',
