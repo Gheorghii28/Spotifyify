@@ -3,12 +3,11 @@
   --hover-green-color: #2aa03b;
   --white-color: #ffffff;
   --light-grey-color: #b3b3b3;
-  // --light-grey-color: #aaaaaa;
   --grey-color: #5e5e5e;
-  --dark-grey-color: #282828;
-  --scrollbar-color: #373737;
+  --dark-grey-color: #121212;
+  --scrollbar-color: #ddd;
   --hover-background-color: #252525;
-  --black-color: #181818;
+  --black-color: #000000;
 }
 html,
 body {
@@ -184,7 +183,7 @@ ul {
   right: 0;
   width: 12px;
   height: var(--custom-scrollbar-height, 100px);
-  background: #ddd;
+  background: var(--scrollbar-color);
   opacity: 0.5;
   z-index: 1;
 }
