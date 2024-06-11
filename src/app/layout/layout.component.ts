@@ -26,6 +26,7 @@ import { PlayingInfoComponent } from '../components/playing-info/playing-info.co
 import { DrawerService } from '../services/drawer.service';
 import { SpotifyService } from '../services/spotify.service';
 import { CustomScrollbarDirective } from '../directives/custom-scrollbar.directive';
+import { FirebaseService } from '../services/firebase.service';
 
 @Component({
   selector: 'app-layout',
@@ -63,7 +64,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
     @Inject(PLATFORM_ID) private platformId: Object,
     private cloudService: CloudService,
     private drawerService: DrawerService,
-    private spotifyService: SpotifyService
+    private spotifyService: SpotifyService,
+    private firebaseService: FirebaseService
   ) {
     this.tokenService.saveTokensToLocalStorage();
     this.tokenService.clearTokensFromCookies();
@@ -108,6 +110,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
     const profile: UserProfile = await this.authService.getProfile(accessToken);
     if (!isPlatformBrowser(this.platformId) || profile) {
       this.userProfile = profile;
+      this.firebaseService.checkUserInFirestore(this.userProfile);
     } else {
       console.error('Failed to fetch user profile.');
     }

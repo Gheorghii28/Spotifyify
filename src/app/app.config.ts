@@ -7,6 +7,11 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideHttpClient, withFetch } from '@angular/common/http';
 import { AudioService, NullAudioService } from './services/audio.service';
 import { isPlatformBrowser } from '@angular/common';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { getDatabase, provideDatabase } from '@angular/fire/database';
+import { getStorage, provideStorage } from '@angular/fire/storage';
+import { firebaseConfig } from '../../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,9 +23,17 @@ export const appConfig: ApplicationConfig = {
     {
       provide: AudioService,
       useFactory: (platformId: Object) => {
-        return isPlatformBrowser(platformId) ? new AudioService() : new NullAudioService();
+        return isPlatformBrowser(platformId)
+          ? new AudioService()
+          : new NullAudioService();
       },
-      deps: [PLATFORM_ID]
-    }
+      deps: [PLATFORM_ID],
+    },
+    provideFirebaseApp(() =>
+      initializeApp(firebaseConfig)
+    ),
+    provideFirestore(() => getFirestore()),
+    provideDatabase(() => getDatabase()),
+    provideStorage(() => getStorage()),
   ],
 };

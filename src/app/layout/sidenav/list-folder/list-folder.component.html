@@ -1,0 +1,65 @@
+<button
+  mat-button
+  class="btn-list-folder"
+  appDropTarget
+  [dropContainerClass]="'library-list'"
+  [dropItemClass]="'btn-list-folder'"
+  (onDrop)="movePlaylistToFolder($event, folder.id)"
+  (contextmenu)="onContextMenu($event)"
+>
+  <div class="div-no-img">
+    <span class="material-symbols-outlined"> folder </span>
+  </div>
+  <div class="text">
+    <span>
+      {{
+        sidenavWidth === 631
+          ? folder.name
+          : utilsService.truncateText(folder.name, 22)
+      }}</span
+    >
+    <span
+      >Playlist <span class="material-symbols-outlined"> adjust </span>
+      {{ folder.playlists.length }}
+      {{ folder.playlists.length <= 1 ? "playlist" : "playlists" }}</span
+    >
+  </div>
+  <div class="div-arrow">
+    <span
+      class="material-symbols-outlined"
+      style="color: #b2b2b2; font-size: 32px"
+      (click)="togglePanelState()"
+    >
+      {{ panelOpenState === true ? "arrow_drop_down" : "arrow_right" }}
+    </span>
+  </div>
+</button>
+<ul
+  [@expandCollapse]="panelOpenState ? 'expanded' : 'collapsed'"
+  style="padding-left: 16px"
+>
+  <li *ngFor="let playlist of playlists">
+    <app-list-item
+      appDraggable
+      [playlist]="playlist"
+      [appDraggable]="utilsService.toJsonString(playlist)"
+    ></app-list-item>
+  </li>
+</ul>
+<div
+  style="visibility: hidden; position: fixed"
+  [style.left]="contextMenuPosition.x"
+  [style.top]="contextMenuPosition.y"
+  [matMenuTriggerFor]="contextMenu"
+></div>
+<mat-menu #contextMenu="matMenu">
+  <ng-template matMenuContent let-item="item">
+    <app-custom-button
+      [icon]="'playlist_remove'"
+      [text]="'Delete'"
+      [customClass]="'secondary'"
+      [sidenavExpanded]="true"
+      (clickEvent)="openDialog()"
+    ></app-custom-button>
+  </ng-template>
+</mat-menu>

@@ -40,3 +40,11 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Ignore the entire 'environments' directory and its contents
+environments/
+
+# Firebase
+.firebase
+*-debug.log
+.runtimeconfig.json

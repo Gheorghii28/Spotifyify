@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRemovePlaylistComponent } from '../../../components/dialog/dialog-remove-playlist/dialog-remove-playlist.component';
 import { CustomButtonComponent } from '../../../components/buttons/custom-button/custom-button.component';
+import { UtilsService } from '../../../services/utils.service';
 
 @Component({
   selector: 'app-list-item',
@@ -26,7 +27,8 @@ export class ListItemComponent {
   constructor(
     private drawerService: DrawerService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    public utilsService: UtilsService
   ) {
     this.subscribeTo();
   }
@@ -41,13 +43,6 @@ export class ListItemComponent {
       .subscribe((width: number) => {
         this.sidenavWidth = width;
       });
-  }
-
-  public truncateText(text: string, maxTextLength: number): string {
-    if (text.length > maxTextLength) {
-      return text.substring(0, maxTextLength) + '...';
-    }
-    return text;
   }
 
   public onContextMenu(event: MouseEvent) {

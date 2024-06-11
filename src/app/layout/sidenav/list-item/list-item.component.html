@@ -1,6 +1,5 @@
 <button
   mat-button
-  mat-button
   (contextmenu)="onContextMenu($event)"
   (click)="navigateToPlaylist()"
 >
@@ -17,7 +16,9 @@
   <div class="text">
     <span>
       {{
-        sidenavWidth === 631 ? playlist.name : truncateText(playlist.name, 22)
+        sidenavWidth === 631
+          ? playlist.name
+          : utilsService.truncateText(playlist.name, 22)
       }}</span
     >
     <span

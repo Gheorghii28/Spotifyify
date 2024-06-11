@@ -17,15 +17,12 @@
   background: var(--dark-grey-color);
   color: var(--light-grey-color);
   height: calc(100% - 166px);
-  ul {
+  .library-list {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    border-radius: 4px;
   }
-}
-
-.navigation-list-item:hover {
-  border-right: 3px solid var(--green-color);
 }
 
 @media (max-width: 768px) {

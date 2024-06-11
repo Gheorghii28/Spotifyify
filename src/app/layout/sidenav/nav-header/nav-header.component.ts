@@ -9,6 +9,9 @@ import { SpotifyService } from '../../../services/spotify.service';
 import { Playlist, PlaylistsObject } from '../../../models/spotify.model';
 import { CloudService } from '../../../services/cloud.service';
 import { CustomButtonComponent } from '../../../components/buttons/custom-button/custom-button.component';
+import { FirebaseService } from '../../../services/firebase.service';
+import { UserFirebaseData } from '../../../models/firebase.model';
+import { UtilsService } from '../../../services/utils.service';
 
 @Component({
   selector: 'app-nav-header',
@@ -27,13 +30,16 @@ export class NavHeaderComponent implements OnDestroy {
   @Input() sidenavExpanded!: boolean;
   @Input() userId!: string;
   @Input() myPlaylists!: PlaylistsObject;
+  @Input() userFirebaseData!: UserFirebaseData;
   sidenavWidth!: number;
   private sidenavWidthSubscription!: Subscription;
 
   constructor(
     private drawerService: DrawerService,
     private spotifyService: SpotifyService,
-    private cloudService: CloudService
+    private cloudService: CloudService,
+    private firebaseService: FirebaseService,
+    private utilsService: UtilsService
   ) {
     this.subscribeTo();
   }
@@ -63,6 +69,16 @@ export class NavHeaderComponent implements OnDestroy {
     const playlistNr: number = this.myPlaylists.items.length + 1;
     const playlist: Playlist = await this.buildPlaylist(playlistNr);
     this.addPlaylistToUser(playlist);
+  }
+
+  public async createPlaylistFolder(): Promise<void> {
+    const folderId = this.utilsService.randomString(11);
+    await this.firebaseService.updateDocument('users', this.userId, {
+      folders: [
+        ...this.userFirebaseData.folders,
+        { id: folderId, name: 'New Folder', playlists: [] },
+      ],
+    });
   }
 
   private async buildPlaylist(playlistNr: number): Promise<Playlist> {
