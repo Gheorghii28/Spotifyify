@@ -23,7 +23,7 @@
               let last = last
             "
           >
-            {{ artist }}
+            {{ artist.name }}
             <ng-container *ngIf="!last">,</ng-container>
           </ng-container>
         </span>
@@ -109,6 +109,20 @@
   <div class="other-features">
     <button mat-icon-button class="hover-effect-on-icons">
       <span class="material-symbols-outlined"> list </span>
+    </button>
+    <button
+      mat-icon-button
+      class="hover-effect-on-icons"
+      style="position: relative"
+      (click)="toggleDrawerEnd()"
+    >
+      <span
+        class="material-symbols-outlined"
+        [ngStyle]="drawerEndStatus ? { color: '#1db954' } : null"
+      >
+        slideshow
+      </span>
+      <div *ngIf="drawerEndStatus" class="dot"></div>
     </button>
     <app-volume></app-volume>
     <app-btn-full-screen [elem]="elem"></app-btn-full-screen>

@@ -1,0 +1,45 @@
+<div class="playing-info-header">
+  <span class="title">{{ getDisplayName() }}</span>
+  <div class="n-h-right">
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="menu"
+      class="hover-effect-on-icons"
+    >
+      <span class="material-symbols-outlined"> more_horiz </span>
+    </button>
+    <mat-menu #menu="matMenu">
+      <app-custom-button
+        [icon]="'add'"
+        [text]="'Add to playlist'"
+        [customClass]="'secondary'"
+        style="display: block; width: 202px"
+        [sidenavExpanded]="true"
+        (clickEvent)="clickEventFunction()"
+      ></app-custom-button>
+      <app-custom-button
+        [icon]="'delete'"
+        [text]="'Remove from this playlist'"
+        [customClass]="'secondary'"
+        style="display: block; width: 202px"
+        [sidenavExpanded]="true"
+        (clickEvent)="clickEventFunction()"
+      ></app-custom-button>
+      <app-custom-button
+        [icon]="'add_circle'"
+        [text]="'Save to your Liked Songs'"
+        [customClass]="'secondary'"
+        style="display: block; width: 202px"
+        [sidenavExpanded]="true"
+        (clickEvent)="clickEventFunction()"
+      ></app-custom-button>
+    </mat-menu>
+    <button
+      mat-menu-item
+      class="hover-effect-on-icons"
+      (click)="closePlayingInfo()"
+    >
+      <span class="material-symbols-outlined"> close </span>
+    </button>
+  </div>
+</div>

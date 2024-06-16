@@ -19,6 +19,7 @@ import { FormsModule } from '@angular/forms';
 import { VolumeComponent } from './volume/volume.component';
 import { BtnFullScreenComponent } from '../buttons/btn-full-screen/btn-full-screen.component';
 import { LikeButtonComponent } from '../buttons/like-button/like-button.component';
+import { DrawerService } from '../../services/drawer.service';
 
 @Component({
   selector: 'app-player',
@@ -40,6 +41,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
   @ViewChild('slider') slider!: ElementRef;
   @Input() files!: CloudFiles;
   @Input() playlistId!: string;
+  @Input() drawerEndStatus!: boolean;
   public isShuffled: boolean = false;
   public state!: StreamState;
   private stateSubscription!: Subscription;
@@ -51,7 +53,8 @@ export class PlayerComponent implements OnInit, OnDestroy {
   constructor(
     private heightService: HeightService,
     public audioService: AudioService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private drawerService: DrawerService
   ) {}
 
   ngOnInit(): void {
@@ -155,5 +158,9 @@ export class PlayerComponent implements OnInit, OnDestroy {
 
   private getRandomTrackIndex(): number {
     return Math.floor(Math.random() * this.files.tracks.length);
+  }
+
+  public toggleDrawerEnd(): void {
+    this.drawerService.setdrawerEndStatus(!this.drawerEndStatus);
   }
 }

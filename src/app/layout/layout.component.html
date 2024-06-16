@@ -8,7 +8,8 @@
         [style.width.px]="sidenavExpanded ? sidenavWidth : 100"
         mode="side"
       >
-        <app-sidenav *ngIf="userProfile"
+        <app-sidenav
+          *ngIf="userProfile"
           [drawerSidenav]="drawerSidenav"
           [userId]="userProfile.id"
           class="h-100"
@@ -21,7 +22,7 @@
       </mat-drawer-content>
       <mat-drawer
         #drawerInfo
-        [opened]="true"
+        [opened]="drawerEndStatus"
         class="round-8 mat-drawer-left"
         style="width: 289px"
         mode="side"
@@ -35,5 +36,6 @@
     *ngIf="files"
     [files]="files"
     [playlistId]="files.id"
+    [drawerEndStatus]="drawerEndStatus"
   ></app-player>
 </div>

@@ -1,1 +1,11 @@
-<p>playing-info works!</p>
+<div *ngIf="playingTrack" class="drawer-end">
+  <app-header [track]="playingTrack" [playlist]="playlist"></app-header>
+  <div class="content">
+    <div scrollable style="height: 100%; padding: 0 16px">
+      <app-track-info [track]="playingTrack"></app-track-info>
+      <ng-container *ngFor="let artist of artists">
+        <app-artist-info [artist]="artist"></app-artist-info>
+      </ng-container>
+    </div>
+  </div>
+</div>

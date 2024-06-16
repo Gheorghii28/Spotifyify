@@ -14,7 +14,7 @@ export interface CloudFiles {
 export interface TrackFile {
   name: string;
   albumName: string;
-  artists: string[];
+  artists: { name: string; id: string }[];
   durationMs: number;
   id: string;
   previewUrl: string;
@@ -53,7 +53,7 @@ export class CloudFilesClass implements CloudFiles {
 export class TrackFileClass implements TrackFile {
   name: string;
   albumName: string;
-  artists: string[];
+  artists: { name: string; id: string }[];
   durationMs: number;
   id: string;
   previewUrl: string;
@@ -75,7 +75,10 @@ export class TrackFileClass implements TrackFile {
     this.likedStatus = false;
   }
 
-  private getArtists(artists: Artist[]): string[] {
-    return artists.map((artist: Artist) => artist.name);
+  private getArtists(artists: Artist[]): { name: string; id: string }[] {
+    return artists.map((artist: Artist) => ({
+      name: artist.name,
+      id: artist.id,
+    }));
   }
 }

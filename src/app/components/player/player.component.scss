@@ -111,3 +111,12 @@
   background-image: radial-gradient(transparent, var(--black-color));
   z-index: -1;
 }
+.dot {
+  position: absolute;
+  bottom: 5px;
+  right: 22px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--green-color);
+}

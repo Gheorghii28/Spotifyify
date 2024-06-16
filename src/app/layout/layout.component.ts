@@ -40,7 +40,7 @@ import { FirebaseService } from '../services/firebase.service';
     CommonModule,
     MatDrawer,
     MatSidenavModule,
-    CustomScrollbarDirective
+    CustomScrollbarDirective,
   ],
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
@@ -53,9 +53,11 @@ export class LayoutComponent implements OnInit, OnDestroy {
   trackIndex!: number;
   sidenavExpanded!: boolean;
   sidenavWidth!: number;
+  drawerEndStatus!: boolean;
   private cloudSubscription!: Subscription;
   private sidenavExpandedSubscription!: Subscription;
   private sidenavWidthSubscription!: Subscription;
+  private drawerEndStatusSubscription!: Subscription;
 
   constructor(
     private tokenService: TokenService,
@@ -85,6 +87,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
     this.cloudSubscription.unsubscribe();
     this.sidenavExpandedSubscription.unsubscribe();
     this.sidenavWidthSubscription.unsubscribe();
+    this.drawerEndStatusSubscription.unsubscribe();
   }
 
   private subscribeTo(): void {
@@ -102,6 +105,11 @@ export class LayoutComponent implements OnInit, OnDestroy {
       .observeSidenavWidth()
       .subscribe((width: number) => {
         this.sidenavWidth = width;
+      });
+    this.drawerEndStatusSubscription = this.drawerService
+      .observedrawerEndStatus()
+      .subscribe((status: boolean) => {
+        this.drawerEndStatus = status;
       });
   }
 

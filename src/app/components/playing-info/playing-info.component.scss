@@ -1,5 +1,10 @@
-p  {
-    height: 100%;
-    margin: 0;
-    background-color: var(--dark-grey-color);
+.drawer-end {
+  height: 100%;
+  margin: 0;
+  background-color: var(--dark-grey-color);
+  .content {
+    position: relative;
+    height: calc(100% - 64px);
+    width: 100%;
+  }
 }

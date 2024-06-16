@@ -1,0 +1,12 @@
+<div class="track-info">
+  <img src="{{ track.img }}" />
+  <div class="text">
+    <span class="track-name">{{ track.name }}</span>
+    <span class="artist">
+      <ng-container *ngFor="let artist of track.artists; let last = last">
+        {{ artist.name }}
+        <ng-container *ngIf="!last">,</ng-container>
+      </ng-container>
+    </span>
+  </div>
+</div>
