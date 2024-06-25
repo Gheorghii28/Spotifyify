@@ -5,21 +5,21 @@
       [text]="'Home'"
       [customClass]="'primary'"
       [sidenavExpanded]="sidenavExpanded"
-      (clickEvent)="navigateTo('home')"
+      (clickEvent)="navigateTo('home', userProfile)"
     ></app-custom-button>
     <app-custom-button
       [icon]="'search'"
       [text]="'Search'"
       [customClass]="'primary'"
       [sidenavExpanded]="sidenavExpanded"
-      (clickEvent)="navigateTo('search')"
+      (clickEvent)="navigateTo('search', userProfile)"
     ></app-custom-button>
   </div>
   <nav #navigation class="navigation round-8">
     <app-nav-header
       [drawerSidenav]="drawerSidenav"
       [sidenavExpanded]="sidenavExpanded"
-      [userId]="userId"
+      [userId]="userProfile.id"
       [myPlaylists]="myPlaylists"
       [userFirebaseData]="userFirebaseData"
     ></app-nav-header>

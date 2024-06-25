@@ -1,0 +1,16 @@
+<app-header [user]="userProfile"
+  ><app-search-bar
+    class="search-bar"
+    (searchResultsChange)="onSearchResultsChange($event)"
+  ></app-search-bar
+></app-header>
+<div class="section-tracks">
+  <ng-container *ngFor="let track of tracks; let i = index">
+    <app-track-list [track]="track" [trackIndex]="i"></app-track-list>
+  </ng-container>
+</div>
+<div class="section-playlists">
+  <ng-container *ngFor="let playlist of playlists">
+    <app-card [data]="playlist"></app-card
+  ></ng-container>
+</div>

@@ -115,7 +115,7 @@ export interface Artist {
   genres: string[];
   href: string;
   id: string;
-  images: Image[]
+  images: Image[];
   name: string;
   popularity: number;
   type: string;
@@ -145,4 +145,24 @@ export interface TracksObject {
 interface TracksObjectItem {
   added_at: string;
   track: Track;
+}
+
+export interface SpotifySearchResults {
+  albums?: SpotifySearchResult;
+  artists?: SpotifySearchResult;
+  playlists?: SpotifySearchResult;
+  tracks?: SpotifySearchResult;
+  shows?: SpotifySearchResult;
+  episodes?: SpotifySearchResult;
+  audiobooks?: SpotifySearchResult;
+}
+
+export interface SpotifySearchResult {
+  href: string;
+  items: any[];
+  limit: number;
+  next: string | null;
+  offset: number;
+  previous: string | null;
+  total: number;
 }

@@ -1,21 +1,6 @@
 <section class="header">
-  <div class="page-flows">
-    <span class="flow">
-      <button
-        mat-icon-button
-        class="hover-effect-on-icons btn-home"
-        (click)="navigateTo('home')"
-      >
-        <span class="material-symbols-outlined"> home </span>
-        <span>Home</span>
-      </button>
-    </span>
-  </div>
-
-  <div class="search">
-    <input type="text" [(ngModel)]="searchText" placeholder="Search" />
-  </div>
-
+  <ng-content set=".search-bar"></ng-content>
+  
   <div class="user">
     <div class="user-notifications">
       <button mat-icon-button class="hover-effect-on-icons">

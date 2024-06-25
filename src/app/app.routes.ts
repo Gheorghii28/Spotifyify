@@ -4,6 +4,7 @@ import { LayoutComponent } from './layout/layout.component';
 import { authGuard } from './guards/auth.guard';
 import { HomeComponent } from './views/home/home.component';
 import { PlaylistComponent } from './views/playlist/playlist.component';
+import { SearchComponent } from './views/search/search.component';
 
 export const routes: Routes = [
   {
@@ -18,6 +19,7 @@ export const routes: Routes = [
     children: [
       { path: 'home', component: HomeComponent },
       { path: 'playlist/:id', component: PlaylistComponent },
+      { path: 'search', component: SearchComponent },
     ],
   },
   { path: 'login', component: LoginComponent },

@@ -1,29 +1,38 @@
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { SpotifyService } from '../../services/spotify.service';
 import { CardComponent } from '../../components/card/card.component';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, Location, isPlatformBrowser } from '@angular/common';
 import { ShelfComponent } from '../../components/shelf/shelf.component';
-import { ShelfData } from '../../models/spotify.model';
+import { ShelfData, UserProfile } from '../../models/spotify.model';
+import { HeaderComponent } from '../../layout/header/header.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CardComponent, CommonModule, ShelfComponent],
+  imports: [CardComponent, CommonModule, ShelfComponent, HeaderComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit {
   shelvesData: ShelfData[] = [];
+  userProfile!: UserProfile;
 
   constructor(
     private spotifyService: SpotifyService,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private location: Location
   ) {}
 
   ngOnInit() {
+    this.setUserProfileFromState();
     if (isPlatformBrowser(this.platformId)) {
       this.fetchAndStoreAllEndpointData();
     }
+  }
+
+  private setUserProfileFromState(): void {
+    const state = this.location.getState() as any;
+    this.userProfile = state?.user;
   }
 
   async fetchAndStoreAllEndpointData(): Promise<void> {

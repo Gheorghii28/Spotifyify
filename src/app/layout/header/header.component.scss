@@ -6,24 +6,6 @@
   display: flex;
   flex-flow: row wrap;
   align-items: center;
-  .search {
-    margin-left: calc(15% - 48px);
-    @media (max-width: 1400px) {
-      margin-left: calc(20% - 48px);
-    }
-    input {
-      border-radius: 15px;
-      border: none;
-      background: var(--white-color);
-      color: var(--black-color);
-      padding: 5px 0px 5px 30px;
-      outline: none;
-      background-image: url("../../../assets/svg/search.svg");
-      background-repeat: no-repeat;
-      background-size: 10%;
-      background-position: 5px;
-    }
-  }
   .user {
     width: 300px;
     margin-left: auto;

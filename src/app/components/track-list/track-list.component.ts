@@ -17,6 +17,7 @@ import { LikeButtonComponent } from '../buttons/like-button/like-button.componen
 })
 export class TrackListComponent implements OnInit, OnDestroy {
   @Input() track!: TrackFile;
+  @Input() trackIndex!: number;
   public state!: StreamState;
   public files!: CloudFiles;
   public playingTrack!: TrackFile;

@@ -4,7 +4,7 @@
       <ng-container
         *ngIf="
           state.playing &&
-            playingTrack.index === track.index &&
+            playingTrack.index === trackIndex &&
             playingTrack.playlistId === track.playlistId;
           else soundNr
         "
@@ -12,7 +12,7 @@
         <app-soundwave></app-soundwave
       ></ng-container>
       <ng-template #soundNr>
-        <span>{{ track.index + 1 }}</span></ng-template
+        <span>{{ trackIndex + 1 }}</span></ng-template
       >
     </div>
     <button
@@ -24,7 +24,7 @@
       <ng-container
         *ngIf="
           state.playing &&
-            playingTrack.index === track.index &&
+            playingTrack.index === trackIndex &&
             playingTrack.playlistId === track.playlistId;
           else playIcon
         "

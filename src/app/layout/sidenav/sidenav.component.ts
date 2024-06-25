@@ -13,6 +13,7 @@ import {
   Playlist,
   PlaylistsObject,
   TracksObject,
+  UserProfile,
 } from '../../models/spotify.model';
 import { CloudService } from '../../services/cloud.service';
 import { CustomButtonComponent } from '../../components/buttons/custom-button/custom-button.component';
@@ -49,7 +50,7 @@ import { Firestore } from '@angular/fire/firestore';
 })
 export class SidenavComponent implements OnDestroy, OnInit {
   @Input() drawerSidenav!: MatDrawer;
-  @Input() userId!: string;
+  @Input() userProfile!: UserProfile;
   sidenavExpanded!: boolean;
   myPlaylists!: PlaylistsObject;
   myTracks!: TracksObject;
@@ -76,7 +77,7 @@ export class SidenavComponent implements OnDestroy, OnInit {
 
   ngOnInit() {
     this.unsub = onSnapshot(
-      doc(this.firestore, 'users', this.userId),
+      doc(this.firestore, 'users', this.userProfile.id),
       (doc) => {
         this.userFirebaseData = doc.data() as UserFirebaseData;
         this.findUnassignedPlaylists();
@@ -117,8 +118,12 @@ export class SidenavComponent implements OnDestroy, OnInit {
       });
   }
 
-  public navigateTo(route: string): void {
-    this.router.navigateByUrl(route);
+  public navigateTo(route: string, data?: UserProfile): void {
+    if (data) {
+      this.router.navigate([route], { state: { user: data } });
+    } else {
+      this.router.navigate([route]);
+    }
   }
 
   private findUnassignedPlaylists(): void {
@@ -143,7 +148,7 @@ export class SidenavComponent implements OnDestroy, OnInit {
           (playlist) => playlist.id !== playlistToRemove.id
         );
       });
-      this.firebaseService.updateDocument('users', this.userId, {
+      this.firebaseService.updateDocument('users', this.userProfile.id, {
         folders: [...this.userFirebaseData.folders],
       });
     }

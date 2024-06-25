@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { UserProfile } from '../../models/spotify.model';
 import { CommonModule } from '@angular/common';
 import { UserMenuComponent } from '../../components/user-menu/user-menu.component';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -14,12 +13,7 @@ import { Router } from '@angular/router';
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
-  searchText = '';
   @Input() user!: UserProfile;
 
-  constructor(private router: Router) {}
-
-  navigateTo(route: string) {
-    this.router.navigateByUrl(route);
-  }
+  constructor() {}
 }

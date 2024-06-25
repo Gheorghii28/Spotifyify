@@ -21,6 +21,6 @@
     </div>
   </div>
   <ng-container *ngFor="let track of playlistFile?.tracks; let i = index">
-    <app-track-list [track]="track"></app-track-list>
+    <app-track-list [track]="track" [trackIndex]="track.index"></app-track-list>
   </ng-container>
 </div>
