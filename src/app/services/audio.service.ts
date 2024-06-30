@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, Subject, of } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import moment from 'moment';
+import { format } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
 import { StreamState } from '../models/stream-state.model';
 import { CloudFiles, TrackFile } from '../models/cloud.model';
 
@@ -152,9 +153,10 @@ export class AudioService {
     this.audioObj.currentTime = seconds;
   }
 
-  private formatTime(time: number, format: string = 'mm:ss'): string {
-    const momentTime = time * 1000;
-    return moment.utc(momentTime).format(format);
+  private formatTime(time: number, formatString: string = 'mm:ss'): string {
+    const date = new Date(time * 1000);
+    const zonedDate = toZonedTime(date, 'UTC');
+    return format(zonedDate, formatString);
   }
 
   public observeStreamState(): Observable<StreamState> {

@@ -3,6 +3,7 @@ import { BrowserStorageService } from './browser-storage.service';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -52,8 +53,9 @@ export class TokenService {
   }
 
  refreshAccessToken(): Observable<any> {
-    const url = 'http://localhost:3000/refresh_token';
+    const url = environment.refreshTokenUrl;
     const refreshToken = this.getRefreshToken() as string;
-    return this.http.get(url, { params: { refresh_token: refreshToken } });
+    const payload = { query: refreshToken };
+    return this.http.post(url, payload, {responseType: 'json'});
   }
 }

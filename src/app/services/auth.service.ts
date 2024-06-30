@@ -2,6 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { TokenService } from './token.service';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,7 @@ export class AuthService {
   ) {}
 
   login(): void {
-    window.location.href = 'http://localhost:3000/login';
+    window.location.href = environment.loginUrl;
   }
 
   logout(): void {
