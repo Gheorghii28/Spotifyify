@@ -58,7 +58,6 @@ export class SidenavComponent implements OnDestroy, OnInit {
   private sidenavExpandedSubscription!: Subscription;
   private myPlaylistsSubscription!: Subscription;
   private myTracksSubscription!: Subscription;
-  private dropActionSubscription!: Subscription;
   private movedToFolderStatusSubscription!: Subscription;
   private unsub!: () => void;
   public userFirebaseData!: UserFirebaseData;
@@ -89,7 +88,6 @@ export class SidenavComponent implements OnDestroy, OnInit {
     this.sidenavExpandedSubscription.unsubscribe();
     this.myPlaylistsSubscription.unsubscribe();
     this.myTracksSubscription.unsubscribe();
-    this.dropActionSubscription.unsubscribe();
     this.movedToFolderStatusSubscription.unsubscribe();
     this.unsub();
   }

@@ -19,6 +19,8 @@ export class AuthService {
   }
 
   logout(): void {
+    this.tokenService.clearTokens();
+    this.tokenService.clearTokensFromCookies();
     this.router.navigate(['/login']);
   }
 
@@ -52,6 +54,7 @@ export class AuthService {
       },
       error: (error) => {
         console.error('Error refreshing access token:', error);
+        this.logout();
       },
     });
     console.error('Error fetching user profile:', error);

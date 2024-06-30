@@ -19,7 +19,6 @@ export class UserMenuComponent {
   ) {}
 
   logout(): void {
-    this.tokenService.clearTokens();
     this.authService.logout();
   }
 }
