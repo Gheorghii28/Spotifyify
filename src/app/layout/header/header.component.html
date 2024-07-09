@@ -15,10 +15,15 @@
     </div>
 
     <div *ngIf="user" class="user-info">
-      <span class="user-info-img">
-        <img src="{{ user.images[0].url }}" alt="Profile Picture" />
-      </span>
-
+      <ng-container *ngIf="user.images[0]; else defaultImg">
+        <span class="user-info-img">
+          <img src="{{ user.images[0].url }}" alt="Profile Picture" /> </span
+      ></ng-container>
+      <ng-template #defaultImg>
+        <span class="material-symbols-outlined play-circle c-pointer">
+          account_circle
+        </span></ng-template
+      >
       <span class="user-info-name">{{ user.display_name }}</span>
     </div>
 
