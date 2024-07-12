@@ -35,7 +35,7 @@
     </mat-menu>
     <button
       mat-menu-item
-      *ngIf="sidenavExpanded"
+      *ngIf="sidenavExpanded && !this.layoutService.isWindowWidthLessThan(1020)"
       class="hover-effect-on-icons"
       (click)="toggleSidenavWidth()"
     >

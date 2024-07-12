@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { HeightService } from './height.service';
+import { LayoutService } from './layout.service';
 
 describe('HeightService', () => {
-  let service: HeightService;
+  let service: LayoutService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(HeightService);
+    service = TestBed.inject(LayoutService);
   });
 
   it('should be created', () => {

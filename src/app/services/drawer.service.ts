@@ -45,4 +45,28 @@ export class DrawerService {
       drawerInstance.toggle();
     }
   }
+
+  public updateDrawerEndStatusBasedOnSidenavWidth(newWidth: number): void {
+    if (newWidth === 631) {
+      this.setdrawerEndStatus(false);
+    } else {
+      this.setdrawerEndStatus(true);
+    }
+  }
+
+  public updateDrawerConfiguration(
+    drawerEndStatus: boolean,
+    isConditionForWidthUpdate: boolean,
+    isConditionForExpansionUpdate: boolean
+  ): void {
+    if (drawerEndStatus) {
+      if (isConditionForWidthUpdate) {
+        this.setSidenavWidth(289);
+        this.updateDrawerEndStatusBasedOnSidenavWidth(289);
+      }
+      if (isConditionForExpansionUpdate) {
+        this.setSidenavExpanded(false);
+      }
+    }
+  }
 }

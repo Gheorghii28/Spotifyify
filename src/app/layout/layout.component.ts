@@ -16,7 +16,7 @@ import {
 } from '../models/spotify.model';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { Subscription } from 'rxjs';
-import { HeightService } from '../services/height.service';
+import { LayoutService } from '../services/layout.service';
 import { RouterOutlet } from '@angular/router';
 import { PlayerComponent } from '../components/player/player.component';
 import { CloudFiles } from '../models/cloud.model';
@@ -62,7 +62,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   constructor(
     private tokenService: TokenService,
     private authService: AuthService,
-    private heightService: HeightService,
+    private layoutService: LayoutService,
     @Inject(PLATFORM_ID) private platformId: Object,
     private cloudService: CloudService,
     private drawerService: DrawerService,
@@ -79,7 +79,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      this.heightService.adjustHeightOnWindowResize();
+      this.layoutService.adjustHeightOnWindowResize();
+      this.layoutService.handleDrawerOnResize(this.drawerEndStatus);
     }
   }
 

@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { HeightService } from '../../services/height.service';
+import { LayoutService } from '../../services/layout.service';
 import { CloudFiles, TrackFile } from '../../models/cloud.model';
 import { Subscription } from 'rxjs';
 import { AudioService } from '../../services/audio.service';
@@ -51,18 +51,20 @@ export class PlayerComponent implements OnInit, OnDestroy {
   public isFullScreen: boolean = false;
 
   constructor(
-    private heightService: HeightService,
+    private layoutService: LayoutService,
     public audioService: AudioService,
     private elementRef: ElementRef,
     private drawerService: DrawerService
   ) {}
 
   ngOnInit(): void {
-    this.heightService.adjustElementHeights();
+    this.layoutService.adjustElementHeights();
     this.subscribeTo();
-    this.heightService.isFullscreen$().subscribe((isFullScreen: boolean) => {
-      this.isFullScreen = isFullScreen;
-    });
+    this.layoutService
+      .observeFullscreenState()
+      .subscribe((isFullScreen: boolean) => {
+        this.isFullScreen = isFullScreen;
+      });
     this.elem = this.elementRef.nativeElement;
   }
 
@@ -162,5 +164,10 @@ export class PlayerComponent implements OnInit, OnDestroy {
 
   public toggleDrawerEnd(): void {
     this.drawerService.setdrawerEndStatus(!this.drawerEndStatus);
+    this.drawerService.updateDrawerConfiguration(
+      !this.drawerEndStatus,
+      this.layoutService.isWindowWidthLessThan(1300),
+      this.layoutService.isWindowWidthLessThan(1020)
+    );
   }
 }

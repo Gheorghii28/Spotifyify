@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener, Input } from '@angular/core';
-import { HeightService } from '../../../services/height.service';
+import { LayoutService } from '../../../services/layout.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -15,13 +15,15 @@ export class BtnFullScreenComponent {
   @Input() elem: any;
   public isFullScreen: boolean = false;
 
-  constructor(private heightService: HeightService) {}
+  constructor(private layoutService: LayoutService) {}
 
   ngOnInit(): void {
-    this.heightService.chkScreenMode();
-    this.heightService.isFullscreen$().subscribe((isFullScreen: boolean) => {
-      this.isFullScreen = isFullScreen;
-    });
+    this.updateFullscreenState();
+    this.layoutService
+      .observeFullscreenState()
+      .subscribe((isFullScreen: boolean) => {
+        this.isFullScreen = isFullScreen;
+      });
   }
 
   @HostListener('document:fullscreenchange', ['$event'])
@@ -29,18 +31,18 @@ export class BtnFullScreenComponent {
   @HostListener('document:mozfullscreenchange', ['$event'])
   @HostListener('document:MSFullscreenChange', ['$event'])
   private fullscreenmodes(event: any): void {
-    this.chkScreenMode();
+    this.updateFullscreenState();
   }
 
-  private chkScreenMode(): void {
-    this.heightService.chkScreenMode();
+  private updateFullscreenState(): void {
+    this.layoutService.updateFullscreenState();
   }
 
-  public openFullscreen(): void {
-    this.heightService.openFullscreen(this.elem);
+  public requestFullscreen(): void {
+    this.layoutService.requestFullscreen(this.elem);
   }
 
-  public closeFullscreen(): void {
-    this.heightService.closeFullscreen();
+  public exitFullscreen(): void {
+    this.layoutService.exitFullscreen();
   }
 }
