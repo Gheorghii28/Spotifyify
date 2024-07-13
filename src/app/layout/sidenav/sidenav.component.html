@@ -15,7 +15,11 @@
       (clickEvent)="navigateTo('search', userProfile)"
     ></app-custom-button>
   </div>
-  <nav #navigation class="navigation round-8">
+  <nav
+    #navigation
+    class="navigation round-8"
+    [ngStyle]="sidenavExpanded ? navExpandedStyles : navCollapsedStyles"
+  >
     <app-nav-header
       [drawerSidenav]="drawerSidenav"
       [sidenavExpanded]="sidenavExpanded"
@@ -32,22 +36,34 @@
         [dropItemClass]="'btn-list-folder'"
         (onDrop)="removePlaylistFromFolders($event)"
         style="height: 100%"
+        [ngStyle]="sidenavExpanded ? listExpandedStyles : listCollapsedStyles"
       >
         <li>
-          <app-list-liked-songs [myTracks]="myTracks"></app-list-liked-songs>
+          <app-list-liked-songs
+            [myTracks]="myTracks"
+            [sidenavExpanded]="sidenavExpanded"
+          ></app-list-liked-songs>
         </li>
-        <li *ngFor="let folder of userFirebaseData?.folders">
+        <li
+          *ngFor="let folder of userFirebaseData?.folders"
+          class="li-folder"
+          [ngStyle]="
+            sidenavExpanded ? liFolderExpandedStyles : liFolderCollapsedStyles
+          "
+        >
           <app-list-folder
             class="folder"
             [folder]="folder"
             [playlists]="folder.playlists"
             [userFirebaseData]="userFirebaseData"
+            [sidenavExpanded]="sidenavExpanded"
           ></app-list-folder>
         </li>
         <li *ngFor="let playlist of folderUnassignedPlaylists">
           <app-list-item
             appDraggable
             [playlist]="playlist"
+            [sidenavExpanded]="sidenavExpanded"
             [appDraggable]="utilsService.toJsonString(playlist)"
           ></app-list-item>
         </li>

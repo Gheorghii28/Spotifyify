@@ -1,6 +1,7 @@
 <button
   mat-button
   class="btn-list-folder"
+  [ngStyle]="sidenavExpanded ? btnExpandedStyles : btnCollapsedStyles"
   appDropTarget
   [dropContainerClass]="'library-list'"
   [dropItemClass]="'btn-list-folder'"
@@ -10,7 +11,7 @@
   <div class="div-no-img">
     <span class="material-symbols-outlined"> folder </span>
   </div>
-  <div class="text">
+  <div *ngIf="sidenavExpanded" class="text">
     <span>
       {{
         sidenavWidth === 631
@@ -24,7 +25,7 @@
       {{ folder.playlists.length <= 1 ? "playlist" : "playlists" }}</span
     >
   </div>
-  <div class="div-arrow">
+  <div *ngIf="sidenavExpanded" class="div-arrow">
     <span
       class="material-symbols-outlined"
       style="color: #b2b2b2; font-size: 32px"
@@ -35,13 +36,14 @@
   </div>
 </button>
 <ul
-  [@expandCollapse]="panelOpenState ? 'expanded' : 'collapsed'"
+  [@expandCollapse]="panelOpenState && sidenavExpanded ? 'expanded' : 'collapsed'"
   style="padding-left: 16px"
 >
   <li *ngFor="let playlist of playlists">
     <app-list-item
       appDraggable
       [playlist]="playlist"
+      [sidenavExpanded]="sidenavExpanded"
       [appDraggable]="utilsService.toJsonString(playlist)"
     ></app-list-item>
   </li>

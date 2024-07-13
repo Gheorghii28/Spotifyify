@@ -16,8 +16,11 @@ import { TracksObject } from '../../../models/spotify.model';
 export class ListLikedSongsComponent {
   @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
   @Input() myTracks!: TracksObject;
+  @Input() sidenavExpanded!: boolean;
   public sidenavWidth!: number;
   private sidenavWidthSubscription!: Subscription;
+  public btnExpandedStyles = { width: '100%', padding: '8px' };
+  public btnCollapsedStyles = { width: '48px', padding: 0 };
 
   constructor(private drawerService: DrawerService, private router: Router) {
     this.subscribeTo();

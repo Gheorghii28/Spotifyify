@@ -2,6 +2,7 @@
   mat-button
   (contextmenu)="onContextMenu($event)"
   (click)="navigateToPlaylist()"
+  [ngStyle]="sidenavExpanded ? btnExpandedStyles : btnCollapsedStyles"
 >
   <ng-container
     *ngIf="playlist.images && playlist.images.length > 0; else noImage"
@@ -13,7 +14,7 @@
       <span class="material-symbols-outlined"> audio_file </span>
     </div>
   </ng-template>
-  <div class="text">
+  <div *ngIf="sidenavExpanded" class="text">
     <span>
       {{
         sidenavWidth === 631

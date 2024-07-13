@@ -19,11 +19,14 @@ import { UtilsService } from '../../../services/utils.service';
 })
 export class ListItemComponent {
   @Input() playlist!: Playlist;
+  @Input() sidenavExpanded!: boolean;
   @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
   public sidenavWidth!: number;
   public contextMenuPosition = { x: '0px', y: '0px' };
   private sidenavWidthSubscription!: Subscription;
-
+  public btnExpandedStyles = { width: '100%', padding: '8px' };
+  public btnCollapsedStyles = { width: '48px', padding: 0 };
+  
   constructor(
     private drawerService: DrawerService,
     private router: Router,

@@ -63,12 +63,15 @@ export class ListFolderComponent {
   @Input() folder!: UserFolder;
   @Input() playlists!: Playlist[];
   @Input() userFirebaseData!: UserFirebaseData;
+  @Input() sidenavExpanded!: boolean;
   @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
   public sidenavWidth!: number;
   public contextMenuPosition = { x: '0px', y: '0px' };
   public panelOpenState = false;
   private movedToFolderStatus!: boolean;
   private movedToFolderStatusSubscription!: Subscription;
+  public btnExpandedStyles = { width: '100%', padding: '8px' };
+  public btnCollapsedStyles = { width: '48px', padding: 0 };
 
   constructor(
     public utilsService: UtilsService,

@@ -63,6 +63,16 @@ export class SidenavComponent implements OnDestroy, OnInit {
   public userFirebaseData!: UserFirebaseData;
   public folderUnassignedPlaylists!: Playlist[];
   private firestore: Firestore = inject(Firestore);
+  public navExpandedStyles = { 'padding-left': '15px' };
+  public navCollapsedStyles = {
+    display: 'flex',
+    'flex-direction': 'column',
+    'align-items': 'center',
+  };
+  public listExpandedStyles = {};
+  public listCollapsedStyles = { 'align-items': 'center' };
+  public liFolderExpandedStyles = {};
+  public liFolderCollapsedStyles = { width: '48px' };
 
   constructor(
     private router: Router,

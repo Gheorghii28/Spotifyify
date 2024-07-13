@@ -1,8 +1,13 @@
-<button mat-button mat-button (click)="navigateToPlaylist()">
+<button
+  mat-button
+  mat-button
+  (click)="navigateToPlaylist()"
+  [ngStyle]="sidenavExpanded ? btnExpandedStyles : btnCollapsedStyles"
+>
   <div class="div-no-img">
     <span class="material-symbols-outlined"> favorite </span>
   </div>
-  <div class="text">
+  <div *ngIf="sidenavExpanded" class="text">
     <span>Liked Songs</span>
     <span
       >Playlist <span class="material-symbols-outlined"> adjust </span>
