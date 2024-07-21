@@ -25,11 +25,3 @@
     border-radius: 4px;
   }
 }
-
-@media (max-width: 768px) {
-  .navigation {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-around;
-  }
-}

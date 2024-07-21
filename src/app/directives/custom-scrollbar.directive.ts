@@ -1,4 +1,5 @@
 import { Directive, ElementRef, HostListener } from '@angular/core';
+import { DomManipulationService } from '../services/dom-manipulation.service';
 
 @Directive({
   selector: '[scrollable]',
@@ -6,7 +7,10 @@ import { Directive, ElementRef, HostListener } from '@angular/core';
 })
 export class CustomScrollbarDirective {
   hostElement!: HTMLElement;
-  constructor(private element: ElementRef) {
+  constructor(
+    private element: ElementRef,
+    private domService: DomManipulationService
+  ) {
     this.hostElement = this.element.nativeElement;
   }
 
@@ -44,5 +48,21 @@ export class CustomScrollbarDirective {
       '--custom-scrollbar-height',
       scrollHeight === scrollbarHeight ? '0px' : `${scrollbarHeight}px`
     );
+    this.checkScrollPosition(scrollPosition);
+  }
+
+  private checkScrollPosition(scrollPosition: number): void {
+    const targetElement = this.domService.getElementById('top-container');
+    if (targetElement) {
+      if (scrollPosition > 240) {
+        this.domService.applyStylesToElement(targetElement, {
+          opacity: '1',
+        });
+      } else {
+        this.domService.applyStylesToElement(targetElement, {
+          opacity: '0',
+        });
+      }
+    }
   }
 }

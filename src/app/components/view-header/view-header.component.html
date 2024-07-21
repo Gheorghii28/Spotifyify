@@ -8,6 +8,29 @@
       ', var(--black-color))'
   }"
 >
+  <div
+    id="top-container"
+    [ngStyle]="{
+      'background-image':
+        'linear-gradient(to bottom, ' +
+        (data.color ? data.color : '#545454') +
+        ', var(--black-color))'
+    }"
+  >
+    <div class="profile-img">
+      <app-btn-play class="mr-10" [playlistId]="data.id"></app-btn-play>
+      <ng-container *ngIf="data.imageUrl; else noImage">
+        <img src="{{ data.imageUrl }}" />
+      </ng-container>
+      <ng-template #noImage>
+        <div class="div-no-img">
+          <span class="material-symbols-outlined"> audio_file </span>
+        </div>
+      </ng-template>
+    </div>
+    <p class="info-name">{{ data.name }}</p>
+  </div>
+
   <div class="info">
     <div class="profile-img">
       <ng-container *ngIf="data.imageUrl; else noImage">
@@ -33,10 +56,5 @@
         </button>
       </div>
     </div>
-  </div>
-
-  <div class="followers">
-    <div class="followers-count">{{ data.followers }}</div>
-    <div class="followers-label">Followers</div>
   </div>
 </div>
