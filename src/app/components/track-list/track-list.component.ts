@@ -1,4 +1,12 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  NgZone,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StreamState } from '../../models/stream-state.model';
 import { Subscription } from 'rxjs';
@@ -7,6 +15,7 @@ import { CloudFiles, TrackFile } from '../../models/cloud.model';
 import { CloudService } from '../../services/cloud.service';
 import { SoundwaveComponent } from '../soundwave/soundwave.component';
 import { LikeButtonComponent } from '../buttons/like-button/like-button.component';
+import { DomManipulationService } from '../../services/dom-manipulation.service';
 
 @Component({
   selector: 'app-track-list',
@@ -15,9 +24,15 @@ import { LikeButtonComponent } from '../buttons/like-button/like-button.componen
   templateUrl: './track-list.component.html',
   styleUrl: './track-list.component.scss',
 })
-export class TrackListComponent implements OnInit, OnDestroy {
+export class TrackListComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() track!: TrackFile;
   @Input() trackIndex!: number;
+  private readonly widthTrackNumber = 22;
+  private readonly widthImg = 55;
+  private readonly widthBtn = 65;
+  private readonly widthLength = 40;
+  private readonly margin = 15;
+  private observer!: ResizeObserver;
   public state!: StreamState;
   public files!: CloudFiles;
   public playingTrack!: TrackFile;
@@ -27,17 +42,25 @@ export class TrackListComponent implements OnInit, OnDestroy {
 
   constructor(
     public audioService: AudioService,
-    private cloudService: CloudService
+    private cloudService: CloudService,
+    private domService: DomManipulationService,
+    private host: ElementRef,
+    private zone: NgZone
   ) {}
 
   ngOnInit(): void {
     this.subscribeTo();
   }
 
+  ngAfterViewInit(): void {
+    this.initializeResizeObserver();
+  }
+
   ngOnDestroy(): void {
     this.stateSubscription.unsubscribe();
     this.cloudSubscription.unsubscribe();
     this.playingTrackSubscription.unsubscribe();
+    this.observer.unobserve(this.host.nativeElement);
   }
 
   private subscribeTo(): void {
@@ -97,5 +120,39 @@ export class TrackListComponent implements OnInit, OnDestroy {
       return false;
     }
     return this.files.id === this.track.playlistId;
+  }
+
+  private initializeResizeObserver(): void {
+    this.observer = new ResizeObserver((entries) => this.handleResize(entries));
+    this.observer.observe(this.host.nativeElement);
+  }
+
+  private handleResize(entries: ResizeObserverEntry[]): void {
+    if (entries.length === 0) return;
+
+    const entry = entries[0];
+    const widthHost = entry.contentRect.width;
+    const widthTitle = this.calculateWidthTitle(widthHost);
+
+    this.zone.run(() => this.updateTitleWidth(widthTitle));
+  }
+
+  private updateTitleWidth(widthTitle: number): void {
+    this.domService.applyStylesToElementByClass(
+      'track-title',
+      'width',
+      `${widthTitle}px`
+    );
+  }
+
+  private calculateWidthTitle(widthHost: number): number {
+    return (
+      widthHost -
+      this.widthTrackNumber -
+      this.widthImg -
+      this.widthBtn -
+      this.widthLength -
+      this.margin
+    );
   }
 }

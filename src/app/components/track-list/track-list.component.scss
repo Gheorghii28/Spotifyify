@@ -47,9 +47,13 @@
     object-fit: cover;
   }
   .track-title {
-    width: 45%;
     margin-left: 15px;
     color: var(--white-color);
+    display: flex;
+    overflow: auto;
+    span {
+      white-space: nowrap;
+    }
   }
   .featured .title:after {
     content: "-";
@@ -74,10 +78,5 @@
   .track-length {
     margin-left: auto;
     color: var(--light-grey-color);
-  }
-}
-@media (max-width: 1200px) {
-  .track-title {
-    width: auto !important;
   }
 }
