@@ -2,9 +2,6 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './views/login/login.component';
 import { LayoutComponent } from './layout/layout.component';
 import { authGuard } from './guards/auth.guard';
-import { HomeComponent } from './views/home/home.component';
-import { PlaylistComponent } from './views/playlist/playlist.component';
-import { SearchComponent } from './views/search/search.component';
 
 export const routes: Routes = [
   {
@@ -17,9 +14,25 @@ export const routes: Routes = [
     component: LayoutComponent,
     canActivate: [authGuard],
     children: [
-      { path: 'home', component: HomeComponent },
-      { path: 'playlist/:id', component: PlaylistComponent },
-      { path: 'search', component: SearchComponent },
+      {
+        path: 'home',
+        loadComponent: () =>
+          import('./views/home/home.component').then((m) => m.HomeComponent),
+      },
+      {
+        path: 'playlist/:id',
+        loadComponent: () =>
+          import('./views/playlist/playlist.component').then(
+            (m) => m.PlaylistComponent
+          ),
+      },
+      {
+        path: 'search',
+        loadComponent: () =>
+          import('./views/search/search.component').then(
+            (m) => m.SearchComponent
+          ),
+      },
     ],
   },
   { path: 'login', component: LoginComponent },
