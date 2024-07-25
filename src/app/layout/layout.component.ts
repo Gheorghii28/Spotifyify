@@ -1,9 +1,12 @@
 import {
+  AfterViewInit,
   Component,
+  ElementRef,
   Inject,
   OnDestroy,
   OnInit,
   PLATFORM_ID,
+  ViewChild,
 } from '@angular/core';
 import { TokenService } from '../services/token.service';
 import { HeaderComponent } from './header/header.component';
@@ -27,6 +30,7 @@ import { DrawerService } from '../services/drawer.service';
 import { SpotifyService } from '../services/spotify.service';
 import { CustomScrollbarDirective } from '../directives/custom-scrollbar.directive';
 import { FirebaseService } from '../services/firebase.service';
+import { ScrollService } from '../services/scroll.service';
 
 @Component({
   selector: 'app-layout',
@@ -45,7 +49,8 @@ import { FirebaseService } from '../services/firebase.service';
   templateUrl: './layout.component.html',
   styleUrl: './layout.component.scss',
 })
-export class LayoutComponent implements OnInit, OnDestroy {
+export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('scrollContainer', { static: false }) scrollContainer!: ElementRef;
   userProfile!: UserProfile;
   loadSubscription!: Subscription;
   resizeSubscription!: Subscription;
@@ -67,7 +72,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
     private cloudService: CloudService,
     private drawerService: DrawerService,
     private spotifyService: SpotifyService,
-    private firebaseService: FirebaseService
+    private firebaseService: FirebaseService,
+    private scrollService: ScrollService
   ) {
     this.tokenService.saveTokensToLocalStorage();
     this.tokenService.clearTokensFromCookies();
@@ -82,6 +88,12 @@ export class LayoutComponent implements OnInit, OnDestroy {
       this.layoutService.adjustHeightOnWindowResize();
       this.layoutService.handleDrawerOnResize(this.drawerEndStatus);
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.scrollContainer.nativeElement.addEventListener('scroll', (event: Event) => {
+      this.scrollService.emitScrollEvent(event);
+    });
   }
 
   ngOnDestroy(): void {
