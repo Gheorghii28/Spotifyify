@@ -5,11 +5,9 @@ import {
   Input,
   NgZone,
   OnDestroy,
-  OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StreamState } from '../../models/stream-state.model';
-import { Subscription } from 'rxjs';
 import { AudioService } from '../../services/audio.service';
 import { CloudFiles, TrackFile } from '../../models/cloud.model';
 import { CloudService } from '../../services/cloud.service';
@@ -24,21 +22,18 @@ import { DomManipulationService } from '../../services/dom-manipulation.service'
   templateUrl: './track-list.component.html',
   styleUrl: './track-list.component.scss',
 })
-export class TrackListComponent implements OnInit, OnDestroy, AfterViewInit {
+export class TrackListComponent implements OnDestroy, AfterViewInit {
   @Input() track!: TrackFile;
   @Input() trackIndex!: number;
+  @Input() files!: CloudFiles;
+  @Input() state!: StreamState;
+  @Input() playingTrack!: TrackFile;
   private readonly widthTrackNumber = 22;
   private readonly widthImg = 55;
   private readonly widthBtn = 65;
   private readonly widthLength = 40;
   private readonly margin = 15;
   private observer!: ResizeObserver;
-  public state!: StreamState;
-  public files!: CloudFiles;
-  public playingTrack!: TrackFile;
-  private stateSubscription!: Subscription;
-  private cloudSubscription!: Subscription;
-  private playingTrackSubscription!: Subscription;
 
   constructor(
     public audioService: AudioService,
@@ -48,37 +43,12 @@ export class TrackListComponent implements OnInit, OnDestroy, AfterViewInit {
     private zone: NgZone
   ) {}
 
-  ngOnInit(): void {
-    this.subscribeTo();
-  }
-
   ngAfterViewInit(): void {
     this.initializeResizeObserver();
   }
 
   ngOnDestroy(): void {
-    this.stateSubscription.unsubscribe();
-    this.cloudSubscription.unsubscribe();
-    this.playingTrackSubscription.unsubscribe();
     this.observer.unobserve(this.host.nativeElement);
-  }
-
-  private subscribeTo(): void {
-    this.stateSubscription = this.audioService
-      .observeStreamState()
-      .subscribe((state: StreamState) => {
-        this.state = state;
-      });
-    this.cloudSubscription = this.cloudService
-      .observeFiles()
-      .subscribe((files: CloudFiles) => {
-        this.files = files;
-      });
-    this.playingTrackSubscription = this.audioService
-      .observePlayingTrack()
-      .subscribe((track: TrackFile) => {
-        this.playingTrack = track;
-      });
   }
 
   public async togglePlayPause(event: Event): Promise<void> {
