@@ -14,6 +14,7 @@ import { UserProfile } from '../../models/spotify.model';
 import { HeaderComponent } from '../../layout/header/header.component';
 import { Subscription } from 'rxjs';
 import { ScrollService } from '../../services/scroll.service';
+import { PlatformDetectionService } from '../../services/platform-detection.service';
 
 @Component({
   selector: 'app-home',
@@ -33,15 +34,15 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(
     private spotifyService: SpotifyService,
-    @Inject(PLATFORM_ID) private platformId: Object,
     private location: Location,
-    private scrollService: ScrollService
+    private scrollService: ScrollService,
+    private platformDetectionService: PlatformDetectionService
   ) {}
 
   ngOnInit() {
     this.setUserProfileFromState();
     this.setScrollSubscription();
-    if (isPlatformBrowser(this.platformId)) {
+    if (this.platformDetectionService.isBrowser) {
       this.windowHeight = window.innerHeight;
       this.getEndpoints();
     }

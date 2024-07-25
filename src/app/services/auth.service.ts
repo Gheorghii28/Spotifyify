@@ -3,15 +3,16 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { TokenService } from './token.service';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { PlatformDetectionService } from './platform-detection.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   constructor(
-    @Inject(PLATFORM_ID) private platformId: Object,
     private tokenService: TokenService,
-    private router: Router
+    private router: Router,
+    private platformDetectionService: PlatformDetectionService
   ) {}
 
   login(): void {
@@ -25,7 +26,7 @@ export class AuthService {
   }
 
   async getProfile(accessToken: string | null): Promise<any | null> {
-    if (!isPlatformBrowser(this.platformId) || !accessToken) return null;
+    if (!this.platformDetectionService.isBrowser || !accessToken) return null;
 
     try {
       const response = await fetch('https://api.spotify.com/v1/me', {

@@ -15,6 +15,7 @@ import { Subscription } from 'rxjs';
 import { CustomScrollbarDirective } from '../../directives/custom-scrollbar.directive';
 import { StreamState } from '../../models/stream-state.model';
 import { AudioService } from '../../services/audio.service';
+import { PlatformDetectionService } from '../../services/platform-detection.service';
 
 @Component({
   selector: 'app-playlist',
@@ -40,7 +41,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private cloudService: CloudService,
     public audioService: AudioService,
-    @Inject(PLATFORM_ID) private platformId: Object
+    private platformDetectionService: PlatformDetectionService
   ) {
     this.subscribeTo();
   }
@@ -48,7 +49,7 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.params.subscribe(async (params) => {
       const playlistId = params['id'];
-      if (isPlatformBrowser(this.platformId)) {
+      if (this.platformDetectionService.isBrowser) {
         const files: CloudFiles = await this.cloudService.getFiles(playlistId);
         this.cloudService.setFiles(files);
       }

@@ -31,6 +31,7 @@ import { SpotifyService } from '../services/spotify.service';
 import { CustomScrollbarDirective } from '../directives/custom-scrollbar.directive';
 import { FirebaseService } from '../services/firebase.service';
 import { ScrollService } from '../services/scroll.service';
+import { PlatformDetectionService } from '../services/platform-detection.service';
 
 @Component({
   selector: 'app-layout',
@@ -68,12 +69,12 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
     private tokenService: TokenService,
     private authService: AuthService,
     private layoutService: LayoutService,
-    @Inject(PLATFORM_ID) private platformId: Object,
     private cloudService: CloudService,
     private drawerService: DrawerService,
     private spotifyService: SpotifyService,
     private firebaseService: FirebaseService,
-    private scrollService: ScrollService
+    private scrollService: ScrollService,
+    private platformDetectionService: PlatformDetectionService
   ) {
     this.tokenService.saveTokensToLocalStorage();
     this.tokenService.clearTokensFromCookies();
@@ -84,16 +85,19 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
+    if (this.platformDetectionService.isBrowser) {
       this.layoutService.adjustHeightOnWindowResize();
       this.layoutService.handleDrawerOnResize(this.drawerEndStatus);
     }
   }
 
   ngAfterViewInit(): void {
-    this.scrollContainer.nativeElement.addEventListener('scroll', (event: Event) => {
-      this.scrollService.emitScrollEvent(event);
-    });
+    this.scrollContainer.nativeElement.addEventListener(
+      'scroll',
+      (event: Event) => {
+        this.scrollService.emitScrollEvent(event);
+      }
+    );
   }
 
   ngOnDestroy(): void {
@@ -129,7 +133,7 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
   async getProfile(): Promise<void> {
     const accessToken = this.tokenService.getAccessToken();
     const profile: UserProfile = await this.authService.getProfile(accessToken);
-    if (!isPlatformBrowser(this.platformId) || profile) {
+    if (!this.platformDetectionService.isBrowser || profile) {
       this.userProfile = profile;
       this.firebaseService.checkUserInFirestore(this.userProfile);
     } else {
