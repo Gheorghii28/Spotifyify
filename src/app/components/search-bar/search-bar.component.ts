@@ -4,6 +4,7 @@ import {
   SpotifySearchResult,
   SpotifySearchResults,
 } from '../../models/spotify.model';
+import { debounce } from 'lodash';
 
 @Component({
   selector: 'app-search-bar',
@@ -25,7 +26,11 @@ export class SearchBarComponent {
   @Output() searchResultsChange: EventEmitter<SpotifySearchResults | null> =
     new EventEmitter();
 
-  constructor(private spotifyService: SpotifyService) {}
+  constructor(private spotifyService: SpotifyService) {
+    this.debouncedOnSearch = debounce(this.onSearch, 500);
+  }
+
+  public debouncedOnSearch(event: Event): void {}
 
   public async onSearch(event: Event): Promise<void> {
     const inputElement = event.target as HTMLInputElement;
