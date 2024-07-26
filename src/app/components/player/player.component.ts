@@ -85,22 +85,54 @@ export class PlayerComponent implements OnInit, OnDestroy {
       .subscribe((track: TrackFile) => {
         if (track) {
           this.playingTrack = track;
-          this.playAudio(track.index, this.files);
+          this.playAudio(track, this.files);
         }
       });
   }
 
-  private async playAudio(
-    trackIndex: number,
-    files: CloudFiles
-  ): Promise<void> {
+  private async playAudio(track: TrackFile, files: CloudFiles): Promise<void> {
     this.audioService.stop();
-    const url: string = this.audioService.getFileUrl(files, trackIndex);
+    const url: string = this.getTrackUrl(files, track);
     this.audioService.playStream(url).subscribe((events) => {
       if (events.type === 'ended') {
         this.updatePlayingTrack();
       }
     });
+  }
+
+  private getTrackUrl(files: CloudFiles, track: TrackFile): string {
+    if (track.playlistId) {
+      return this.audioService.getFileUrl(files, track.index);
+    }
+    return track.previewUrl;
+  }
+
+  public get getLikedStatus(): boolean {
+    if (this.playingTrack.playlistId) {
+      return this.files.tracks[this.playingTrack.index].likedStatus;
+    }
+    return this.playingTrack.likedStatus;
+  }
+
+  public get getImageUrl(): string {
+    if (this.playingTrack.playlistId) {
+      return this.files.tracks[this.playingTrack.index].img as string;
+    }
+    return this.playingTrack.img;
+  }
+
+  public get getName(): string {
+    if (this.playingTrack.playlistId) {
+      return this.files.tracks[this.playingTrack.index].name as string;
+    }
+    return this.playingTrack.name;
+  }
+
+  public get getArtists(): { name: string; id: string }[] {
+    if (this.playingTrack.playlistId) {
+      return this.files.tracks[this.playingTrack.index].artists;
+    }
+    return this.playingTrack.artists;
   }
 
   public next(): void {
@@ -128,12 +160,18 @@ export class PlayerComponent implements OnInit, OnDestroy {
     this.audioService.togglePlayPause();
   }
 
-  public isFirstPlaying(): boolean {
-    return this.playingTrack.index === 0;
+  public get isFirstPlaying(): boolean {
+    if (this.playingTrack.playlistId) {
+      return this.playingTrack.index === 0;
+    }
+    return true;
   }
 
-  public isLastPlaying(): boolean {
-    return this.playingTrack.index === this.files.tracks.length - 1;
+  public get isLastPlaying(): boolean {
+    if (this.playingTrack.playlistId) {
+      return this.playingTrack.index === this.files.tracks.length - 1;
+    }
+    return true;
   }
 
   public onSliderChangeEnd(): void {

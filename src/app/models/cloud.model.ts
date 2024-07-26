@@ -20,7 +20,8 @@ export interface TrackFile {
   previewUrl: string;
   index: number;
   img: string;
-  playlistId: string;
+  playlistId?: string;
+  albumId?: string;
   likedStatus: boolean;
 }
 
@@ -59,10 +60,16 @@ export class TrackFileClass implements TrackFile {
   previewUrl: string;
   index: number;
   img: string;
-  playlistId: string;
+  playlistId: string | undefined;
+  albumId: string | undefined;
   likedStatus: boolean;
 
-  constructor(track: Track, index: number, playlistId: string) {
+  constructor(
+    track: Track,
+    index: number,
+    playlistId: string | undefined,
+    albumId: string | undefined
+  ) {
     this.name = track.name;
     this.albumName = track.album.name;
     this.artists = this.getArtists(track.artists);
@@ -72,6 +79,7 @@ export class TrackFileClass implements TrackFile {
     this.index = index;
     this.img = track.album.images[0].url;
     this.playlistId = playlistId;
+    this.albumId = albumId;
     this.likedStatus = false;
   }
 

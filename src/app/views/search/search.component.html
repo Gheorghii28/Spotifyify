@@ -6,7 +6,13 @@
 ></app-header>
 <div class="section-tracks">
   <ng-container *ngFor="let track of tracks; let i = index">
-    <app-track-list [track]="track" [trackIndex]="i"></app-track-list>
+    <app-track-list
+      [track]="track"
+      [trackIndex]="i"
+      [files]="playlistFile"
+      [playingTrack]="playingTrack"
+      [state]="state"
+    ></app-track-list>
   </ng-container>
 </div>
 <div class="section-playlists">

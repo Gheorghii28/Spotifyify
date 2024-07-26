@@ -66,14 +66,16 @@ export class TrackListComponent implements OnDestroy, AfterViewInit {
   }
 
   private async openPlaylist(): Promise<void> {
-    await this.setCloudFiles();
+    if (this.track.playlistId) {
+      await this.setCloudFiles();
+    }
     this.audioService.stop();
     this.audioService.setPlayingTrack(this.track);
   }
 
   private async setCloudFiles(): Promise<void> {
     const files: CloudFiles = await this.cloudService.getFiles(
-      this.track.playlistId
+      this.track.playlistId as string
     );
     this.cloudService.setFiles(files);
   }

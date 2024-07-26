@@ -70,7 +70,7 @@ export class CloudService {
   private extractPlayableTracks(playlist: Playlist): TrackFile[] {
     return playlist.tracks.items
       .filter((item) => item.track && item.track.preview_url)
-      .map((item, index) => new TrackFileClass(item.track, index, playlist.id));
+      .map((item, index) => new TrackFileClass(item.track, index, playlist.id, undefined));
   }
 
   public async updateLikedStatus(

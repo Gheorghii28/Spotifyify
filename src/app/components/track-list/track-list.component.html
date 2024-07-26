@@ -1,6 +1,6 @@
 <div *ngIf="track" class="track c-pointer">
   <div class="track-number">
-    <div class="not-hover-actions">
+    <div *ngIf="state" class="not-hover-actions">
       <ng-container
         *ngIf="
           state.playing &&

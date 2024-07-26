@@ -6,7 +6,7 @@ export interface UserProfile {
     filter_enabled: boolean;
     filter_locked: boolean;
   };
-  external_urls: { spotify: string };
+  external_urls: ExternalUrls;
   followers: { href: string; total: number };
   href: string;
   id: string;
@@ -24,7 +24,7 @@ export interface Image {
 
 export interface Owner {
   display_name: string;
-  external_urls: { spotify: string };
+  external_urls: ExternalUrls;
   href: string;
   id: string;
   type: string;
@@ -34,7 +34,7 @@ export interface Owner {
 export interface Playlist {
   collaborative: boolean;
   description: string;
-  external_urls: { spotify: string };
+  external_urls: ExternalUrls;
   followers?: { href: string; total: number };
   href: string;
   id: string;
@@ -77,8 +77,8 @@ export interface Track {
   disc_number: number;
   duration_ms: number;
   explicit: boolean;
-  external_ids: { isrc: string };
-  external_urls: { spotify: string };
+  external_ids: ExternalIds;
+  external_urls: ExternalUrls;
   href: string;
   id: string;
   is_local: boolean;
@@ -94,7 +94,7 @@ export interface Album {
   album_type: string;
   artists: Artist[];
   available_markets: string[];
-  external_urls: { spotify: string };
+  external_urls: ExternalUrls;
   href: string;
   id: string;
   images: Image[];
@@ -107,7 +107,7 @@ export interface Album {
 }
 
 export interface Artist {
-  external_urls: { spotify: string };
+  external_urls: ExternalUrls;
   followers: {
     href: string;
     total: number;
@@ -165,4 +165,32 @@ export interface SpotifySearchResult {
   offset: number;
   previous: string | null;
   total: number;
+}
+
+export interface SpotifySearchTrack {
+  album: Album;
+  artists: Artist[];
+  available_markets: string[];
+  disc_number: number;
+  duration_ms: number;
+  explicit: boolean;
+  external_ids: ExternalIds;
+  external_urls: ExternalUrls;
+  href: string;
+  id: string;
+  is_local: boolean;
+  name: string;
+  popularity: number;
+  preview_url: string | null;
+  track_number: number;
+  type: string;
+  uri: string;
+}
+
+interface ExternalUrls {
+  spotify: string;
+}
+
+interface ExternalIds {
+  isrc: string;
 }

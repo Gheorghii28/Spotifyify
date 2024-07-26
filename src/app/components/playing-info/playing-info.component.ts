@@ -54,7 +54,9 @@ export class PlayingInfoComponent implements OnInit, OnDestroy {
       .subscribe((track: TrackFile) => {
         if (track) {
           this.playingTrack = track;
-          this.loadPlaylistForCurrentTrack(track);
+          if (track.playlistId) {
+            this.loadPlaylistForCurrentTrack(track);
+          }
           this.loadArtists(track);
         }
       });
@@ -66,7 +68,7 @@ export class PlayingInfoComponent implements OnInit, OnDestroy {
     );
     if (tracks.items) {
       const track: Track = tracks.items[0].track;
-      this.playingTrack = new TrackFileClass(track, 0, '');
+      this.playingTrack = new TrackFileClass(track, 0, '', undefined);
       this.loadArtists(this.playingTrack);
     }
   }

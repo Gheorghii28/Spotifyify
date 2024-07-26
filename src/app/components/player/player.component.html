@@ -7,22 +7,17 @@
   <div class="song-bar">
     <div class="song-infos">
       <div class="image-container">
-        <img src="{{ files.imageUrl }}" alt="" />
+        <img src="{{ getImageUrl }}" alt="" />
       </div>
-      <div class="song-description" *ngIf="files.tracks[playingTrack.index]">
+      <div class="song-description">
         <span
           class="title m-3 overflow-ellipsis hover-effect-underline c-pointer"
-          >{{ files.tracks[playingTrack.index].name }}</span
+          >{{ getName }}</span
         >
         <span
           class="artist m-3 overflow-ellipsis hover-effect-underline c-pointer"
         >
-          <ng-container
-            *ngFor="
-              let artist of files.tracks[playingTrack.index].artists;
-              let last = last
-            "
-          >
+          <ng-container *ngFor="let artist of getArtists; let last = last">
             {{ artist.name }}
             <ng-container *ngIf="!last">,</ng-container>
           </ng-container>
@@ -31,7 +26,7 @@
     </div>
     <app-like-button
       [trackId]="playingTrack.id"
-      [likedStatus]="files.tracks[playingTrack.index].likedStatus"
+      [likedStatus]="getLikedStatus"
     ></app-like-button>
   </div>
   <div class="progress-controller">
@@ -47,7 +42,7 @@
       <button
         mat-icon-button
         class="hover-effect-on-icons"
-        [disabled]="isFirstPlaying()"
+        [disabled]="isFirstPlaying"
         (click)="previous()"
       >
         <span class="material-symbols-outlined"> skip_previous </span>
@@ -78,7 +73,7 @@
       <button
         mat-icon-button
         class="hover-effect-on-icons"
-        [disabled]="isLastPlaying()"
+        [disabled]="isLastPlaying"
         (click)="next()"
       >
         <span class="material-symbols-outlined"> skip_next </span>
@@ -131,8 +126,6 @@
 <div
   class="overlay"
   *ngIf="isFullScreen"
-  [style.background-image]="
-    isFullScreen ? 'url(' + files.tracks[playingTrack.index].img + ')' : ''
-  "
+  [style.background-image]="isFullScreen ? 'url(' + getImageUrl + ')' : ''"
 ></div>
 <div class="shadow" *ngIf="isFullScreen"></div>
