@@ -1,5 +1,7 @@
 .section-tracks {
   padding-right: 12px;
+  display: flex;
+  flex-direction: column;
 }
 .section-playlists {
   display: flex;
