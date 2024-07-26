@@ -1,14 +1,8 @@
-import {
-  Component,
-  Inject,
-  OnDestroy,
-  OnInit,
-  PLATFORM_ID,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ViewHeaderComponent } from '../../components/view-header/view-header.component';
 import { TrackListComponent } from '../../components/track-list/track-list.component';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { CloudFiles, TrackFile } from '../../models/cloud.model';
 import { CloudService } from '../../services/cloud.service';
 import { Subscription } from 'rxjs';
@@ -16,6 +10,7 @@ import { CustomScrollbarDirective } from '../../directives/custom-scrollbar.dire
 import { StreamState } from '../../models/stream-state.model';
 import { AudioService } from '../../services/audio.service';
 import { PlatformDetectionService } from '../../services/platform-detection.service';
+import { TrackListHeaderComponent } from '../../components/track-list-header/track-list-header.component';
 
 @Component({
   selector: 'app-playlist',
@@ -25,6 +20,7 @@ import { PlatformDetectionService } from '../../services/platform-detection.serv
     TrackListComponent,
     CommonModule,
     CustomScrollbarDirective,
+    TrackListHeaderComponent,
   ],
   templateUrl: './playlist.component.html',
   styleUrl: './playlist.component.scss',

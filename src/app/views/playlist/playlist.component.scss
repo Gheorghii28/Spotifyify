@@ -3,30 +3,4 @@
   flex-flow: column wrap;
   margin-bottom: 15px;
   padding-right: 12px;
-  .tracks-heading {
-    color: var(--light-grey-color);
-    height: 42px;
-    display: flex;
-    flex-flow: row wrap;
-    align-items: center;
-    .tracks-heading-number {
-      margin-left: 10px;
-      font-style: italic;
-    }
-    .tracks-heading-title {
-      margin-left: 70px;
-      width: 45%;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    .tracks-heading-length {
-      margin-left: auto;
-      font-size: 20px;
-    }
-    .tracks-heading-popularity {
-      font-size: 20px;
-      margin-left: 55px;
-      padding-right: 10px;
-    }
-  }
 }

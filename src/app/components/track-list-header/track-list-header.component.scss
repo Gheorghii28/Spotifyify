@@ -1,0 +1,29 @@
+.track-list-header {
+  color: var(--light-grey-color);
+  height: 42px;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  .track-list-header-number {
+    margin-left: 22px;
+    font-style: italic;
+  }
+  .track-list-header-title {
+    width: 45%;
+    margin-left: 15px;
+    margin-right: auto;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .track-list-header-recommend {
+    font-size: 20px;
+    width: 60px;
+    display: flex;
+    justify-content: center;
+  }
+  .track-list-header-pace {
+    width: 35px;
+    margin-left: 10px;
+    font-size: 20px;
+  }
+}

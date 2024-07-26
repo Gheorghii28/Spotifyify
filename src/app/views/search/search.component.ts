@@ -20,6 +20,7 @@ import { StreamState } from '../../models/stream-state.model';
 import { Subscription } from 'rxjs';
 import { AudioService } from '../../services/audio.service';
 import { SpotifyService } from '../../services/spotify.service';
+import { TrackListHeaderComponent } from '../../components/track-list-header/track-list-header.component';
 
 @Component({
   selector: 'app-search',
@@ -30,6 +31,7 @@ import { SpotifyService } from '../../services/spotify.service';
     CommonModule,
     TrackListComponent,
     CardComponent,
+    TrackListHeaderComponent
   ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',

@@ -5,6 +5,7 @@
   ></app-search-bar
 ></app-header>
 <div class="section-tracks">
+  <app-track-list-header *ngIf="tracks!.length > 0"></app-track-list-header>
   <ng-container *ngFor="let track of tracks; let i = index">
     <app-track-list
       [track]="track"
