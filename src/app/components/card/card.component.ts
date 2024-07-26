@@ -21,4 +21,8 @@ export class CardComponent {
   navigateToPlaylist(id: string): void {
     this.router.navigate(['/playlist', id]);
   }
+
+  public get imgUrl(): string {
+    return this.data?.images?.[0]?.url || '';
+  }
 }
