@@ -3,6 +3,9 @@ import { SpotifyService } from '../../../services/spotify.service';
 import { CommonModule } from '@angular/common';
 import { CloudService } from '../../../services/cloud.service';
 import { TracksObject } from '../../../models/spotify.model';
+import { TrackFile } from '../../../models/cloud.model';
+import { Subscription } from 'rxjs';
+import { AudioService } from '../../../services/audio.service';
 
 @Component({
   selector: 'app-like-button',
@@ -15,10 +18,32 @@ export class LikeButtonComponent {
   @Input() trackId!: string;
   @Input() likedStatus!: boolean;
 
+  public playingTrack!: TrackFile;
+  private playingTrackSubscription!: Subscription;
+
   constructor(
     private spotifyService: SpotifyService,
-    private cloudService: CloudService
+    private cloudService: CloudService,
+    private audioService: AudioService
   ) {}
+
+  ngOnInit(): void {
+    this.subscribeTo();
+  }
+
+  ngOnDestroy(): void {
+    this.playingTrackSubscription.unsubscribe();
+  }
+
+  private subscribeTo(): void {
+    this.playingTrackSubscription = this.audioService
+      .observePlayingTrack()
+      .subscribe((track: TrackFile) => {
+        if (track) {
+          this.playingTrack = track;
+        }
+      });
+  }
 
   public async toogleLiked(): Promise<void> {
     if (this.likedStatus) {
@@ -32,6 +57,11 @@ export class LikeButtonComponent {
 
   private async updateLikedStatus(id: string): Promise<void> {
     const likedStatus = await this.spotifyService.fetchLikedStatusForTrack(id);
+    this.likedStatus = likedStatus;
+    if (id === this.playingTrack.id) {
+      this.playingTrack.likedStatus = likedStatus;
+      this.audioService.setPlayingTrack(this.playingTrack);
+    }
     this.cloudService.updateLikedStatus(id, likedStatus);
   }
 

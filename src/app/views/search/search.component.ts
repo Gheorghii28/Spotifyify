@@ -19,6 +19,7 @@ import { CloudService } from '../../services/cloud.service';
 import { StreamState } from '../../models/stream-state.model';
 import { Subscription } from 'rxjs';
 import { AudioService } from '../../services/audio.service';
+import { SpotifyService } from '../../services/spotify.service';
 
 @Component({
   selector: 'app-search',
@@ -47,7 +48,8 @@ export class SearchComponent {
   constructor(
     private location: Location,
     private cloudService: CloudService,
-    public audioService: AudioService
+    public audioService: AudioService,
+    private spotifyService: SpotifyService
   ) {}
 
   ngOnInit() {
@@ -84,22 +86,57 @@ export class SearchComponent {
     this.userProfile = state?.user;
   }
 
-  public onSearchResultsChange(results: SpotifySearchResults | null): void {
+  public async onSearchResultsChange(
+    results: SpotifySearchResults | null
+  ): Promise<void> {
     this.tracks = [];
     this.playlists = [];
     if (results) {
-      this.tracks = this.getFilteredTracks(results);
+      this.tracks = await this.getFilteredTracks(results);
       this.playlists = results.playlists?.items || [];
     }
   }
 
-  private getFilteredTracks(results: SpotifySearchResults | null): TrackFile[] {
-    return (
-      results?.tracks?.items.filter(
-        (track: SpotifySearchTrack) => track.preview_url !== null
-      ) || []
-    ).map((track: any, index: number) => {
-      return new TrackFileClass(track, index, undefined, track.album.id);
-    });
+  private async getFilteredTracks(
+    results: SpotifySearchResults | null
+  ): Promise<TrackFile[]> {
+    if (!results || !results.tracks || !results.tracks.items) {
+      return [];
+    }
+    const filteredTracks = this.filterTracksWithPreviewUrl(
+      results.tracks.items
+    );
+    const trackFiles = await this.createTrackFilesWithLikedStatus(
+      filteredTracks
+    );
+    return trackFiles;
+  }
+
+  private filterTracksWithPreviewUrl(
+    tracks: SpotifySearchTrack[]
+  ): SpotifySearchTrack[] {
+    return tracks.filter((track) => track.preview_url !== null);
+  }
+
+  private async createTrackFilesWithLikedStatus(
+    tracks: SpotifySearchTrack[]
+  ): Promise<TrackFile[]> {
+    return Promise.all(
+      tracks.map(async (track, index) => {
+        const searchedTrack = this.createTrackFile(track, index);
+        searchedTrack.likedStatus = await this.fetchLikedStatus(
+          searchedTrack.id
+        );
+        return searchedTrack;
+      })
+    );
+  }
+
+  private createTrackFile(track: SpotifySearchTrack, index: number): TrackFile {
+    return new TrackFileClass(track, index, undefined, track.album.id);
+  }
+
+  private async fetchLikedStatus(trackId: string): Promise<boolean> {
+    return this.spotifyService.fetchLikedStatusForTrack(trackId);
   }
 }

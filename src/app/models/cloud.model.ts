@@ -1,4 +1,4 @@
-import { Artist, Playlist, Track } from './spotify.model';
+import { Artist, Playlist, SpotifySearchTrack, Track } from './spotify.model';
 
 export interface CloudFiles {
   name: string;
@@ -65,7 +65,7 @@ export class TrackFileClass implements TrackFile {
   likedStatus: boolean;
 
   constructor(
-    track: Track,
+    track: Track | SpotifySearchTrack,
     index: number,
     playlistId: string | undefined,
     albumId: string | undefined
@@ -75,7 +75,7 @@ export class TrackFileClass implements TrackFile {
     this.artists = this.getArtists(track.artists);
     this.durationMs = track.duration_ms;
     this.id = track.id;
-    this.previewUrl = track.preview_url;
+    this.previewUrl = track.preview_url as string;
     this.index = index;
     this.img = track.album.images[0].url;
     this.playlistId = playlistId;

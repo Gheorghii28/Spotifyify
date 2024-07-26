@@ -84,8 +84,10 @@ export class PlayerComponent implements OnInit, OnDestroy {
       .observePlayingTrack()
       .subscribe((track: TrackFile) => {
         if (track) {
+          if (this.playingTrack?.id !== track.id) {
+            this.playAudio(track, this.files);
+          }
           this.playingTrack = track;
-          this.playAudio(track, this.files);
         }
       });
   }
