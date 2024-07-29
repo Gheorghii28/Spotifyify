@@ -7,11 +7,10 @@
   flex-flow: row wrap;
   align-items: center;
   .user {
-    width: 300px;
     margin-left: auto;
     display: flex;
     flex-flow: row wrap;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     .user-info {
       display: flex;

@@ -1,23 +1,25 @@
-<app-header [user]="userProfile"
+<app-header resizeObserver (resize)="onResize($event)" [user]="userProfile"
   ><app-search-bar
     class="search-bar"
     (searchResultsChange)="onSearchResultsChange($event)"
   ></app-search-bar
 ></app-header>
-<div class="section-tracks">
-  <app-track-list-header *ngIf="tracks!.length > 0"></app-track-list-header>
-  <ng-container *ngFor="let track of tracks; let i = index">
-    <app-track-list
-      [track]="track"
-      [trackIndex]="i"
-      [files]="playlistFile"
-      [playingTrack]="playingTrack"
-      [state]="state"
-    ></app-track-list>
-  </ng-container>
-</div>
-<div class="section-playlists">
-  <ng-container *ngFor="let playlist of playlists">
-    <app-card [data]="playlist"></app-card
-  ></ng-container>
+<div class="container">
+  <div class="section-tracks">
+    <app-track-list-header *ngIf="tracks!.length > 0"></app-track-list-header>
+    <ng-container *ngFor="let track of tracks; let i = index">
+      <app-track-list
+        [track]="track"
+        [trackIndex]="i"
+        [files]="playlistFile"
+        [playingTrack]="playingTrack"
+        [state]="state"
+      ></app-track-list>
+    </ng-container>
+  </div>
+  <div class="section-playlists">
+    <ng-container *ngFor="let playlist of playlists">
+      <app-card [data]="playlist"></app-card
+    ></ng-container>
+  </div>
 </div>

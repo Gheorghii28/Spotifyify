@@ -1,4 +1,11 @@
-import { Component } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { HeaderComponent } from '../../layout/header/header.component';
 import {
   Playlist,
@@ -21,7 +28,12 @@ import { Subscription } from 'rxjs';
 import { AudioService } from '../../services/audio.service';
 import { SpotifyService } from '../../services/spotify.service';
 import { TrackListHeaderComponent } from '../../components/track-list-header/track-list-header.component';
+import { ResizeObserverDirective } from '../../directives/resize-observer.directive';
 
+interface ElementConfig {
+  nativeElement: HTMLElement | undefined;
+  threshold: number;
+}
 @Component({
   selector: 'app-search',
   standalone: true,
@@ -31,12 +43,14 @@ import { TrackListHeaderComponent } from '../../components/track-list-header/tra
     CommonModule,
     TrackListComponent,
     CardComponent,
-    TrackListHeaderComponent
+    TrackListHeaderComponent,
+    ResizeObserverDirective,
   ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
 })
-export class SearchComponent {
+export class SearchComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild(HeaderComponent) headerComponent!: HeaderComponent;
   public userProfile!: UserProfile;
   tracks: TrackFile[] = [];
   playlists: Playlist[] = [];
@@ -46,6 +60,12 @@ export class SearchComponent {
   private cloudSubscription!: Subscription;
   private stateSubscription!: Subscription;
   private playingTrackSubscription!: Subscription;
+  private elements: { [key in keyof HeaderComponent]?: ElementConfig } = {
+    userNotifications: { nativeElement: undefined, threshold: 630 },
+    userInbox: { nativeElement: undefined, threshold: 520 },
+    userName: { nativeElement: undefined, threshold: 470 },
+    userInfo: { nativeElement: undefined, threshold: 420 },
+  };
 
   constructor(
     private location: Location,
@@ -57,6 +77,10 @@ export class SearchComponent {
   ngOnInit() {
     this.setUserProfileFromState();
     this.subscribeTo();
+  }
+
+  ngAfterViewInit(): void {
+    this.initializeElements();
   }
 
   ngOnDestroy(): void {
@@ -140,5 +164,33 @@ export class SearchComponent {
 
   private async fetchLikedStatus(trackId: string): Promise<boolean> {
     return this.spotifyService.fetchLikedStatusForTrack(trackId);
+  }
+
+  private initializeElements(): void {
+    for (const key in this.elements) {
+      if (this.elements.hasOwnProperty(key)) {
+        const elementRef = this.headerComponent[
+          key as keyof HeaderComponent
+        ] as ElementRef | undefined;
+        if (elementRef) {
+          this.elements[key as keyof HeaderComponent]!.nativeElement =
+            elementRef.nativeElement;
+        }
+      }
+    }
+  }
+
+  public onResize(event: ResizeObserverEntry): void {
+    const width = event.contentRect.width;
+
+    for (const key in this.elements) {
+      if (this.elements.hasOwnProperty(key)) {
+        const element = this.elements[key as keyof HeaderComponent];
+        if (element?.nativeElement) {
+          element.nativeElement.style.display =
+            width < element.threshold ? 'none' : '';
+        }
+      }
+    }
   }
 }

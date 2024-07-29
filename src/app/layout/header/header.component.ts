@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { UserProfile } from '../../models/spotify.model';
@@ -14,6 +14,11 @@ import { UserMenuComponent } from '../../components/user-menu/user-menu.componen
 })
 export class HeaderComponent {
   @Input() user!: UserProfile;
-
+  @ViewChild('userNotifications', { read: ElementRef })
+  userNotifications!: ElementRef;
+  @ViewChild('userInbox', { read: ElementRef }) userInbox!: ElementRef;
+  @ViewChild('userInfo', { read: ElementRef }) userInfo!: ElementRef;
+  @ViewChild('userName', { read: ElementRef }) userName!: ElementRef;
+  public userProfile!: UserProfile;
   constructor() {}
 }
