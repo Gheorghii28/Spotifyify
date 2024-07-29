@@ -1,4 +1,4 @@
-<section>
+<section resizeObserver (resize)="onResize($event)">
   <h2 *ngIf="data">{{ data.message }}</h2>
   <div class="section-container" (scroll)="onScroll($event)">
     <ng-container *ngFor="let item of displayedItems">

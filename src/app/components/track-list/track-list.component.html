@@ -1,4 +1,4 @@
-<div *ngIf="track" class="track c-pointer">
+<div resizeObserver (resize)="onResize($event)" *ngIf="track" class="track c-pointer">
   <div class="track-number">
     <div *ngIf="state" class="not-hover-actions">
       <ng-container

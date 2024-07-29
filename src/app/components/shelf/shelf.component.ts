@@ -1,72 +1,43 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  HostListener,
-  Input,
-  NgZone,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { Component, HostListener, Input, OnInit } from '@angular/core';
 import { CardComponent } from '../card/card.component';
 import { CommonModule } from '@angular/common';
 import { Playlist, ShelfData } from '../../models/spotify.model';
 import { SpotifyService } from '../../services/spotify.service';
+import { ResizeObserverDirective } from '../../directives/resize-observer.directive';
 
 @Component({
   selector: 'app-shelf',
   standalone: true,
-  imports: [CardComponent, CommonModule],
+  imports: [CardComponent, CommonModule, ResizeObserverDirective],
   templateUrl: './shelf.component.html',
   styleUrl: './shelf.component.scss',
 })
-export class ShelfComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ShelfComponent implements OnInit {
   @Input() endpoint!: string;
   data!: ShelfData;
   displayedItems: Playlist[] = [];
-  private observer!: ResizeObserver;
   private currentIndex: number = 0;
   private firstChildWidth!: number;
   private cardWidth: number = 200;
 
-  constructor(
-    private spotifyService: SpotifyService,
-    private host: ElementRef,
-    private zone: NgZone
-  ) {}
+  constructor(private spotifyService: SpotifyService) {}
 
   ngOnInit(): void {
     this.fetchAndStoreEndpointData();
   }
 
-  ngAfterViewInit(): void {
-    this.initializeResizeObserver();
-  }
-
-  ngOnDestroy(): void {
-    this.observer.unobserve(this.host.nativeElement);
-  }
-
-  private initializeResizeObserver(): void {
-    const firstChild = this.host.nativeElement.firstElementChild;
-    if (firstChild) {
-      this.observer = new ResizeObserver((entries) =>
-        this.handleResize(entries)
-      );
-      this.observer.observe(firstChild);
+  @HostListener('scroll', ['$event'])
+  onScroll(event: any): void {
+    const nativeElement = event.target as HTMLElement;
+    if (this.isScrolledToRightEnd(nativeElement)) {
+      this.loadMoreItems();
     }
   }
 
-  private handleResize(entries: ResizeObserverEntry[]): void {
-    if (entries.length === 0) return;
-
-    const entry = entries[0];
-    const widthResizeEl = entry.contentRect.width;
-
-    this.zone.run(() => {
-      this.firstChildWidth = widthResizeEl;
-      this.loadMoreItems();
-    });
+  public onResize(event: ResizeObserverEntry): void {
+    const width = event.contentRect.width;
+    this.firstChildWidth = width;
+    this.loadMoreItems();
   }
 
   private async fetchAndStoreEndpointData(): Promise<void> {
@@ -75,14 +46,6 @@ export class ShelfComponent implements OnInit, AfterViewInit, OnDestroy {
       this.loadMoreItems();
     } catch (error) {
       console.error('Error fetching data:', error);
-    }
-  }
-  
-  @HostListener('scroll', ['$event'])
-  onScroll(event: any): void {
-    const nativeElement = event.target as HTMLElement;
-    if (this.isScrolledToRightEnd(nativeElement)) {
-      this.loadMoreItems();
     }
   }
 
