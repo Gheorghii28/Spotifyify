@@ -11,6 +11,7 @@ import { StreamState } from '../../models/stream-state.model';
 import { AudioService } from '../../services/audio.service';
 import { PlatformDetectionService } from '../../services/platform-detection.service';
 import { TrackListHeaderComponent } from '../../components/track-list-header/track-list-header.component';
+import { BtnPlayComponent } from '../../components/buttons/btn-play/btn-play.component';
 
 @Component({
   selector: 'app-playlist',
@@ -21,6 +22,7 @@ import { TrackListHeaderComponent } from '../../components/track-list-header/tra
     CommonModule,
     CustomScrollbarDirective,
     TrackListHeaderComponent,
+    BtnPlayComponent,
   ],
   templateUrl: './playlist.component.html',
   styleUrl: './playlist.component.scss',

@@ -33,6 +33,13 @@ export const routes: Routes = [
             (m) => m.SearchComponent
           ),
       },
+      {
+        path: 'my-tracks',
+        loadComponent: () =>
+          import('./views/my-tracks/my-tracks.component').then(
+            (m) => m.MyTracksComponent
+          ),
+      },
     ],
   },
   { path: 'login', component: LoginComponent },

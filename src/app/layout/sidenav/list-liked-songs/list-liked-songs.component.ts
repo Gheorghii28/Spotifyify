@@ -4,7 +4,6 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DrawerService } from '../../../services/drawer.service';
-import { TracksObject } from '../../../models/spotify.model';
 
 @Component({
   selector: 'app-list-liked-songs',
@@ -15,14 +14,17 @@ import { TracksObject } from '../../../models/spotify.model';
 })
 export class ListLikedSongsComponent {
   @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
-  @Input() myTracks!: TracksObject;
+  @Input() myTracksTotal!: number;
   @Input() sidenavExpanded!: boolean;
   public sidenavWidth!: number;
   private sidenavWidthSubscription!: Subscription;
   public btnExpandedStyles = { width: '100%', padding: '8px' };
   public btnCollapsedStyles = { width: '48px', padding: 0 };
 
-  constructor(private drawerService: DrawerService, private router: Router) {
+  constructor(
+    private drawerService: DrawerService,
+    private router: Router
+  ) {
     this.subscribeTo();
   }
 
@@ -39,6 +41,6 @@ export class ListLikedSongsComponent {
   }
 
   public navigateToPlaylist(): void {
-    this.router.navigate(['/collection', 'tracks']);
+    this.router.navigate(['/my-tracks']);
   }
 }

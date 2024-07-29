@@ -142,7 +142,7 @@ export interface TracksObject {
   total: number;
 }
 
-interface TracksObjectItem {
+export interface TracksObjectItem {
   added_at: string;
   track: Track;
 }

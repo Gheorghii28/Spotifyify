@@ -90,3 +90,29 @@ export class TrackFileClass implements TrackFile {
     }));
   }
 }
+
+export interface MyTracks {
+  color: string;
+  imageUrl: string | undefined;
+  name: string;
+  type: string;
+  description: string;
+  tracks?: TrackFile[]
+}
+
+export class MyTracksClass implements MyTracks {
+  color: string;
+  imageUrl: string | undefined;
+  name: string;
+  type: string;
+  description: string;
+
+  constructor() {
+    this.color = '#460bf3';
+    this.imageUrl = undefined;
+    this.name = 'Liked Songs';
+    this.type = 'my tracks';
+    this.description =
+      'A collection of songs that I have liked over time. These tracks are my personal favorites and reflect my music taste.';
+  }
+}

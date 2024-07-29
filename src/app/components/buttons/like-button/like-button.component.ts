@@ -58,9 +58,11 @@ export class LikeButtonComponent {
   private async updateLikedStatus(id: string): Promise<void> {
     const likedStatus = await this.spotifyService.fetchLikedStatusForTrack(id);
     this.likedStatus = likedStatus;
-    if (id === this.playingTrack.id) {
-      this.playingTrack.likedStatus = likedStatus;
-      this.audioService.setPlayingTrack(this.playingTrack);
+    if (this.playingTrack) {
+      if (id === this.playingTrack.id) {
+        this.playingTrack.likedStatus = likedStatus;
+        this.audioService.setPlayingTrack(this.playingTrack);
+      }
     }
     this.cloudService.updateLikedStatus(id, likedStatus);
   }

@@ -53,7 +53,7 @@ export class SidenavComponent implements OnDestroy, OnInit {
   @Input() userProfile!: UserProfile;
   sidenavExpanded!: boolean;
   myPlaylists!: PlaylistsObject;
-  myTracks!: TracksObject;
+  myTracksTotal!: number;
   private movedToFolderStatus!: boolean;
   private sidenavExpandedSubscription!: Subscription;
   private myPlaylistsSubscription!: Subscription;
@@ -117,7 +117,7 @@ export class SidenavComponent implements OnDestroy, OnInit {
     this.myTracksSubscription = this.cloudService
       .observeMyTracks()
       .subscribe((tracks: TracksObject) => {
-        this.myTracks = tracks;
+        this.myTracksTotal = tracks.total;
       });
     this.movedToFolderStatusSubscription = this.utilsService
       .observeToFolderStatus()
