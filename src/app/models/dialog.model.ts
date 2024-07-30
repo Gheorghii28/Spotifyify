@@ -9,3 +9,14 @@ export interface DialogRemoveFolderData {
   userFirebaseData: UserFirebaseData;
   folder: UserFolder;
 }
+
+export interface DialogRemoveTrackData {
+  playlistId: string;
+  snapshot_id: string;
+  uri: string;
+}
+
+export interface DialogAddTrackData {
+  position: number;
+  uri: string;
+}

@@ -112,6 +112,9 @@ export class SidenavComponent implements OnDestroy, OnInit {
       .observeMyPlaylists()
       .subscribe((playlists: PlaylistsObject) => {
         this.myPlaylists = playlists;
+        if (this.userFirebaseData) {
+          this.updateFirebaseWithMyPlaylists();
+        }
         this.findUnassignedPlaylists();
       });
     this.myTracksSubscription = this.cloudService
@@ -144,7 +147,7 @@ export class SidenavComponent implements OnDestroy, OnInit {
         folderAssignedPlaylistIds.add(assignedPlaylist.id);
       });
     });
-    this.folderUnassignedPlaylists = this.myPlaylists.items.filter(
+    this.folderUnassignedPlaylists = this.myPlaylists.items?.filter(
       (playlist) => !folderAssignedPlaylistIds.has(playlist.id)
     );
   }
@@ -160,5 +163,21 @@ export class SidenavComponent implements OnDestroy, OnInit {
         folders: [...this.userFirebaseData.folders],
       });
     }
+  }
+
+  private updateFirebaseWithMyPlaylists(): void {
+    const items: Playlist[] = this.myPlaylists.items;
+    const userData: UserFirebaseData = this.userFirebaseData;
+    userData.folders.forEach((folder: UserFolder) => {
+      folder.playlists.forEach((playlist: Playlist) => {
+        const matchedPlaylist = items.find((item) => item.id === playlist.id);
+        if (matchedPlaylist && matchedPlaylist.tracks) {
+          playlist.tracks.total = matchedPlaylist.tracks.total;
+        }
+      });
+    });
+    this.firebaseService.updateDocument('users', this.userProfile.id, {
+      folders: [...userData.folders],
+    });
   }
 }

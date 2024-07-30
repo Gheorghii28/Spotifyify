@@ -10,15 +10,21 @@ export class SpotifyService {
   async fetchWebApi(
     endpoint: string,
     method: string,
-    responseType: 'json' | 'text'
+    responseType: 'json' | 'text',
+    body: any = undefined
   ) {
     const token = this.tokenService.getAccessToken();
-    const res = await fetch(`https://api.spotify.com/${endpoint}`, {
+    const options: RequestInit = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
       method,
-    });
+    };
+    if (body) {
+      const bodyAsStringify = JSON.stringify(body);
+      options.body = bodyAsStringify;
+    }
+    const res = await fetch(`https://api.spotify.com/${endpoint}`, options);
     if (responseType === 'json') {
       return await res.json();
     } else {
@@ -53,8 +59,8 @@ export class SpotifyService {
     return await this.fetchWebApi(`v1/${endpoint}`, 'PUT', 'text');
   }
 
-  async removeSpotifyData(endpoint: string) {
-    return await this.fetchWebApi(`v1/${endpoint}`, 'DELETE', 'text');
+  async removeSpotifyData(endpoint: string, body: any = undefined) {
+    return await this.fetchWebApi(`v1/${endpoint}`, 'DELETE', 'text', body);
   }
 
   async fetchLikedStatusForTrack(id: string) {

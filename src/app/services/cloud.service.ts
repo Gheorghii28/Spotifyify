@@ -6,7 +6,11 @@ import {
   TrackFile,
   TrackFileClass,
 } from '../models/cloud.model';
-import { Playlist, PlaylistsObject, TracksObject } from '../models/spotify.model';
+import {
+  Playlist,
+  PlaylistsObject,
+  TracksObject,
+} from '../models/spotify.model';
 import { SpotifyService } from './spotify.service';
 
 @Injectable({
@@ -22,6 +26,7 @@ export class CloudService {
     tracks: [],
     type: '',
     color: '',
+    snapshot_id: ';',
   };
   private files$: BehaviorSubject<any> = new BehaviorSubject(this.initialFiles);
   private myPlaylists$: BehaviorSubject<any> = new BehaviorSubject({});
@@ -68,9 +73,15 @@ export class CloudService {
   }
 
   private extractPlayableTracks(playlist: Playlist): TrackFile[] {
-    return playlist.tracks.items
-      .filter((item) => item.track && item.track.preview_url)
-      .map((item, index) => new TrackFileClass(item.track, index, playlist.id, undefined));
+    if (playlist.tracks.items) {
+      return playlist.tracks.items
+        .filter((item) => item.track && item.track.preview_url)
+        .map(
+          (item, index) =>
+            new TrackFileClass(item.track, index, playlist.id, undefined)
+        );
+    }
+    return [];
   }
 
   public async updateLikedStatus(

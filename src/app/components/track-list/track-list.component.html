@@ -1,5 +1,6 @@
 <div
   resizeObserver
+  (contextmenu)="onContextMenu($event)"
   (resize)="onResize($event)"
   (mouseenter)="onMouseEnter()"
   (mouseleave)="onMouseLeave()"
@@ -27,3 +28,27 @@
   ></app-like-button>
   <div class="track-length">{{ track.durationMs | date : "mm:ss" }}</div>
 </div>
+<div
+  style="visibility: hidden; position: fixed"
+  [style.left]="contextMenuPosition.x"
+  [style.top]="contextMenuPosition.y"
+  [matMenuTriggerFor]="contextMenu"
+></div>
+<mat-menu #contextMenu="matMenu">
+  <ng-template matMenuContent let-item="item">
+    <app-custom-button
+      [icon]="'playlist_remove'"
+      [text]="'Delete'"
+      [customClass]="'secondary'"
+      [sidenavExpanded]="true"
+      (clickEvent)="openRemoveDialog()"
+    ></app-custom-button>
+    <app-custom-button
+      [icon]="'playlist_add'"
+      [text]="'Add'"
+      [customClass]="'secondary'"
+      [sidenavExpanded]="true"
+      (clickEvent)="openAddDialog()"
+    ></app-custom-button>
+  </ng-template>
+</mat-menu>

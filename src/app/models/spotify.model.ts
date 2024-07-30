@@ -46,11 +46,11 @@ export interface Playlist {
   snapshot_id: string;
   tracks: {
     href: string;
-    items: any[];
-    limit: number;
-    next: string;
-    offset: number;
-    previous: string;
+    items?: any[];
+    limit?: number;
+    next?: string;
+    offset?: number;
+    previous?: string;
     total: number;
   };
   type: string;

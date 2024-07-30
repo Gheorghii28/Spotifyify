@@ -9,6 +9,7 @@ export interface CloudFiles {
   tracks: TrackFile[];
   type: string;
   color: string;
+  snapshot_id: string;
 }
 
 export interface TrackFile {
@@ -23,6 +24,7 @@ export interface TrackFile {
   playlistId?: string;
   albumId?: string;
   likedStatus: boolean;
+  uri: string;
 }
 
 export class CloudFilesClass implements CloudFiles {
@@ -34,6 +36,7 @@ export class CloudFilesClass implements CloudFiles {
   tracks: TrackFile[];
   type: string;
   color: string;
+  snapshot_id: string;
 
   constructor(file: Playlist, tracks: TrackFile[]) {
     this.name = file.name;
@@ -44,6 +47,7 @@ export class CloudFilesClass implements CloudFiles {
     this.tracks = tracks;
     this.type = file.type;
     this.color = file.primary_color;
+    this.snapshot_id = file.snapshot_id
   }
 
   private getImgUrl(file: Playlist): string | null {
@@ -63,6 +67,7 @@ export class TrackFileClass implements TrackFile {
   playlistId: string | undefined;
   albumId: string | undefined;
   likedStatus: boolean;
+  uri: string;
 
   constructor(
     track: Track | SpotifySearchTrack,
@@ -81,6 +86,7 @@ export class TrackFileClass implements TrackFile {
     this.playlistId = playlistId;
     this.albumId = albumId;
     this.likedStatus = false;
+    this.uri = track.uri;
   }
 
   private getArtists(artists: Artist[]): { name: string; id: string }[] {
@@ -97,7 +103,7 @@ export interface MyTracks {
   name: string;
   type: string;
   description: string;
-  tracks?: TrackFile[]
+  tracks?: TrackFile[];
 }
 
 export class MyTracksClass implements MyTracks {
