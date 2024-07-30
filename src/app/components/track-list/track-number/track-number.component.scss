@@ -1,0 +1,26 @@
+.track-number {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+  color: var(--light-grey-color);
+  width: 12px;
+}
+.btn-nr {
+  display: block;
+  app-soundwave {
+    display: flex;
+    justify-content: center;
+    width: 36px;
+  }
+  span {
+    display: block;
+    width: 36px;
+    text-align: center;
+  }
+}
+.btn-toggle {
+  display: block;
+}
+.hovered {
+  display: none !important;
+}

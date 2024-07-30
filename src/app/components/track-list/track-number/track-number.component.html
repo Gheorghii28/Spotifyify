@@ -1,0 +1,47 @@
+<div class="track-number">
+  <div *ngIf="state" class="btn-nr" [class.hovered]="isHovered">
+    <ng-container
+      *ngIf="
+        state.playing &&
+          playingTrack.index === trackIndex &&
+          playingTrack.playlistId === track.playlistId;
+        else soundNr
+      "
+    >
+      <app-soundwave></app-soundwave
+    ></ng-container>
+    <ng-template #soundNr>
+      <span>{{ trackIndex + 1 }}</span></ng-template
+    >
+  </div>
+  <button
+    class="btn-non-style btn-toggle" [class.hovered]="!isHovered"
+    *ngIf="state"
+    [disabled]="state.error"
+    (click)="togglePlayPause($event)"
+  >
+    <ng-container
+      *ngIf="
+        state.playing &&
+          playingTrack.index === trackIndex &&
+          playingTrack.playlistId === track.playlistId;
+        else playIcon
+      "
+    >
+      <span
+        class="material-symbols-outlined play-circle c-pointer"
+        style="font-size: 24px"
+      >
+        pause
+      </span></ng-container
+    >
+    <ng-template #playIcon>
+      <span
+        class="material-symbols-outlined play-circle c-pointer"
+        style="font-size: 24px"
+      >
+        play_arrow
+      </span></ng-template
+    >
+  </button>
+</div>

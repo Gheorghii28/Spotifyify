@@ -1,51 +1,19 @@
-<div resizeObserver (resize)="onResize($event)" *ngIf="track" class="track c-pointer">
-  <div class="track-number">
-    <div *ngIf="state" class="not-hover-actions">
-      <ng-container
-        *ngIf="
-          state.playing &&
-            playingTrack.index === trackIndex &&
-            playingTrack.playlistId === track.playlistId;
-          else soundNr
-        "
-      >
-        <app-soundwave></app-soundwave
-      ></ng-container>
-      <ng-template #soundNr>
-        <span>{{ trackIndex + 1 }}</span></ng-template
-      >
-    </div>
-    <button
-      class="btn-non-style hover-actions"
-      *ngIf="state"
-      [disabled]="state.error"
-      (click)="togglePlayPause($event)"
-    >
-      <ng-container
-        *ngIf="
-          state.playing &&
-            playingTrack.index === trackIndex &&
-            playingTrack.playlistId === track.playlistId;
-          else playIcon
-        "
-      >
-        <span
-          class="material-symbols-outlined play-circle c-pointer"
-          style="font-size: 24px"
-        >
-          pause
-        </span></ng-container
-      >
-      <ng-template #playIcon>
-        <span
-          class="material-symbols-outlined play-circle c-pointer"
-          style="font-size: 24px"
-        >
-          play_arrow
-        </span></ng-template
-      >
-    </button>
-  </div>
+<div
+  resizeObserver
+  (resize)="onResize($event)"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
+  *ngIf="track"
+  class="track c-pointer"
+>
+  <app-track-number
+    [state]="state"
+    [trackIndex]="trackIndex"
+    [files]="files"
+    [track]="track"
+    [playingTrack]="playingTrack"
+    [isHovered]="isHovered"
+  ></app-track-number>
   <img [src]="track.img" />
   <div class="track-title featured">
     <span class="title">{{ track.name }}</span>
@@ -53,6 +21,9 @@
       <span class="feature">{{ artist.name }}</span>
     </ng-container>
   </div>
-  <app-like-button [trackId]="track.id" [likedStatus]="track.likedStatus"></app-like-button>
+  <app-like-button
+    [trackId]="track.id"
+    [likedStatus]="track.likedStatus"
+  ></app-like-button>
   <div class="track-length">{{ track.durationMs | date : "mm:ss" }}</div>
 </div>

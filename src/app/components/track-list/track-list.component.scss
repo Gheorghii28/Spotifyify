@@ -6,38 +6,9 @@
   align-items: center;
   &:hover {
     background: var(--dark-grey-color);
-    .hover-actions {
-      display: block;
-    }
-    .not-hover-actions {
-      display: none;
-    }
   }
   &:last-child {
     border-bottom: 1px solid var(--dark-grey-color);
-  }
-  .hover-actions {
-    display: none;
-  }
-  .not-hover-actions {
-    display: block;
-    app-soundwave {
-      display: flex;
-      justify-content: center;
-      width: 36px;
-    }
-    span {
-      display: block;
-      width: 36px;
-      text-align: center;
-    }
-  }
-  .track-number {
-    display: flex;
-    align-items: center;
-    margin-left: 10px;
-    color: var(--light-grey-color);
-    width: 12px;
   }
   img {
     width: 30px;
