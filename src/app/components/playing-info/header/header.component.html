@@ -13,25 +13,25 @@
         [icon]="'add'"
         [text]="'Add to playlist'"
         [customClass]="'secondary'"
-        style="display: block; width: 202px"
+        style="display: block; width: 224px"
         [sidenavExpanded]="true"
-        (clickEvent)="clickEventFunction()"
+        (clickEvent)="openAddDialog()"
       ></app-custom-button>
       <app-custom-button
         [icon]="'delete'"
         [text]="'Remove from this playlist'"
         [customClass]="'secondary'"
-        style="display: block; width: 202px"
+        style="display: block; width: 224px"
         [sidenavExpanded]="true"
-        (clickEvent)="clickEventFunction()"
+        (clickEvent)="openRemoveDialog()"
       ></app-custom-button>
       <app-custom-button
         [icon]="'add_circle'"
         [text]="'Save to your Liked Songs'"
         [customClass]="'secondary'"
-        style="display: block; width: 202px"
+        style="display: block; width: 224px"
         [sidenavExpanded]="true"
-        (clickEvent)="clickEventFunction()"
+        (clickEvent)="saveToLikedSongs()"
       ></app-custom-button>
     </mat-menu>
     <button
