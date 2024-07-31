@@ -6,9 +6,29 @@
   <span class="material-symbols-outlined"> more_vert </span>
 </button>
 <mat-menu #menu="matMenu">
-  <button mat-menu-item>Account</button>
-  <button mat-menu-item>Profile</button>
-  <button mat-menu-item>Settings</button>
+  <app-custom-button
+    [icon]="'person'"
+    [text]="'Profile'"
+    [customClass]="'secondary'"
+    style="display: block; width: 202px"
+    [sidenavExpanded]="true"
+    (clickEvent)="toProfile()"
+  ></app-custom-button>
+  <app-custom-button
+    [icon]="'settings'"
+    [text]="'Settings'"
+    [customClass]="'secondary'"
+    style="display: block; width: 202px"
+    [sidenavExpanded]="true"
+    (clickEvent)="toSettings()"
+  ></app-custom-button>
   <mat-divider></mat-divider>
-  <button mat-menu-item (click)="logout()">Log Out</button>
+  <app-custom-button
+    [icon]="'logout'"
+    [text]="'Log Out'"
+    [customClass]="'secondary'"
+    style="display: block; width: 202px"
+    [sidenavExpanded]="true"
+    (clickEvent)="logout()"
+  ></app-custom-button>
 </mat-menu>
