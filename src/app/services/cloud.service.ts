@@ -17,7 +17,7 @@ import { SpotifyService } from './spotify.service';
   providedIn: 'root',
 })
 export class CloudService {
-  private initialFiles: CloudFiles = {
+  public initialFiles: CloudFiles = {
     name: '',
     description: '',
     followers: undefined,
@@ -27,6 +27,7 @@ export class CloudService {
     type: '',
     color: '',
     snapshot_id: ';',
+    isUserCreated: false,
   };
   private files$: BehaviorSubject<any> = new BehaviorSubject(this.initialFiles);
   private myPlaylists$: BehaviorSubject<any> = new BehaviorSubject({});

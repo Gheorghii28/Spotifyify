@@ -10,6 +10,7 @@ export interface CloudFiles {
   type: string;
   color: string;
   snapshot_id: string;
+  isUserCreated: boolean
 }
 
 export interface TrackFile {
@@ -37,6 +38,7 @@ export class CloudFilesClass implements CloudFiles {
   type: string;
   color: string;
   snapshot_id: string;
+  isUserCreated: boolean
 
   constructor(file: Playlist, tracks: TrackFile[]) {
     this.name = file.name;
@@ -48,6 +50,7 @@ export class CloudFilesClass implements CloudFiles {
     this.type = file.type;
     this.color = file.primary_color;
     this.snapshot_id = file.snapshot_id
+    this.isUserCreated = false;
   }
 
   private getImgUrl(file: Playlist): string | null {
