@@ -37,6 +37,7 @@
 <mat-menu #contextMenu="matMenu">
   <ng-template matMenuContent let-item="item">
     <app-custom-button
+      *ngIf="showDeleteBtn"
       [icon]="'playlist_remove'"
       [text]="'Delete'"
       [customClass]="'secondary'"

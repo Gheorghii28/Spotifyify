@@ -8,7 +8,11 @@
     <div info-actions>
       <app-btn-play class="mr-10" [playlistId]="playlistFile.id"></app-btn-play>
       <button class="button-light c-pointer">Follow</button>
-      <button mat-icon-button class="hover-effect-on-icons btn-non-style">
+      <button
+        [style.display]="!playlistFile.isUserCreated ? 'none' : ''"
+        mat-icon-button
+        class="hover-effect-on-icons btn-non-style"
+      >
         <span class="material-symbols-outlined"> more_vert </span>
       </button>
     </div>
@@ -23,6 +27,7 @@
       [files]="playlistFile"
       [playingTrack]="playingTrack"
       [state]="state"
+      [showDeleteBtn]="playlistFile.isUserCreated"
     ></app-track-list>
   </ng-container>
 </div>

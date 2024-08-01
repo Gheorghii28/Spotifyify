@@ -2,9 +2,7 @@
   ><app-view-header [data]="myTracks"></app-view-header
 ></ng-container>
 <div *ngIf="myTracks" class="tracks">
-  <app-track-list-header
-    *ngIf="myTracks.tracks"
-  ></app-track-list-header>
+  <app-track-list-header *ngIf="myTracks.tracks"></app-track-list-header>
   <ng-container *ngFor="let track of myTracks?.tracks; let i = index">
     <app-track-list
       [track]="track"
@@ -12,6 +10,7 @@
       [files]="playlistFile"
       [playingTrack]="playingTrack"
       [state]="state"
+      [showDeleteBtn]="false"
     ></app-track-list>
   </ng-container>
 </div>

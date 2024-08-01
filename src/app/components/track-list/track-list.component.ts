@@ -36,6 +36,7 @@ export class TrackListComponent {
   @Input() files!: CloudFiles;
   @Input() state!: StreamState;
   @Input() playingTrack!: TrackFile;
+  @Input() showDeleteBtn!: boolean;
   @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
   public contextMenuPosition = { x: '0px', y: '0px' };
   public isHovered = false;
