@@ -1,0 +1,8 @@
+<button
+  [ngClass]="{'following-color': isFollowing}"
+  class="button-light c-pointer"
+  (click)="toggleFollowing()"
+  [disabled]="isDisabled"
+>
+  {{ isFollowing ? 'Following' : 'Follow' }}
+</button>

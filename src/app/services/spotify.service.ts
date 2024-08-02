@@ -55,8 +55,8 @@ export class SpotifyService {
     return await this.fetchWebApi(`v1/${endpoint}`, 'GET', 'json');
   }
 
-  async updateSpotifyData(endpoint: string) {
-    return await this.fetchWebApi(`v1/${endpoint}`, 'PUT', 'text');
+  async updateSpotifyData(endpoint: string, body: any = undefined) {
+    return await this.fetchWebApi(`v1/${endpoint}`, 'PUT', 'text', body);
   }
 
   async removeSpotifyData(endpoint: string, body: any = undefined) {
@@ -73,5 +73,22 @@ export class SpotifyService {
   public async retrieveSpotifyData<T>(endpoint: string): Promise<T> {
     const response = await this.getSpotifyData(endpoint);
     return response;
+  }
+
+  public async getPlaylistFollowStatus(id: string): Promise<boolean> {
+    if (id.length > 0) {
+      const isFollowing = await this.checkIfCurrentUserFollowsPlaylist(id);
+      return isFollowing;
+    }
+    return false;
+  }
+
+  private async checkIfCurrentUserFollowsPlaylist(
+    id: string
+  ): Promise<boolean> {
+    const response: boolean[] = await this.getSpotifyData(
+      `playlists/${id}/followers/contains`
+    );
+    return response[0];
   }
 }

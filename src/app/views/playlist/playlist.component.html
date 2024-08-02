@@ -5,9 +5,9 @@
       class="small-play-btn mr-10"
       [playlistId]="playlistFile.id"
     ></app-btn-play>
-    <div info-actions>
+    <div class="info-actons" info-actions>
       <app-btn-play class="mr-10" [playlistId]="playlistFile.id"></app-btn-play>
-      <button class="button-light c-pointer">Follow</button>
+      <app-btn-follow [isFollowing]="isFollowing" [playlistId]="playlistFile.id"></app-btn-follow>
       <button
         [style.display]="!playlistFile.isUserCreated ? 'none' : ''"
         mat-icon-button

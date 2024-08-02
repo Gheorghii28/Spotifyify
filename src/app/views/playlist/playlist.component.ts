@@ -14,6 +14,7 @@ import { TrackListHeaderComponent } from '../../components/track-list-header/tra
 import { BtnPlayComponent } from '../../components/buttons/btn-play/btn-play.component';
 import { Playlist, PlaylistsObject } from '../../models/spotify.model';
 import { SpotifyService } from '../../services/spotify.service';
+import { BtnFollowComponent } from '../../components/buttons/btn-follow/btn-follow.component';
 
 @Component({
   selector: 'app-playlist',
@@ -25,12 +26,14 @@ import { SpotifyService } from '../../services/spotify.service';
     CustomScrollbarDirective,
     TrackListHeaderComponent,
     BtnPlayComponent,
+    BtnFollowComponent,
   ],
   templateUrl: './playlist.component.html',
   styleUrl: './playlist.component.scss',
 })
 export class PlaylistComponent implements OnInit, OnDestroy {
   playlistFile!: CloudFiles;
+  isFollowing!: boolean;
   private cloudSubscription!: Subscription;
   public state!: StreamState;
   public playingTrack!: TrackFile;
@@ -73,8 +76,11 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   private subscribeTo(): void {
     this.cloudSubscription = this.cloudService
       .observeFiles()
-      .subscribe((files: CloudFiles) => {
+      .subscribe(async (files: CloudFiles) => {
         this.playlistFile = files;
+        this.isFollowing = await this.spotifyService.getPlaylistFollowStatus(
+          files.id
+        );
       });
     this.stateSubscription = this.audioService
       .observeStreamState()
