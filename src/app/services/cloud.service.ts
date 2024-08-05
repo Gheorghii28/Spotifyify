@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, lastValueFrom, Observable } from 'rxjs';
 import {
   CloudFiles,
   CloudFilesClass,
@@ -60,17 +60,23 @@ export class CloudService {
   }
 
   public async getFiles(playlistId: string): Promise<CloudFiles> {
-    const playlist: Playlist = await this.spotifyService.getSpotifyData(
-      `playlists/${playlistId}`
-    );
-    const tracks: TrackFile[] = this.extractPlayableTracks(playlist);
-    tracks.forEach(async (track: TrackFile) => {
-      track.likedStatus = await this.spotifyService.fetchLikedStatusForTrack(
-        track.id
+    try {
+      const playlist: Playlist = await lastValueFrom(
+        this.spotifyService.getPlaylist(playlistId)
       );
-    });
-    const files: CloudFiles = new CloudFilesClass(playlist, tracks);
-    return files;
+      const tracks: TrackFile[] = this.extractPlayableTracks(playlist).slice(
+        0,
+        50
+      );
+      const updatedTracks: TrackFile[] = await this.updateTrackLikedStatus(
+        tracks
+      );
+      const files: CloudFiles = new CloudFilesClass(playlist, updatedTracks);
+      return files;
+    } catch (error) {
+      console.error('Error getting files:', error);
+      throw new Error('Failed to retrieve files.');
+    }
   }
 
   private extractPlayableTracks(playlist: Playlist): TrackFile[] {
@@ -98,6 +104,30 @@ export class CloudService {
         track.likedStatus = newStatus;
         this.setFiles(currentFiles);
       }
+    }
+  }
+
+  public async updateTrackLikedStatus(
+    tracks: TrackFile[]
+  ): Promise<TrackFile[]> {
+    try {
+      const trackIds: string[] = tracks.map((track) => track.id);
+      const likedStatuses: boolean[] = await lastValueFrom(
+        this.spotifyService.checkUsersSavedTracks(trackIds)
+      );
+      const updatedTracks: TrackFile[] = tracks.map(
+        (track: TrackFile, index: number) => {
+          return {
+            ...track,
+            likedStatus: likedStatuses[index],
+          };
+        }
+      );
+
+      return updatedTracks;
+    } catch (error) {
+      console.error('Error updating track liked status:', error);
+      throw new Error('Failed to update track liked status.');
     }
   }
 }

@@ -14,7 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { Playlist, PlaylistsObject } from '../../../models/spotify.model';
-import { Subscription } from 'rxjs';
+import { lastValueFrom, Subscription } from 'rxjs';
 import { CloudService } from '../../../services/cloud.service';
 
 @Component({
@@ -66,19 +66,14 @@ export class DialogAddTrackComponent {
     this.dialogRef.close();
   }
 
-  public async addTrack(): Promise<void> {
+  public async addTrack(playlistId: string): Promise<void> {
     try {
-      const body = {
-        uris: [this.data.uri],
-        position: this.data.position,
-      };
-      const postResponse = await this.spotifyService.postToSpotify(
-        `playlists/${this.playlistControl.value?.id}/tracks`,
-        body
+      await lastValueFrom(
+        this.spotifyService.addItemsToPlaylist(playlistId, this.data)
       );
       this.dialogRef.close(true);
     } catch (error) {
-      console.error('Error while adding the track:', error);
+      console.error('Error adding item to playlist:', error);
     }
   }
 }

@@ -6,9 +6,10 @@ import { FirebaseService } from '../../../services/firebase.service';
 import { Router } from '@angular/router';
 import { CloudService } from '../../../services/cloud.service';
 import { SpotifyService } from '../../../services/spotify.service';
-import { Playlist, PlaylistsObject } from '../../../models/spotify.model';
+import { PlaylistsObject } from '../../../models/spotify.model';
 import { DialogRemoveFolderData } from '../../../models/dialog.model';
 import { UserFolder } from '../../../models/firebase.model';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-dialog-remove-folder',
@@ -31,41 +32,59 @@ export class DialogRemoveFolderComponent {
     this.dialogRef.close();
   }
 
-  public async removeFolder(): Promise<void> {
-    const folderToRemove = this.data.folder;
-    let folders = this.data.userFirebaseData.folders;
-    folders = folders.filter(
-      (folder: UserFolder) => folder.id !== folderToRemove.id
-    );
-    folderToRemove.playlists.forEach(async (playlist: Playlist) => {
-      await this.removePlaylist(playlist.id);
-    });
-    await this.firebaseService.updateDocument(
-      'users',
-      this.data.userFirebaseData.userId,
-      { folders: folders }
-    );
-    await this.updatePlaylists();
-    this.onNoClick();
+  public async removeFolderAndCleanUp(): Promise<void> {
+    try {
+      const folderToRemove: UserFolder = this.data.folder;
+      const folders: UserFolder[] = this.data.userFirebaseData.folders.filter(
+        (folder: UserFolder) => folder.id !== folderToRemove.id
+      );
+      await this.firebaseService.updateDocument(
+        'users',
+        this.data.userFirebaseData.userId,
+        { folders: folders }
+      );
+      await Promise.all(
+        folderToRemove.playlists.map((playlist) =>
+          this.removePlaylist(playlist.id)
+        )
+      );
+      await this.updatePlaylists();
+      this.onNoClick();
+      if (this.isCurrentPlaylistInDeletedFolder(folderToRemove)) {
+        await this.router.navigate(['/home']);
+      }
+    } catch (error) {
+      console.error('Error removing folder:', error);
+    }
   }
 
   private async removePlaylist(playlistId: string): Promise<void> {
-    const currentUrl = this.router.url;
-    if (this.isPlaylistInUrl(currentUrl, playlistId)) {
-      this.router.navigate(['/home']);
+    try {
+      await lastValueFrom(this.spotifyService.unfollowPlaylist(playlistId));
+    } catch (error) {
+      console.error('Error removing playlist:', error);
     }
-    const removalResponse = await this.spotifyService.removeSpotifyData(
-      `playlists/${playlistId}/followers`
-    );
   }
 
   private async updatePlaylists(): Promise<void> {
-    const updatedPlaylists: PlaylistsObject =
-      await this.spotifyService.retrieveSpotifyData(`me/playlists`);
-    this.cloudService.setMyPlaylists(updatedPlaylists);
+    try {
+      const updatedPlaylists: PlaylistsObject = await lastValueFrom(
+        this.spotifyService.getCurrentUsersPlaylists()
+      );
+      this.cloudService.setMyPlaylists(updatedPlaylists);
+    } catch (error) {
+      console.error('Error updating playlists:', error);
+    }
   }
 
-  private isPlaylistInUrl(url: string, id: string): boolean {
-    return url.includes(id);
+  private isCurrentPlaylistInDeletedFolder(
+    folderToRemove: UserFolder
+  ): boolean {
+    const currentUrl = this.router.url;
+    const isPlaylistInUrl = (playlistId: string) =>
+      currentUrl.includes(playlistId);
+    return folderToRemove.playlists.some((playlist) =>
+      isPlaylistInUrl(playlist.id)
+    );
   }
 }

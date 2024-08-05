@@ -5,7 +5,7 @@ import { TrackListComponent } from '../../components/track-list/track-list.compo
 import { CommonModule } from '@angular/common';
 import { CloudFiles, TrackFile } from '../../models/cloud.model';
 import { CloudService } from '../../services/cloud.service';
-import { Subscription } from 'rxjs';
+import { lastValueFrom, Subscription } from 'rxjs';
 import { CustomScrollbarDirective } from '../../directives/custom-scrollbar.directive';
 import { StreamState } from '../../models/stream-state.model';
 import { AudioService } from '../../services/audio.service';
@@ -55,8 +55,9 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     this.route.params.subscribe(async (params) => {
       const playlistId = params['id'];
       if (this.platformDetectionService.isBrowser) {
-        const myPlaylists: PlaylistsObject =
-          await this.spotifyService.retrieveSpotifyData(`me/playlists`);
+        const myPlaylists: PlaylistsObject = await lastValueFrom(
+          this.spotifyService.getCurrentUsersPlaylists()
+        );
         const files: CloudFiles = await this.cloudService.getFiles(playlistId);
         const isUserCreated = myPlaylists.items.some(
           (playlist: Playlist) => playlist.id === files.id
@@ -77,10 +78,13 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     this.cloudSubscription = this.cloudService
       .observeFiles()
       .subscribe(async (files: CloudFiles) => {
-        this.playlistFile = files;
-        this.isFollowing = await this.spotifyService.getPlaylistFollowStatus(
-          files.id
-        );
+        if (files.id.length > 0) {
+          this.playlistFile = files;
+          const response: boolean[] = await lastValueFrom(
+            this.spotifyService.checkIfCurrentUserFollowsPlaylist(files.id)
+          );
+          this.isFollowing = response[0];
+        }
       });
     this.stateSubscription = this.audioService
       .observeStreamState()

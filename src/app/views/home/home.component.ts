@@ -1,16 +1,15 @@
-import {
-  Component,
-  HostListener,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { SpotifyService } from '../../services/spotify.service';
 import { CardComponent } from '../../components/card/card.component';
 import { CommonModule, Location } from '@angular/common';
 import { ShelfComponent } from '../../components/shelf/shelf.component';
-import { UserProfile } from '../../models/spotify.model';
+import {
+  CategoryItem,
+  SpotifyCategoryResponse,
+  UserProfile,
+} from '../../models/spotify.model';
 import { HeaderComponent } from '../../layout/header/header.component';
-import { Subscription } from 'rxjs';
+import { lastValueFrom, Subscription } from 'rxjs';
 import { ScrollService } from '../../services/scroll.service';
 import { PlatformDetectionService } from '../../services/platform-detection.service';
 
@@ -70,10 +69,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   private async getEndpoints(): Promise<void> {
-    const data = await this.spotifyService.getSpotifyData('browse/categories');
+    const data: SpotifyCategoryResponse = await lastValueFrom(
+      this.spotifyService.getSeveralBrowseCategories()
+    );
     const featuredEndpoint: string[] = ['browse/featured-playlists'];
-    const categoryEndpoints = data.categories.items.map(
-      (item: { id: string }) => {
+    const categoryEndpoints: string[] = data.categories.items.map(
+      (item: CategoryItem) => {
         return `browse/categories/${item.id}/playlists`;
       }
     );

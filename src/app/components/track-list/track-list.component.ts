@@ -15,6 +15,7 @@ import { CloudService } from '../../services/cloud.service';
 import { DialogAddTrackComponent } from '../dialog/dialog-add-track/dialog-add-track.component';
 import { PlaylistsObject } from '../../models/spotify.model';
 import { SpotifyService } from '../../services/spotify.service';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-track-list',
@@ -120,8 +121,9 @@ export class TrackListComponent {
     if (trackIndex !== -1) {
       this.files.tracks.splice(trackIndex, 1);
       this.cloudService.setFiles(this.files);
-      const playlists: PlaylistsObject =
-        await this.spotifyService.retrieveSpotifyData(`me/playlists`);
+      const playlists: PlaylistsObject = await lastValueFrom(
+        this.spotifyService.getCurrentUsersPlaylists()
+      );
       this.cloudService.setMyPlaylists(playlists);
     }
   }
@@ -142,8 +144,9 @@ export class TrackListComponent {
   }
 
   private async addTrackToPlaylist(): Promise<void> {
-    const playlists: PlaylistsObject =
-      await this.spotifyService.retrieveSpotifyData(`me/playlists`);
+    const playlists: PlaylistsObject = await lastValueFrom(
+      this.spotifyService.getCurrentUsersPlaylists()
+    );
     this.cloudService.setMyPlaylists(playlists);
   }
 }

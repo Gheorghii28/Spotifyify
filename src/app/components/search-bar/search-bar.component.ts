@@ -5,6 +5,7 @@ import {
   SpotifySearchResults,
 } from '../../models/spotify.model';
 import { debounce } from 'lodash';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-search-bar',
@@ -52,12 +53,12 @@ export class SearchBarComponent {
   private generateSearchPromises(
     searchQuery: string
   ): Promise<SpotifySearchResults>[] {
-    const encodedQuery = encodeURIComponent(searchQuery);
     return this.filterTypes.map(
-      (type: string): Promise<SpotifySearchResults> =>
-        this.spotifyService.getSpotifyData(
-          `search?q=${encodedQuery}&type=${type}&limit=10`
-        )
+      (type: string): Promise<SpotifySearchResults> => {
+        return lastValueFrom(
+          this.spotifyService.searchForItem(searchQuery, type)
+        );
+      }
     );
   }
 

@@ -194,3 +194,28 @@ interface ExternalUrls {
 interface ExternalIds {
   isrc: string;
 }
+
+export interface SpotifyCategoryResponse {
+  categories: {
+    href: string;
+    limit: number;
+    next: string | null;
+    offset: number;
+    previous: string | null;
+    total: number;
+    items: CategoryItem[];
+  };
+}
+
+export interface CategoryItem {
+  href: string;
+  icons: Icon[];
+  id: string;
+  name: string;
+}
+
+export interface Icon {
+  url: string;
+  height: number;
+  width: number;
+}

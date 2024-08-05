@@ -15,7 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { SpotifyService } from '../../../services/spotify.service';
 import { CloudService } from '../../../services/cloud.service';
 import { DialogRemoveTrackComponent } from '../../dialog/dialog-remove-track/dialog-remove-track.component';
-import { Subscription } from 'rxjs';
+import { lastValueFrom, Subscription } from 'rxjs';
 import { AudioService } from '../../../services/audio.service';
 
 @Component({
@@ -93,8 +93,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   private async addTrackToPlaylist(): Promise<void> {
-    const playlists: PlaylistsObject =
-      await this.spotifyService.retrieveSpotifyData(`me/playlists`);
+    const playlists: PlaylistsObject = await lastValueFrom(
+      this.spotifyService.getCurrentUsersPlaylists()
+    );
     this.cloudService.setMyPlaylists(playlists);
   }
 
@@ -121,26 +122,24 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (trackIndex !== -1) {
       this.files.tracks.splice(trackIndex, 1);
       this.cloudService.setFiles(this.files);
-      const playlists: PlaylistsObject =
-        await this.spotifyService.retrieveSpotifyData(`me/playlists`);
+      const playlists: PlaylistsObject = await lastValueFrom(
+        this.spotifyService.getCurrentUsersPlaylists()
+      );
       this.cloudService.setMyPlaylists(playlists);
     }
   }
 
   public async saveToLikedSongs(): Promise<void> {
     if (this.track.likedStatus) {
-    } else {
-      await this.saveTrack(this.track.id);
+      this.saveTrack(this.track.id);
     }
-    await this.updateLikedStatus(this.track.id);
-    await this.setMyTracks();
   }
 
   private async saveTrack(id: string): Promise<void> {
     try {
-      const res = await this.spotifyService.updateSpotifyData(
-        `me/tracks?ids=${id}`
-      );
+      await lastValueFrom(this.spotifyService.saveTracksForCurrentUser(id));
+      await this.updateLikedStatus(id);
+      await this.setMyTracks();
     } catch (error) {
       console.error('Error saving track:', error);
     }
@@ -157,8 +156,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   private async setMyTracks(): Promise<void> {
-    const tracks: TracksObject = await this.spotifyService.retrieveSpotifyData(
-      `me/tracks`
+    const tracks: TracksObject = await lastValueFrom(
+      this.spotifyService.getUsersSavedTracks()
     );
     this.cloudService.setMyTracks(tracks);
   }

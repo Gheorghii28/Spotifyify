@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { SpotifyService } from '../../../services/spotify.service';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-btn-follow',
@@ -23,9 +24,7 @@ export class BtnFollowComponent {
       this.isFollowing
         ? await this.unfollowPlaylist(this.playlistId)
         : await this.followPlaylist(this.playlistId);
-      this.isFollowing = await this.spotifyService.getPlaylistFollowStatus(
-        this.playlistId
-      );
+      this.isFollowing = await this.getPlaylistFollowStatus(this.playlistId);
     } catch (error) {
       console.error('Error toggling follow status:', error);
     } finally {
@@ -35,19 +34,28 @@ export class BtnFollowComponent {
 
   private async followPlaylist(id: string): Promise<void> {
     try {
-      await this.spotifyService.updateSpotifyData(`playlists/${id}/followers`, {
-        public: false,
-      });
-    } catch (eror) {
-      console.error('Error following playlist:', eror);
+      await lastValueFrom(this.spotifyService.followPlaylist(id));
+    } catch (error) {
+      console.error('Error follow playlist:', error);
     }
   }
 
   private async unfollowPlaylist(id: string): Promise<void> {
     try {
-      await this.spotifyService.removeSpotifyData(`playlists/${id}/followers`);
+      await lastValueFrom(this.spotifyService.unfollowPlaylist(id));
     } catch (error) {
-      console.error('Error unfollowing playlist:', error);
+      console.error('Error unfollow playlist:', error);
     }
+  }
+
+  private async getPlaylistFollowStatus(id: string): Promise<boolean> {
+    if (id.length > 0) {
+      const response: boolean[] = await lastValueFrom(
+        this.spotifyService.checkIfCurrentUserFollowsPlaylist(id)
+      );
+      const isFollowing = response[0];
+      return isFollowing;
+    }
+    return false;
   }
 }

@@ -1,9 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {
-  Track,
-  TracksObject,
-  TracksObjectItem,
-} from '../../models/spotify.model';
+import { TracksObject, TracksObjectItem } from '../../models/spotify.model';
 import { Subscription } from 'rxjs';
 import { CloudService } from '../../services/cloud.service';
 import { ViewHeaderComponent } from '../../components/view-header/view-header.component';
@@ -19,7 +15,6 @@ import { StreamState } from '../../models/stream-state.model';
 import { TrackListHeaderComponent } from '../../components/track-list-header/track-list-header.component';
 import { TrackListComponent } from '../../components/track-list/track-list.component';
 import { CommonModule } from '@angular/common';
-import { SpotifyService } from '../../services/spotify.service';
 
 @Component({
   selector: 'app-my-tracks',
@@ -45,8 +40,7 @@ export class MyTracksComponent implements OnInit, OnDestroy {
 
   constructor(
     private cloudService: CloudService,
-    private audioService: AudioService,
-    private spotifyService: SpotifyService
+    private audioService: AudioService
   ) {}
 
   ngOnInit(): void {
@@ -93,20 +87,16 @@ export class MyTracksComponent implements OnInit, OnDestroy {
   private async createTrackFiles(
     items: TracksObjectItem[]
   ): Promise<TrackFile[]> {
-    return Promise.all(
-      items.map(async (item, index) => {
-        const myTrack = this.createTrackFile(item.track, index);
-        myTrack.likedStatus = await this.fetchLikedStatus(myTrack.id);
-        return myTrack;
-      })
+    const myTracks = this.createTrackFile(items).slice(0, 50);
+    const updatedTracks: TrackFile[] =
+      await this.cloudService.updateTrackLikedStatus(myTracks);
+    return updatedTracks;
+  }
+
+  private createTrackFile(items: TracksObjectItem[]): TrackFile[] {
+    return items.map(
+      (item, index) =>
+        new TrackFileClass(item.track, index, undefined, item.track.album.id)
     );
-  }
-
-  private createTrackFile(track: Track, index: number): TrackFile {
-    return new TrackFileClass(track, index, undefined, track.album.id);
-  }
-
-  private async fetchLikedStatus(trackId: string): Promise<boolean> {
-    return this.spotifyService.fetchLikedStatusForTrack(trackId);
   }
 }

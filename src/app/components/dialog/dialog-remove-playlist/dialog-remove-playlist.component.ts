@@ -7,6 +7,7 @@ import { CloudService } from '../../../services/cloud.service';
 import { SpotifyService } from '../../../services/spotify.service';
 import { Router } from '@angular/router';
 import { PlaylistsObject } from '../../../models/spotify.model';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-dialog-remove-playlist',
@@ -29,24 +30,29 @@ export class DialogRemovePlaylistComponent {
   }
 
   public async removePlaylist(): Promise<void> {
-    const currentUrl = this.router.url;
-    if (this.isPlaylistInUrl(currentUrl, this.data.id)) {
-      this.router.navigate(['/home']);
+    try {
+      await lastValueFrom(this.spotifyService.unfollowPlaylist(this.data.id));
+      await this.updatePlaylists();
+      this.onNoClick();
+      const currentUrl = this.router.url;
+      const isPlaylistInUrl = (playlistId: string) =>
+        currentUrl.includes(playlistId);
+      if (isPlaylistInUrl(this.data.id)) {
+        this.router.navigate(['/home']);
+      }
+    } catch (error) {
+      console.error('Error removing playlist:', error);
     }
-    const removalResponse = await this.spotifyService.removeSpotifyData(
-      `playlists/${this.data.id}/followers`
-    );
-    this.onNoClick();
-    this.updatePlaylists();
   }
 
   private async updatePlaylists(): Promise<void> {
-    const updatedPlaylists: PlaylistsObject =
-      await this.spotifyService.retrieveSpotifyData(`me/playlists`);
-    this.cloudService.setMyPlaylists(updatedPlaylists);
-  }
-
-  private isPlaylistInUrl(url: string, id: string): boolean {
-    return url.includes(id);
+    try {
+      const updatedPlaylists: PlaylistsObject = await lastValueFrom(
+        this.spotifyService.getCurrentUsersPlaylists()
+      );
+      this.cloudService.setMyPlaylists(updatedPlaylists);
+    } catch (error) {
+      console.error('Error updating playlists:', error);
+    }
   }
 }

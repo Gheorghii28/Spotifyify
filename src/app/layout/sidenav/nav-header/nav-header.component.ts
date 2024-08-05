@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDrawer } from '@angular/material/sidenav';
 import { DrawerService } from '../../../services/drawer.service';
-import { Subscription } from 'rxjs';
+import { lastValueFrom, Subscription } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { SpotifyService } from '../../../services/spotify.service';
@@ -74,9 +74,15 @@ export class NavHeaderComponent implements OnDestroy {
   }
 
   public async createNewPlaylist(): Promise<void> {
-    const playlistNr: number = this.myPlaylists.items.length + 1;
-    const playlist: Playlist = await this.buildPlaylist(playlistNr);
-    this.addPlaylistToUser(playlist);
+    try {
+      const playlistNr: number = this.myPlaylists.items.length + 1;
+      const playlist: Playlist = await lastValueFrom(
+        this.spotifyService.createPlaylist(this.userId, playlistNr)
+      );
+      this.addPlaylistToUser(playlist);
+    } catch (error) {
+      console.error('Error created playlist:', error);
+    }
   }
 
   public async createPlaylistFolder(): Promise<void> {
@@ -87,18 +93,6 @@ export class NavHeaderComponent implements OnDestroy {
         { id: folderId, name: 'New Folder', playlists: [] },
       ],
     });
-  }
-
-  private async buildPlaylist(playlistNr: number): Promise<Playlist> {
-    const body = {
-      name: `My Playlist #${playlistNr}`,
-      description: 'New playlist description',
-      public: true,
-    };
-    return await this.spotifyService.postToSpotify(
-      `users/${this.userId}/playlists`,
-      body
-    );
   }
 
   private addPlaylistToUser(playlist: Playlist): void {

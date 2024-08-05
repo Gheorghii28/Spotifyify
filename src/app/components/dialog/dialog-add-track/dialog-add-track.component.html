@@ -20,6 +20,12 @@
   </mat-card-content>
   <mat-card-actions>
     <button mat-button (click)="onNoClick()">Cancel</button>
-    <button mat-button [disabled]="!playlistControl.value" (click)="addTrack()">Add</button>
+    <button
+      mat-button
+      [disabled]="!playlistControl.value"
+      (click)="addTrack(playlistControl.value!.id)"
+    >
+      Add
+    </button>
   </mat-card-actions>
 </mat-card>

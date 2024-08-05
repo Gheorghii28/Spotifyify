@@ -70,8 +70,7 @@ export class SearchComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private location: Location,
     private cloudService: CloudService,
-    public audioService: AudioService,
-    private spotifyService: SpotifyService
+    public audioService: AudioService
   ) {}
 
   ngOnInit() {
@@ -147,23 +146,17 @@ export class SearchComponent implements OnInit, OnDestroy, AfterViewInit {
   private async createTrackFilesWithLikedStatus(
     tracks: SpotifySearchTrack[]
   ): Promise<TrackFile[]> {
-    return Promise.all(
-      tracks.map(async (track, index) => {
-        const searchedTrack = this.createTrackFile(track, index);
-        searchedTrack.likedStatus = await this.fetchLikedStatus(
-          searchedTrack.id
-        );
-        return searchedTrack;
-      })
+    const searchedTracks = this.createTrackFile(tracks).slice(0, 50);
+    const updatedTracks: TrackFile[] =
+      await this.cloudService.updateTrackLikedStatus(searchedTracks);
+    return updatedTracks;
+  }
+
+  private createTrackFile(tracks: SpotifySearchTrack[]): TrackFile[] {
+    return tracks.map(
+      (track, index) =>
+        new TrackFileClass(track, index, undefined, track.album.id)
     );
-  }
-
-  private createTrackFile(track: SpotifySearchTrack, index: number): TrackFile {
-    return new TrackFileClass(track, index, undefined, track.album.id);
-  }
-
-  private async fetchLikedStatus(trackId: string): Promise<boolean> {
-    return this.spotifyService.fetchLikedStatusForTrack(trackId);
   }
 
   private initializeElements(): void {

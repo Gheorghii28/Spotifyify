@@ -1,9 +1,10 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogRemoveTrackData } from '../../../models/dialog.model';
 import { SpotifyService } from '../../../services/spotify.service';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-dialog-remove-track',
@@ -25,21 +26,12 @@ export class DialogRemoveTrackComponent {
 
   public async removeTrack(): Promise<void> {
     try {
-      const body = {
-        snapshot_id: this.data.snapshot_id,
-        tracks: [
-          {
-            uri: this.data.uri,
-          },
-        ],
-      };
-      const removalResponse = await this.spotifyService.removeSpotifyData(
-        `playlists/${this.data.playlistId}/tracks`,
-        body
+      await lastValueFrom(
+        this.spotifyService.removePlaylisItems(this.data.playlistId, this.data)
       );
       this.dialogRef.close(true);
     } catch (error) {
-      console.error('Error while deleting the track:', error);
+      console.error('Error removing track:', error);
     }
   }
 }

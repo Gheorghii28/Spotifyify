@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { CloudService } from '../../../services/cloud.service';
 import { TracksObject } from '../../../models/spotify.model';
 import { TrackFile } from '../../../models/cloud.model';
-import { Subscription } from 'rxjs';
+import { lastValueFrom, Subscription } from 'rxjs';
 import { AudioService } from '../../../services/audio.service';
 
 @Component({
@@ -45,33 +45,22 @@ export class LikeButtonComponent {
       });
   }
 
-  public async toogleLiked(): Promise<void> {
-    if (this.likedStatus) {
-      await this.removeTrack(this.trackId);
-    } else {
-      await this.saveTrack(this.trackId);
+  // TODO: Implement functionality to enable/disable the toggle button
+  public async toggleLiked(): Promise<void> {
+    try {
+      this.likedStatus
+        ? await this.removeTrack(this.trackId)
+        : await this.saveTrack(this.trackId);
+      await this.updateLikedStatus(this.trackId);
+      await this.setMyTracks();
+    } catch (error) {
+      console.error('Error toggling likedStatus status:', error);
     }
-    await this.updateLikedStatus(this.trackId);
-    await this.setMyTracks();
-  }
-
-  private async updateLikedStatus(id: string): Promise<void> {
-    const likedStatus = await this.spotifyService.fetchLikedStatusForTrack(id);
-    this.likedStatus = likedStatus;
-    if (this.playingTrack) {
-      if (id === this.playingTrack.id) {
-        this.playingTrack.likedStatus = likedStatus;
-        this.audioService.setPlayingTrack(this.playingTrack);
-      }
-    }
-    this.cloudService.updateLikedStatus(id, likedStatus);
   }
 
   private async saveTrack(id: string): Promise<void> {
     try {
-      const res = await this.spotifyService.updateSpotifyData(
-        `me/tracks?ids=${id}`
-      );
+      await lastValueFrom(this.spotifyService.saveTracksForCurrentUser(id));
     } catch (error) {
       console.error('Error saving track:', error);
     }
@@ -79,17 +68,29 @@ export class LikeButtonComponent {
 
   private async removeTrack(id: string): Promise<void> {
     try {
-      const res = await this.spotifyService.removeSpotifyData(
-        `me/tracks?ids=${id}`
-      );
+      await lastValueFrom(this.spotifyService.removeUsersSavedTracks(id));
     } catch (error) {
       console.error('Error removing track:', error);
     }
   }
 
+  private async updateLikedStatus(id: string): Promise<void> {
+    const likedStatusArr: boolean[] = await lastValueFrom(
+      this.spotifyService.checkUsersSavedTracks([id])
+    );
+    this.likedStatus = likedStatusArr[0];
+    if (this.playingTrack) {
+      if (id === this.playingTrack.id) {
+        this.playingTrack.likedStatus = likedStatusArr[0];
+        this.audioService.setPlayingTrack(this.playingTrack);
+      }
+    }
+    this.cloudService.updateLikedStatus(id, likedStatusArr[0]);
+  }
+
   private async setMyTracks(): Promise<void> {
-    const tracks: TracksObject = await this.spotifyService.retrieveSpotifyData(
-      `me/tracks`
+    const tracks: TracksObject = await lastValueFrom(
+      this.spotifyService.getUsersSavedTracks()
     );
     this.cloudService.setMyTracks(tracks);
   }

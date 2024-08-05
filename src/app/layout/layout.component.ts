@@ -2,23 +2,21 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  Inject,
+  NgZone,
   OnDestroy,
   OnInit,
-  PLATFORM_ID,
   ViewChild,
 } from '@angular/core';
 import { TokenService } from '../services/token.service';
 import { HeaderComponent } from './header/header.component';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { AuthService } from '../services/auth.service';
+import { CommonModule } from '@angular/common';
 import {
   PlaylistsObject,
   TracksObject,
   UserProfile,
 } from '../models/spotify.model';
 import { SidenavComponent } from './sidenav/sidenav.component';
-import { Subscription } from 'rxjs';
+import { lastValueFrom, Subscription } from 'rxjs';
 import { LayoutService } from '../services/layout.service';
 import { RouterOutlet } from '@angular/router';
 import { PlayerComponent } from '../components/player/player.component';
@@ -67,25 +65,27 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private tokenService: TokenService,
-    private authService: AuthService,
     private layoutService: LayoutService,
     private cloudService: CloudService,
     private drawerService: DrawerService,
     private spotifyService: SpotifyService,
     private firebaseService: FirebaseService,
     private scrollService: ScrollService,
-    private platformDetectionService: PlatformDetectionService
+    private platformDetectionService: PlatformDetectionService,
+    private ngZone: NgZone
   ) {
     this.tokenService.saveTokensToLocalStorage();
     this.tokenService.clearTokensFromCookies();
-    this.getProfile();
-    this.setMyPlaylists();
-    this.setMyTracks();
     this.subscribeTo();
   }
 
   ngOnInit(): void {
     if (this.platformDetectionService.isBrowser) {
+      this.ngZone.runOutsideAngular(() => {
+        this.getProfile();
+        this.setMyPlaylists();
+        this.setMyTracks();
+      });
       this.layoutService.adjustHeightOnWindowResize();
       this.layoutService.handleDrawerOnResize(this.drawerEndStatus);
     }
@@ -131,8 +131,9 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async getProfile(): Promise<void> {
-    const accessToken = this.tokenService.getAccessToken();
-    const profile: UserProfile = await this.authService.getProfile(accessToken);
+    const profile: UserProfile = await lastValueFrom(
+      this.spotifyService.getCurrentUsersProfile()
+    );
     if (!this.platformDetectionService.isBrowser || profile) {
       this.userProfile = profile;
       this.firebaseService.checkUserInFirestore(this.userProfile);
@@ -142,14 +143,15 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private async setMyPlaylists(): Promise<void> {
-    const playlists: PlaylistsObject =
-      await this.spotifyService.retrieveSpotifyData(`me/playlists`);
+    const playlists: PlaylistsObject = await lastValueFrom(
+      this.spotifyService.getCurrentUsersPlaylists()
+    );
     this.cloudService.setMyPlaylists(playlists);
   }
 
   private async setMyTracks(): Promise<void> {
-    const tracks: TracksObject = await this.spotifyService.retrieveSpotifyData(
-      `me/tracks`
+    const tracks: TracksObject = await lastValueFrom(
+      this.spotifyService.getUsersSavedTracks()
     );
     this.cloudService.setMyTracks(tracks);
   }

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Playlist, ShelfData } from '../../models/spotify.model';
 import { SpotifyService } from '../../services/spotify.service';
 import { ResizeObserverDirective } from '../../directives/resize-observer.directive';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-shelf',
@@ -42,7 +43,9 @@ export class ShelfComponent implements OnInit {
 
   private async fetchAndStoreEndpointData(): Promise<void> {
     try {
-      this.data = await this.spotifyService.getSpotifyData(this.endpoint);
+      this.data = await lastValueFrom(
+        this.spotifyService.getApiData(this.endpoint)
+      );
       this.loadMoreItems();
     } catch (error) {
       console.error('Error fetching data:', error);
