@@ -7,7 +7,6 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { TokenService } from '../services/token.service';
 import { HeaderComponent } from './header/header.component';
 import { CommonModule } from '@angular/common';
 import {
@@ -64,7 +63,6 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
   private drawerEndStatusSubscription!: Subscription;
 
   constructor(
-    private tokenService: TokenService,
     private layoutService: LayoutService,
     private cloudService: CloudService,
     private drawerService: DrawerService,
@@ -74,8 +72,6 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
     private platformDetectionService: PlatformDetectionService,
     private ngZone: NgZone
   ) {
-    this.tokenService.saveTokensToLocalStorage();
-    this.tokenService.clearTokensFromCookies();
     this.subscribeTo();
   }
 

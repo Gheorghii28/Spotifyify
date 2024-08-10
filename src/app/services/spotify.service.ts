@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { TokenService } from './token.service';
 import { catchError, Observable, throwError } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {
   DialogAddTrackData,
   DialogRemoveTrackData,
@@ -13,23 +12,12 @@ import {
 export class SpotifyService {
   private readonly apiUrl: string = 'https://api.spotify.com/v1/';
 
-  constructor(private tokenService: TokenService, private http: HttpClient) {}
-
-  private get getHeaders(): HttpHeaders {
-    const token = this.tokenService.getAccessToken();
-    const headers = new HttpHeaders()
-      .set('Authorization', `Bearer ${token}`)
-      .set('Content-Type', 'application/json');
-    return headers;
-  }
+  constructor(private http: HttpClient) {}
 
   // --- Users ---
   public getCurrentUsersProfile(): Observable<any> {
     const url = `${this.apiUrl}me`;
-    const options = {
-      headers: this.getHeaders,
-    };
-    return this.http.get(url, options).pipe(
+    return this.http.get(url).pipe(
       catchError((error) => {
         console.error('Error Get Current Users Profile:', error);
         return throwError(
@@ -44,10 +32,7 @@ export class SpotifyService {
     const body = {
       public: false,
     };
-    const options = {
-      headers: this.getHeaders,
-    };
-    return this.http.put(url, body, options).pipe(
+    return this.http.put(url, body).pipe(
       catchError((error) => {
         console.error(`Error follow playlist:`, error);
         return throwError(() => new Error(`Failed to follow playlist`));
@@ -57,10 +42,7 @@ export class SpotifyService {
 
   public unfollowPlaylist(playlistId: string): Observable<any> {
     const url = `${this.apiUrl}playlists/${playlistId}/followers`;
-    const options = {
-      headers: this.getHeaders,
-    };
-    return this.http.delete(url, options).pipe(
+    return this.http.delete(url).pipe(
       catchError((error) => {
         console.error(`Error unfollow playlist:`, error);
         return throwError(() => new Error(`Failed to unfollow playlist`));
@@ -72,10 +54,7 @@ export class SpotifyService {
     playlistId: string
   ): Observable<any> {
     const url: string = `${this.apiUrl}playlists/${playlistId}/followers/contains`;
-    const options = {
-      headers: this.getHeaders,
-    };
-    return this.http.get(url, options).pipe(
+    return this.http.get(url).pipe(
       catchError((error) => {
         console.error(`Error Check if Current User Follows Playlist:`, error);
         return throwError(
@@ -88,10 +67,7 @@ export class SpotifyService {
   // --- Playlists ---
   public getPlaylist(playlistId: string): Observable<any> {
     const url: string = `${this.apiUrl}playlists/${playlistId}`;
-    const options = {
-      headers: this.getHeaders,
-    };
-    return this.http.get(url, options).pipe(
+    return this.http.get(url).pipe(
       catchError((error) => {
         console.error(`Error Get Playlist (playlistId:${playlistId}):`, error);
         return throwError(
@@ -110,10 +86,7 @@ export class SpotifyService {
       uris: [data.uri],
       position: data.position,
     };
-    const options = {
-      headers: this.getHeaders,
-    };
-    return this.http.post(url, body, options).pipe(
+    return this.http.post(url, body).pipe(
       catchError((error) => {
         console.error('Error adding items to playlist:', error);
         return throwError(() => new Error('Failed to add items to playlist'));
@@ -136,7 +109,6 @@ export class SpotifyService {
     };
     const options = {
       body: body,
-      headers: this.getHeaders,
     };
     return this.http.request('delete', url, options).pipe(
       catchError((error) => {
@@ -150,10 +122,7 @@ export class SpotifyService {
 
   public getCurrentUsersPlaylists(): Observable<any> {
     const url: string = `${this.apiUrl}me/playlists`;
-    const options = {
-      headers: this.getHeaders,
-    };
-    return this.http.get(url, options).pipe(
+    return this.http.get(url).pipe(
       catchError((error) => {
         console.error('Error Get Current Users Playlists:', error);
         return throwError(
@@ -170,10 +139,7 @@ export class SpotifyService {
       description: 'New playlist description',
       public: true,
     };
-    const options = {
-      headers: this.getHeaders,
-    };
-    return this.http.post(url, body, options).pipe(
+    return this.http.post(url, body).pipe(
       catchError((error) => {
         console.error('Error create playlist:', error);
         return throwError(() => new Error('Failed to create playlist'));
@@ -183,10 +149,7 @@ export class SpotifyService {
 
   public getApiData(endpoint: string): Observable<any> {
     const url = `${this.apiUrl}${endpoint}`;
-    const options = {
-      headers: this.getHeaders,
-    };
-    return this.http.get(url, options).pipe(
+    return this.http.get(url).pipe(
       catchError((error) => {
         console.error('Error Get Api Data:', error);
         return throwError(() => new Error('Failed to Get Api Data'));
@@ -197,10 +160,7 @@ export class SpotifyService {
   // --- Tracks ---
   public getUsersSavedTracks(): Observable<any> {
     const url: string = `${this.apiUrl}me/tracks`;
-    const options = {
-      headers: this.getHeaders,
-    };
-    return this.http.get(url, options).pipe(
+    return this.http.get(url).pipe(
       catchError((error) => {
         console.error('Error Get Users Saved Tracks:', error);
         return throwError(() => new Error('Failed to Get Users Saved Tracks'));
@@ -213,10 +173,7 @@ export class SpotifyService {
     const body = {
       ids: [trackId],
     };
-    const options = {
-      headers: this.getHeaders,
-    };
-    return this.http.put(url, body, options).pipe(
+    return this.http.put(url, body).pipe(
       catchError((error) => {
         console.error(`Error Save Tracks for Current User:`, error);
         return throwError(
@@ -228,10 +185,7 @@ export class SpotifyService {
 
   public removeUsersSavedTracks(trackId: string): Observable<any> {
     const url = `${this.apiUrl}me/tracks?ids=${trackId}`;
-    const options = {
-      headers: this.getHeaders,
-    };
-    return this.http.delete(url, options).pipe(
+    return this.http.delete(url).pipe(
       catchError((error) => {
         console.error(`Error Remove User's Saved Tracks:`, error);
         return throwError(
@@ -245,10 +199,7 @@ export class SpotifyService {
     const url: string = `${this.apiUrl}me/tracks/contains?ids=${trackIds.join(
       ','
     )}`;
-    const options = {
-      headers: this.getHeaders,
-    };
-    return this.http.get(url, options).pipe(
+    return this.http.get(url).pipe(
       catchError((error) => {
         console.error(`Error check users saved tracks:`, error);
         return throwError(
@@ -261,10 +212,7 @@ export class SpotifyService {
   // ---Artists ---
   public getArtist(artistIds: string[]): Observable<any> {
     const url: string = `${this.apiUrl}artists?ids=${artistIds.join(',')}`;
-    const options = {
-      headers: this.getHeaders,
-    };
-    return this.http.get(url, options).pipe(
+    return this.http.get(url).pipe(
       catchError((error) => {
         console.error(`Error Get Artist:`, error);
         return throwError(() => new Error(`Failed to Get Artist`));
@@ -275,10 +223,7 @@ export class SpotifyService {
   // --- Categories ---
   public getSeveralBrowseCategories(): Observable<any> {
     const url = `${this.apiUrl}browse/categories`;
-    const options = {
-      headers: this.getHeaders,
-    };
-    return this.http.get(url, options).pipe(
+    return this.http.get(url).pipe(
       catchError((error) => {
         console.error('Error Get Several Browse Categories:', error);
         return throwError(
@@ -292,10 +237,7 @@ export class SpotifyService {
   public searchForItem(searchQuery: string, type: string): Observable<any> {
     const encodedQuery = encodeURIComponent(searchQuery);
     const url = `${this.apiUrl}search?q=${encodedQuery}&type=${type}&limit=10`;
-    const options = {
-      headers: this.getHeaders,
-    };
-    return this.http.get(url, options).pipe(
+    return this.http.get(url).pipe(
       catchError((error) => {
         console.error('Error search for item:', error);
         return throwError(() => new Error('Failed to search for item'));

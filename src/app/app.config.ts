@@ -4,7 +4,11 @@ import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { BrowserStorageService } from './services/browser-storage.service';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withFetch,
+  withInterceptors,
+} from '@angular/common/http';
 import { AudioService, NullAudioService } from './services/audio.service';
 import { isPlatformBrowser } from '@angular/common';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
@@ -12,6 +16,7 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getDatabase, provideDatabase } from '@angular/fire/database';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { environment } from '../environments/environment';
+import { tokenInterceptor } from './auth/interceptor/token.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,7 +24,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(),
     BrowserStorageService,
     provideAnimationsAsync(),
-    provideHttpClient(withFetch()),
+    provideHttpClient(withFetch(), withInterceptors([tokenInterceptor])),
     {
       provide: AudioService,
       useFactory: (platformId: Object) => {
@@ -29,9 +34,7 @@ export const appConfig: ApplicationConfig = {
       },
       deps: [PLATFORM_ID],
     },
-    provideFirebaseApp(() =>
-      initializeApp(environment.firebaseConfig)
-    ),
+    provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideFirestore(() => getFirestore()),
     provideDatabase(() => getDatabase()),
     provideStorage(() => getStorage()),
