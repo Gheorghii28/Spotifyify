@@ -49,6 +49,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
   private playingTrackSubscription!: Subscription;
   public elem: any;
   public isFullScreen: boolean = false;
+  public repeatMode: number = 0;
 
   constructor(
     private layoutService: LayoutService,
@@ -84,9 +85,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
       .observePlayingTrack()
       .subscribe((track: TrackFile) => {
         if (track) {
-          if (this.playingTrack?.id !== track.id) {
-            this.playAudio(track, this.files);
-          }
+          this.playAudio(track, this.files);
           this.playingTrack = track;
         }
       });
@@ -97,7 +96,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
     const url: string = this.getTrackUrl(files, track);
     this.audioService.playStream(url).subscribe((events) => {
       if (events.type === 'ended') {
-        this.updatePlayingTrack();
+        this.handleTrackEnd();
       }
     });
   }
@@ -147,6 +146,10 @@ export class PlayerComponent implements OnInit, OnDestroy {
       }
     }
     return this.playingTrack.artists;
+  }
+
+  public toggleRepeat(): void {
+    this.repeatMode = (this.repeatMode + 1) % 3;
   }
 
   public next(): void {
@@ -201,18 +204,23 @@ export class PlayerComponent implements OnInit, OnDestroy {
     this.isShuffled = !this.isShuffled;
   }
 
-  private async updatePlayingTrack(): Promise<void> {
-    if (this.isShuffled) {
+  private async handleTrackEnd(): Promise<void> {
+    if (this.repeatMode === 2) {
+      this.audioService.setPlayingTrack(this.playingTrack);
+    } else if (this.isShuffled) {
       const trackIndex: number = this.getRandomTrackIndex();
       const track: TrackFile = await this.audioService.getPlayingTrack(
         this.files,
         trackIndex
       );
       this.audioService.setPlayingTrack(track);
-    } else {
+    } else if (!this.isLastPlaying) {
       this.next();
+    } else if (this.repeatMode === 1) {
+      const track = this.files.tracks[0];
+      this.audioService.setPlayingTrack(track);
     }
-  }
+  }  
 
   private getRandomTrackIndex(): number {
     return Math.floor(Math.random() * this.files.tracks.length);

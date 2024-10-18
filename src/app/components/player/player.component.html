@@ -34,10 +34,11 @@
       <button
         mat-icon-button
         class="hover-effect-on-icons"
-        [style.color]="isShuffled ? 'var(--green-color)' : ''"
         (click)="toggleShuffle()"
       >
-        <span class="material-symbols-outlined"> shuffle </span>
+        <span 
+         [ngStyle]="isShuffled ? { color: '#1db954' } : null"
+         class="material-symbols-outlined"> shuffle </span>
       </button>
       <button
         mat-icon-button
@@ -78,8 +79,13 @@
       >
         <span class="material-symbols-outlined"> skip_next </span>
       </button>
-      <button mat-icon-button class="hover-effect-on-icons">
-        <span class="material-symbols-outlined"> undo </span>
+      <button mat-icon-button class="hover-effect-on-icons" (click)="toggleRepeat()">
+        <span 
+        class="material-symbols-outlined"
+        [ngStyle]="{ color: repeatMode !== 0 ? '#1db954' : '' }"
+        >
+        {{ repeatMode === 2 ? 'repeat_one_on' : (repeatMode === 1 ? 'repeat_on' : 'repeat') }}
+        </span>
       </button>
     </div>
     <div class="progress-container">
