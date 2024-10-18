@@ -112,22 +112,56 @@ export class CloudService {
   ): Promise<TrackFile[]> {
     try {
       const trackIds: string[] = tracks.map((track) => track.id);
-      const likedStatuses: boolean[] = await lastValueFrom(
-        this.spotifyService.checkUsersSavedTracks(trackIds)
-      );
-      const updatedTracks: TrackFile[] = tracks.map(
-        (track: TrackFile, index: number) => {
-          return {
-            ...track,
-            likedStatus: likedStatuses[index],
-          };
-        }
-      );
+      if(trackIds.length > 0) {
+        const likedStatuses: boolean[] = await lastValueFrom(
+          this.spotifyService.checkUsersSavedTracks(trackIds)
+        );
+        const updatedTracks: TrackFile[] = tracks.map(
+          (track: TrackFile, index: number) => {
+            return {
+              ...track,
+              likedStatus: likedStatuses[index],
+            };
+          }
+        );
 
-      return updatedTracks;
+        return updatedTracks;
+      }
+      
+      return tracks;
     } catch (error) {
       console.error('Error updating track liked status:', error);
       throw new Error('Failed to update track liked status.');
     }
+  }
+
+  public updateTrackIndexesAndImage(files: CloudFiles): void {
+    files.tracks.forEach((track: TrackFile, index: number) => {
+      track.index = index;
+    });
+  
+    files.imageUrl = files.tracks[0]?.img || '';
+  }
+
+  public async deleteTrackFromPlaylist(files: CloudFiles, trackFile: TrackFile): Promise<void> {
+    const trackIndex = files.tracks.findIndex(
+      (track) => track.id === trackFile.id
+    );
+    if (trackIndex !== -1) {
+      files.tracks.splice(trackIndex, 1);
+      this.updateTrackIndexesAndImage(files);
+      this.setFiles(files);
+      const playlists: PlaylistsObject = await lastValueFrom(
+        this.spotifyService.getCurrentUsersPlaylists()
+      );
+      this.setMyPlaylists(playlists);
+    }
+  }
+
+  public async addTrackToPlaylist(): Promise<void> {
+    const playlists: PlaylistsObject = await lastValueFrom(
+      this.spotifyService.getCurrentUsersPlaylists()
+    );
+    this.setMyPlaylists(playlists);
   }
 }

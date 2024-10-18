@@ -5,11 +5,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { CustomButtonComponent } from '../../buttons/custom-button/custom-button.component';
 import { DrawerService } from '../../../services/drawer.service';
 import { CloudFiles, TrackFile } from '../../../models/cloud.model';
-import {
-  Playlist,
-  PlaylistsObject,
-  TracksObject,
-} from '../../../models/spotify.model';
+import { Playlist, TracksObject } from '../../../models/spotify.model';
 import { DialogAddTrackComponent } from '../../dialog/dialog-add-track/dialog-add-track.component';
 import { MatDialog } from '@angular/material/dialog';
 import { SpotifyService } from '../../../services/spotify.service';
@@ -87,16 +83,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.addTrackToPlaylist();
+        this.cloudService.addTrackToPlaylist();
       }
     });
-  }
-
-  private async addTrackToPlaylist(): Promise<void> {
-    const playlists: PlaylistsObject = await lastValueFrom(
-      this.spotifyService.getCurrentUsersPlaylists()
-    );
-    this.cloudService.setMyPlaylists(playlists);
   }
 
   public openRemoveDialog(): void {
@@ -110,23 +99,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.deleteTrackFromPlaylist();
+        this.cloudService.deleteTrackFromPlaylist(this.files, this.track);
       }
     });
-  }
-
-  private async deleteTrackFromPlaylist(): Promise<void> {
-    const trackIndex = this.files.tracks.findIndex(
-      (track) => track.id === this.track.id
-    );
-    if (trackIndex !== -1) {
-      this.files.tracks.splice(trackIndex, 1);
-      this.cloudService.setFiles(this.files);
-      const playlists: PlaylistsObject = await lastValueFrom(
-        this.spotifyService.getCurrentUsersPlaylists()
-      );
-      this.cloudService.setMyPlaylists(playlists);
-    }
   }
 
   public async saveToLikedSongs(): Promise<void> {

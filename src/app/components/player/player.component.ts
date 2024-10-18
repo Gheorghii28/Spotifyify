@@ -111,28 +111,40 @@ export class PlayerComponent implements OnInit, OnDestroy {
 
   public get getLikedStatus(): boolean {
     if (this.playingTrack.playlistId) {
-      return this.files.tracks[this.playingTrack.index].likedStatus;
+      const track = this.files.tracks[this.playingTrack.index];
+      if(track) {
+        return track.likedStatus;
+      }
     }
     return this.playingTrack.likedStatus;
   }
 
   public get getImageUrl(): string {
     if (this.playingTrack.playlistId) {
-      return this.files.tracks[this.playingTrack.index].img as string;
+      const track = this.files.tracks[this.playingTrack.index];
+      if(track) {
+        return track.img as string;
+      }
     }
     return this.playingTrack.img;
   }
 
   public get getName(): string {
     if (this.playingTrack.playlistId) {
-      return this.files.tracks[this.playingTrack.index].name as string;
+      const track = this.files.tracks[this.playingTrack.index];
+      if(track) {
+        return track.name as string;
+      }
     }
     return this.playingTrack.name;
   }
 
   public get getArtists(): { name: string; id: string }[] {
     if (this.playingTrack.playlistId) {
-      return this.files.tracks[this.playingTrack.index].artists;
+      const track = this.files.tracks[this.playingTrack.index];
+      if(track) {
+        return track.artists;
+      }
     }
     return this.playingTrack.artists;
   }
@@ -174,6 +186,10 @@ export class PlayerComponent implements OnInit, OnDestroy {
       return this.playingTrack.index === this.files.tracks.length - 1;
     }
     return true;
+  }
+
+  public get isPlaylistEmpty(): boolean {
+    return this.files.tracks.length === 0;
   }
 
   public onSliderChangeEnd(): void {

@@ -13,9 +13,7 @@ import { DialogRemoveTrackComponent } from '../dialog/dialog-remove-track/dialog
 import { CustomButtonComponent } from '../buttons/custom-button/custom-button.component';
 import { CloudService } from '../../services/cloud.service';
 import { DialogAddTrackComponent } from '../dialog/dialog-add-track/dialog-add-track.component';
-import { PlaylistsObject } from '../../models/spotify.model';
 import { SpotifyService } from '../../services/spotify.service';
-import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-track-list',
@@ -109,23 +107,9 @@ export class TrackListComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.deleteTrackFromPlaylist();
+        this.cloudService.deleteTrackFromPlaylist(this.files, this.track);
       }
     });
-  }
-
-  private async deleteTrackFromPlaylist(): Promise<void> {
-    const trackIndex = this.files.tracks.findIndex(
-      (track) => track.id === this.track.id
-    );
-    if (trackIndex !== -1) {
-      this.files.tracks.splice(trackIndex, 1);
-      this.cloudService.setFiles(this.files);
-      const playlists: PlaylistsObject = await lastValueFrom(
-        this.spotifyService.getCurrentUsersPlaylists()
-      );
-      this.cloudService.setMyPlaylists(playlists);
-    }
   }
 
   public openAddDialog(): void {
@@ -138,15 +122,8 @@ export class TrackListComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.addTrackToPlaylist();
+        this.cloudService.addTrackToPlaylist();
       }
     });
-  }
-
-  private async addTrackToPlaylist(): Promise<void> {
-    const playlists: PlaylistsObject = await lastValueFrom(
-      this.spotifyService.getCurrentUsersPlaylists()
-    );
-    this.cloudService.setMyPlaylists(playlists);
   }
 }

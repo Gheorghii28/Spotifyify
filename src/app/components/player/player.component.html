@@ -73,7 +73,7 @@
       <button
         mat-icon-button
         class="hover-effect-on-icons"
-        [disabled]="isLastPlaying"
+        [disabled]="isLastPlaying || isPlaylistEmpty"
         (click)="next()"
       >
         <span class="material-symbols-outlined"> skip_next </span>
