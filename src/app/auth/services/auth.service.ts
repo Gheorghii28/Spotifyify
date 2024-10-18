@@ -48,9 +48,9 @@ export class AuthService {
     this.browserStorageService.remove('access_token');
     this.browserStorageService.remove('refresh_token');
     this.browserStorageService.remove('expiration_time');
-    this.cookieService.delete('accessToken');
-    this.cookieService.delete('refreshToken');
-    this.cookieService.delete('expirationTime');
+    this.cookieService.delete('accessToken', '/', environment.domain);
+    this.cookieService.delete('refreshToken', '/', environment.domain);
+    this.cookieService.delete('expirationTime', '/', environment.domain);
   }
 
   public storeToken(): void {
