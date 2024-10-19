@@ -17,8 +17,8 @@
         [sidenavExpanded]="true"
         (clickEvent)="openAddDialog()"
       ></app-custom-button>
-      <!-- TODO: Display the remove button if the currently playing track is from one of the user's playlists -->
       <app-custom-button
+        *ngIf="isOwnedByUser"
         [icon]="'delete'"
         [text]="'Remove from this playlist'"
         [customClass]="'secondary'"

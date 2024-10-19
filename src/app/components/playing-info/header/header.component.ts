@@ -5,7 +5,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { CustomButtonComponent } from '../../buttons/custom-button/custom-button.component';
 import { DrawerService } from '../../../services/drawer.service';
 import { CloudFiles, TrackFile } from '../../../models/cloud.model';
-import { Playlist, TracksObject } from '../../../models/spotify.model';
+import { Playlist, PlaylistsObject, TracksObject } from '../../../models/spotify.model';
 import { DialogAddTrackComponent } from '../../dialog/dialog-add-track/dialog-add-track.component';
 import { MatDialog } from '@angular/material/dialog';
 import { SpotifyService } from '../../../services/spotify.service';
@@ -33,6 +33,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private playingTrack!: TrackFile;
   private cloudSubscription!: Subscription;
   private playingTrackSubscription!: Subscription;
+  public isOwnedByUser: boolean = false;
   constructor(
     private drawerService: DrawerService,
     private spotifyService: SpotifyService,
@@ -55,6 +56,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .observeFiles()
       .subscribe((files: CloudFiles) => {
         this.files = files;
+        this.checkIfPlaylistOwnedByUser();
       });
     this.playingTrackSubscription = this.audioService
       .observePlayingTrack()
@@ -135,5 +137,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.spotifyService.getUsersSavedTracks()
     );
     this.cloudService.setMyTracks(tracks);
+  }
+
+  public async isPlaylistOwnedByUser(): Promise<boolean> {
+    const playlists: PlaylistsObject = await lastValueFrom(
+      this.spotifyService.getCurrentUsersPlaylists()
+    );
+    
+    return playlists.items.some(
+      (playlist: Playlist) => playlist.id === this.files.id
+    );
+  }  
+
+  private async checkIfPlaylistOwnedByUser(): Promise<void> {
+    this.isOwnedByUser = await this.isPlaylistOwnedByUser();
   }
 }
