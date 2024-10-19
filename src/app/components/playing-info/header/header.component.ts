@@ -5,7 +5,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { CustomButtonComponent } from '../../buttons/custom-button/custom-button.component';
 import { DrawerService } from '../../../services/drawer.service';
 import { CloudFiles, TrackFile } from '../../../models/cloud.model';
-import { Playlist, PlaylistsObject, TracksObject } from '../../../models/spotify.model';
+import { Playlist, PlaylistsObject } from '../../../models/spotify.model';
 import { DialogAddTrackComponent } from '../../dialog/dialog-add-track/dialog-add-track.component';
 import { MatDialog } from '@angular/material/dialog';
 import { SpotifyService } from '../../../services/spotify.service';
@@ -13,6 +13,7 @@ import { CloudService } from '../../../services/cloud.service';
 import { DialogRemoveTrackComponent } from '../../dialog/dialog-remove-track/dialog-remove-track.component';
 import { lastValueFrom, Subscription } from 'rxjs';
 import { AudioService } from '../../../services/audio.service';
+import { LikedStatusService } from '../../../services/liked-status.service';
 
 @Component({
   selector: 'app-header',
@@ -39,6 +40,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private spotifyService: SpotifyService,
     private cloudService: CloudService,
     private audioService: AudioService,
+    private likedStatusService: LikedStatusService,
     private dialog: MatDialog
   ) {}
 
@@ -107,36 +109,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   public async saveToLikedSongs(): Promise<void> {
-    if (this.track.likedStatus) {
-      this.saveTrack(this.track.id);
+    if (!this.track.likedStatus) {
+      this.likedStatusService.saveTrack(this.track.id);
+      await this.likedStatusService.checkAndUpdateLikedStatus(this.track.id, this.playingTrack);
+      await this.likedStatusService.updateUserSavedTracks();
     }
-  }
-
-  private async saveTrack(id: string): Promise<void> {
-    try {
-      await lastValueFrom(this.spotifyService.saveTracksForCurrentUser(id));
-      await this.updateLikedStatus(id);
-      await this.setMyTracks();
-    } catch (error) {
-      console.error('Error saving track:', error);
-    }
-  }
-
-  private async updateLikedStatus(id: string): Promise<void> {
-    if (this.playingTrack) {
-      if (id === this.playingTrack.id) {
-        this.playingTrack.likedStatus = true;
-        this.audioService.setPlayingTrack(this.playingTrack);
-      }
-    }
-    this.cloudService.updateLikedStatus(id, true);
-  }
-
-  private async setMyTracks(): Promise<void> {
-    const tracks: TracksObject = await lastValueFrom(
-      this.spotifyService.getUsersSavedTracks()
-    );
-    this.cloudService.setMyTracks(tracks);
   }
 
   public async isPlaylistOwnedByUser(): Promise<boolean> {

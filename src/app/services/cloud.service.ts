@@ -59,6 +59,10 @@ export class CloudService {
     this.myTracks$.next(newTracks);
   }
 
+  public getCurrentFiles(): Promise<CloudFiles> {
+    return Promise.resolve(this.files$.getValue());
+  }  
+
   public async getFiles(playlistId: string): Promise<CloudFiles> {
     try {
       const playlist: Playlist = await lastValueFrom(
@@ -89,22 +93,6 @@ export class CloudService {
         );
     }
     return [];
-  }
-
-  public async updateLikedStatus(
-    trackId: string,
-    newStatus: boolean
-  ): Promise<void> {
-    const currentFiles = (await this.files$.getValue()) as CloudFiles;
-    if (currentFiles) {
-      const track = currentFiles.tracks.find(
-        (track: TrackFile) => track.id === trackId
-      );
-      if (track) {
-        track.likedStatus = newStatus;
-        this.setFiles(currentFiles);
-      }
-    }
   }
 
   public async updateTrackLikedStatus(
