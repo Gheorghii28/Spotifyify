@@ -12,6 +12,7 @@ import {
   TracksObject,
 } from '../models/spotify.model';
 import { SpotifyService } from './spotify.service';
+import { DialogChangePlaylistDetailsData } from '../models/dialog.model';
 
 @Injectable({
   providedIn: 'root',
@@ -151,5 +152,31 @@ export class CloudService {
       this.spotifyService.getCurrentUsersPlaylists()
     );
     this.setMyPlaylists(playlists);
+  }
+
+  public async updatePlaylistDetails(details: DialogChangePlaylistDetailsData): Promise<void> {
+    try {
+      const playlists: PlaylistsObject = await lastValueFrom(this.spotifyService.getCurrentUsersPlaylists());
+      const newName = details.name.trim();
+      const newDescription = details.description.trim();
+      const playlistToUpdate = playlists.items.find((playlist) => playlist.id === details.id);
+  
+      if (playlistToUpdate && (playlistToUpdate.name !== newName || playlistToUpdate.description !== newDescription)) {
+        playlistToUpdate.name = newName;
+        playlistToUpdate.description = newDescription;
+        this.setMyPlaylists(playlists);
+
+        const currentFiles = (await this.getCurrentFiles()) as CloudFiles;
+        if(details.id === currentFiles.id) {
+          currentFiles.name = newName;
+          currentFiles.description = newDescription;
+          this.setFiles(currentFiles);
+        }
+      } else {
+        console.log('No changes detected or playlist not found.');
+      }
+    } catch (error) {
+      console.error('Error updating playlist:', error);
+    }
   }
 }

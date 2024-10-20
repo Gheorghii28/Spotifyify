@@ -3,6 +3,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import {
   DialogAddTrackData,
+  DialogChangePlaylistDetailsData,
   DialogRemoveTrackData,
 } from '../models/dialog.model';
 
@@ -147,8 +148,8 @@ export class SpotifyService {
     );
   }
 
-  public changePlaylistDetails(playlistId: string, details: { name: string, description: string }): Observable<any> {
-    const url = `${this.apiUrl}playlists/${playlistId}`;
+  public changePlaylistDetails(details: DialogChangePlaylistDetailsData): Observable<any> {
+    const url = `${this.apiUrl}playlists/${details.id}`;
     const body = {
       name: details.name,
       description: details.description,

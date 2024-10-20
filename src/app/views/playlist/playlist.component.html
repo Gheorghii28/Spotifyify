@@ -12,9 +12,26 @@
         [style.display]="!playlistFile.isUserCreated ? 'none' : ''"
         mat-icon-button
         class="hover-effect-on-icons btn-non-style"
+        [matMenuTriggerFor]="menu"
       >
         <span class="material-symbols-outlined"> more_vert </span>
       </button>
+      <mat-menu #menu="matMenu">
+        <app-custom-button
+        [icon]="'playlist_remove'"
+        [text]="'Delete'"
+        [customClass]="'secondary'"
+        [sidenavExpanded]="true"
+        (clickEvent)="openDeleteDialog()">
+        </app-custom-button>
+        <app-custom-button
+          [icon]="'queue_music'"
+          [text]="'Change'"
+          [customClass]="'secondary'"
+          [sidenavExpanded]="true"
+          (clickEvent)="openChangeDialog()">
+        </app-custom-button>
+      </mat-menu>
     </div>
   </app-view-header></ng-container
 >

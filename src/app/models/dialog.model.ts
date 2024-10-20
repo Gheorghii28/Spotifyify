@@ -4,6 +4,11 @@ export interface DialogRemovePlaylistData {
   name: string;
   id: string;
 }
+export interface DialogChangePlaylistDetailsData {
+  id: string;
+  name: string;
+  description: string;
+}
 
 export interface DialogRemoveFolderData {
   userFirebaseData: UserFirebaseData;

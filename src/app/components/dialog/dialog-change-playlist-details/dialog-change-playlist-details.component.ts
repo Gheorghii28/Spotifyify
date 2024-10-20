@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { DialogChangePlaylistDetailsData } from '../../../models/dialog.model';
 
 @Component({
   selector: 'app-dialog-change-playlist-details',
@@ -26,7 +27,7 @@ export class DialogChangePlaylistDetailsComponent {
 
   constructor(
     public dialogRef: MatDialogRef<DialogChangePlaylistDetailsComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { name: string, description: string },
+    @Inject(MAT_DIALOG_DATA) public data: DialogChangePlaylistDetailsData,
   ) {
     this.nameControl.setValue(this.data.name);
     this.descriptionControl.setValue(this.data.description);
@@ -39,6 +40,7 @@ export class DialogChangePlaylistDetailsComponent {
   public changePlaylistDetails() {
     if (this.nameControl.valid) {
       const updatedDetails = {
+        id: this.data.id,
         name: this.nameControl.value,
         description: this.descriptionControl.value
       };

@@ -15,6 +15,13 @@ import { BtnPlayComponent } from '../../components/buttons/btn-play/btn-play.com
 import { Playlist, PlaylistsObject } from '../../models/spotify.model';
 import { SpotifyService } from '../../services/spotify.service';
 import { BtnFollowComponent } from '../../components/buttons/btn-follow/btn-follow.component';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatButtonModule } from '@angular/material/button';
+import { CustomButtonComponent } from '../../components/buttons/custom-button/custom-button.component';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogRemovePlaylistComponent } from '../../components/dialog/dialog-remove-playlist/dialog-remove-playlist.component';
+import { DialogChangePlaylistDetailsComponent } from '../../components/dialog/dialog-change-playlist-details/dialog-change-playlist-details.component';
+import { DialogChangePlaylistDetailsData } from '../../models/dialog.model';
 
 @Component({
   selector: 'app-playlist',
@@ -27,6 +34,9 @@ import { BtnFollowComponent } from '../../components/buttons/btn-follow/btn-foll
     TrackListHeaderComponent,
     BtnPlayComponent,
     BtnFollowComponent,
+    MatButtonModule,
+    MatMenuModule,
+    CustomButtonComponent,
   ],
   templateUrl: './playlist.component.html',
   styleUrl: './playlist.component.scss',
@@ -45,7 +55,8 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     private cloudService: CloudService,
     public audioService: AudioService,
     private platformDetectionService: PlatformDetectionService,
-    private spotifyService: SpotifyService
+    private spotifyService: SpotifyService,
+    private dialog: MatDialog,
   ) {
     this.subscribeTo();
   }
@@ -96,5 +107,38 @@ export class PlaylistComponent implements OnInit, OnDestroy {
       .subscribe((track: TrackFile) => {
         this.playingTrack = track;
       });
+  } 
+  
+  public openDeleteDialog(): void {
+    const dialogRef = this.dialog.open(DialogRemovePlaylistComponent, {
+      data: { name: this.playlistFile.name, id: this.playlistFile.id },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {});
+  }
+
+  public openChangeDialog(): void {
+    const dialogRef = this.dialog.open(DialogChangePlaylistDetailsComponent, {
+      data: { 
+        id: this.playlistFile.id, 
+        name: this.playlistFile.name, 
+        description: this.playlistFile.description 
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: DialogChangePlaylistDetailsData) => {
+      if (result) {
+        this.spotifyService.changePlaylistDetails(result).subscribe({
+          next: (response) => {
+            this.cloudService.updatePlaylistDetails(result);
+         },
+          error: (err) => {
+            console.error('Failed to update playlist:', err);
+          }
+        });
+      } else {
+        console.log('Dialog was closed without changes');
+      }
+    });
   }
 }
