@@ -147,6 +147,21 @@ export class SpotifyService {
     );
   }
 
+  public changePlaylistDetails(playlistId: string, details: { name: string, description: string }): Observable<any> {
+    const url = `${this.apiUrl}playlists/${playlistId}`;
+    const body = {
+      name: details.name,
+      description: details.description,
+      public: true,
+    };
+    return this.http.put(url, body).pipe(
+      catchError((error) => {
+        console.error('Error updating playlist:', error);
+        return throwError(() => new Error('Failed to update playlist'));
+      })
+    );
+  }
+
   public getApiData(endpoint: string): Observable<any> {
     const url = `${this.apiUrl}${endpoint}`;
     return this.http.get(url).pipe(

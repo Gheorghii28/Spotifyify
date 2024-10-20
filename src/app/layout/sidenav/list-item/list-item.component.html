@@ -41,7 +41,14 @@
       [text]="'Delete'"
       [customClass]="'secondary'"
       [sidenavExpanded]="true"
-      (clickEvent)="openDialog()"
+      (clickEvent)="openDeleteDialog()"
+    ></app-custom-button>
+    <app-custom-button
+      [icon]="'queue_music'"
+      [text]="'Change'"
+      [customClass]="'secondary'"
+      [sidenavExpanded]="true"
+      (clickEvent)="openChangeDialog()"
     ></app-custom-button>
   </ng-template>
 </mat-menu>

@@ -104,7 +104,7 @@ export class ListFolderComponent {
     this.panelOpenState = !this.panelOpenState;
   }
 
-  public openDialogDelete(): void {
+  public openDeleteDialog(): void {
     const dialogRef = this.dialog.open(DialogRemoveFolderComponent, {
       data: { userFirebaseData: this.userFirebaseData, folder: this.folder },
     });
@@ -112,7 +112,7 @@ export class ListFolderComponent {
     dialogRef.afterClosed().subscribe((result) => {});
   }
 
-  public openDialogRename(): void {
+  public openRenameDialog(): void {
     const dialogRef = this.dialog.open(DialogRenameFolderComponent, {
       data: { folderName: this.folder.name },
     });

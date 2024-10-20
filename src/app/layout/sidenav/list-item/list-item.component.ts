@@ -1,14 +1,18 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { Playlist } from '../../../models/spotify.model';
+import { Playlist, PlaylistsObject } from '../../../models/spotify.model';
 import { CommonModule } from '@angular/common';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
-import { Subscription } from 'rxjs';
+import { lastValueFrom, Subscription } from 'rxjs';
 import { DrawerService } from '../../../services/drawer.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRemovePlaylistComponent } from '../../../components/dialog/dialog-remove-playlist/dialog-remove-playlist.component';
 import { CustomButtonComponent } from '../../../components/buttons/custom-button/custom-button.component';
 import { UtilsService } from '../../../services/utils.service';
+import { DialogChangePlaylistDetailsComponent } from '../../../components/dialog/dialog-change-playlist-details/dialog-change-playlist-details.component';
+import { SpotifyService } from '../../../services/spotify.service';
+import { CloudService } from '../../../services/cloud.service';
+import { CloudFiles } from '../../../models/cloud.model';
 
 @Component({
   selector: 'app-list-item',
@@ -31,7 +35,9 @@ export class ListItemComponent {
     private drawerService: DrawerService,
     private router: Router,
     private dialog: MatDialog,
-    public utilsService: UtilsService
+    public utilsService: UtilsService,
+    private spotifyService: SpotifyService,
+    private cloudService : CloudService,
   ) {
     this.subscribeTo();
   }
@@ -62,11 +68,58 @@ export class ListItemComponent {
     this.router.navigate(['/playlist', this.playlist.id]);
   }
 
-  public openDialog(): void {
+  public openDeleteDialog(): void {
     const dialogRef = this.dialog.open(DialogRemovePlaylistComponent, {
       data: { name: this.playlist.name, id: this.playlist.id },
     });
 
     dialogRef.afterClosed().subscribe((result) => {});
   }
+
+  public openChangeDialog(): void {
+    const dialogRef = this.dialog.open(DialogChangePlaylistDetailsComponent, {
+      data: { name: this.playlist.name, description: this.playlist.description },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.spotifyService.changePlaylistDetails(this.playlist.id, result).subscribe({
+          next: (response) => {
+            this.updatePlaylists(result);
+         },
+          error: (err) => {
+            console.error('Failed to update playlist:', err);
+          }
+        });
+      } else {
+        console.log('Dialog was closed without changes');
+      }
+    });
+  }
+
+  private async updatePlaylists(details: { name: string; description: string }): Promise<void> {
+    try {
+      const playlists: PlaylistsObject = await lastValueFrom(this.spotifyService.getCurrentUsersPlaylists());
+      const newName = details.name.trim();
+      const newDescription = details.description.trim();
+      const playlistToUpdate = playlists.items.find((playlist) => playlist.id === this.playlist.id);
+  
+      if (playlistToUpdate && (playlistToUpdate.name !== newName || playlistToUpdate.description !== newDescription)) {
+        playlistToUpdate.name = newName;
+        playlistToUpdate.description = newDescription;
+        this.cloudService.setMyPlaylists(playlists);
+
+        const currentFiles = (await this.cloudService.getCurrentFiles()) as CloudFiles;
+        if(this.playlist.id === currentFiles.id) {
+          currentFiles.name = newName;
+          currentFiles.description = newDescription;
+          this.cloudService.setFiles(currentFiles);
+        }
+      } else {
+        console.log('No changes detected or playlist not found.');
+      }
+    } catch (error) {
+      console.error('Error updating playlist:', error);
+    }
+  }  
 }
