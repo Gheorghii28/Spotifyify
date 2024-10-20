@@ -32,5 +32,7 @@ export class UserMenuComponent {
     this.router.navigate(['/profile']);
   }
 
-  public toSettings(): void {}
+  public toSettings(): void {
+    this.router.navigate(['/settings']);
+  }
 }
