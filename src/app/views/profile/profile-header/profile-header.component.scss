@@ -1,0 +1,121 @@
+.header {
+    height: 320px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    #top-container {
+      display: flex;
+      gap: 8px;
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 64px;
+      opacity: 0;
+      z-index: 2;
+      transition: all 0.5s ease-in-out;
+      .profile-img {
+        position: relative;
+        img {
+          width: 64px;
+          height: 64px;
+        }
+        .div-no-img {
+          width: 64px;
+          height: 64px;
+        }
+      }
+      .info-name {
+        font-size: 24px;
+        font-weight: 700;
+        padding: 0 0 0px 0;
+        line-height: 1;
+        margin: 0;
+        display: flex;
+        align-items: center;
+      }
+    }
+    .info {
+      padding: 15px;
+      z-index: 1;
+      width: 100%;
+      display: flex;
+      align-items: flex-end;
+    }
+    .info-country {
+      color: var(--white-color);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .info-email {
+      color: var(--white-color);
+      font-size: 12px;
+      padding: 0 0 10px 0;
+    }
+    .info-playlist {
+      color: var(--white-color);
+      font-size: 12px;
+      padding: 0 0 10px 0;
+    }
+    .info-actions {
+      display: flex;
+      flex-flow: row wrap;
+      align-items: center;
+    }
+  }
+  .profile-img {
+    margin-right: 15px;
+    img {
+      width: 160px;
+      height: 160px;
+      border-radius: 6px;
+    }
+    .div-no-img {
+      width: 160px;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #282828;
+      border-radius: 4px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      span {
+        color: #b2b2b2;
+      }
+    }
+  }
+  .info-name {
+    color: var(--white-color);
+    font-size: 36px;
+    font-weight: 700;
+    padding: 0 0 10px 0;
+    line-height: 1.1;
+  }
+  @media (max-width: 522px) {
+    .header {
+      height: auto;
+      flex-flow: column wrap;
+      .info {
+        margin-top: 0;
+        width: 100%;
+        display: flex;
+        flex-flow: column wrap;
+        align-items: center;
+        text-align: center;
+        .profile-img {
+          margin-right: 0;
+        }
+      }
+      .info-country {
+        margin-top: 10px;
+      }
+      .followers {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  }
+  

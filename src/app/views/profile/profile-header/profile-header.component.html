@@ -1,0 +1,52 @@
+<div
+  *ngIf="data as UserProfile"
+  class="header"
+  [ngStyle]="{
+    'background-image':
+      'linear-gradient(to bottom, ' +
+      '#565656' +
+      ', var(--black-color))'
+  }"
+>
+  <div
+    id="top-container"
+    [ngStyle]="{
+      'background-image':
+        'linear-gradient(to bottom, ' +
+        '#565656' +
+        ', var(--black-color))'
+    }"
+  >
+    <div class="profile-img">
+      <ng-container *ngIf="data.images[0]; else noImage">
+        <img src="{{ data.images[0].url }}" />
+      </ng-container>
+      <ng-template #noImage>
+        <div class="div-no-img">
+          <span class="material-symbols-outlined"> audio_file </span>
+        </div>
+      </ng-template>
+    </div>
+    <p class="info-name">{{ data.display_name }}</p>
+  </div>
+
+  <div class="info">
+    <div class="profile-img">
+      <ng-container *ngIf="data.images[0]; else noImage">
+        <img src="{{ data.images[0].url }}" />
+      </ng-container>
+      <ng-template #noImage>
+        <div class="div-no-img">
+          <span class="material-symbols-outlined"> audio_file </span>
+        </div>
+      </ng-template>
+    </div>
+
+    <div class="info-meta">
+      <div class="info-country">{{ data.country }}</div>
+      <div class="info-name">{{ data.display_name }}</div>
+      <div class="info-email">{{ data.email }}</div>
+      <div class="info-playlist">{{ playlistCount }} Public Playlist{{ playlistCount === 1 ? '' : 's' }}</div>
+    </div>
+  </div>
+</div>

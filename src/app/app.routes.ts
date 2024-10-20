@@ -39,6 +39,13 @@ export const routes: Routes = [
             (m) => m.MyTracksComponent
           ),
       },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./views/profile/profile.component').then(
+            (m) => m.ProfileComponent
+          ),
+      },
     ],
   },
   {

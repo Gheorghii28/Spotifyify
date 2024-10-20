@@ -23,6 +23,6 @@ export class CardComponent {
   }
 
   public get imgUrl(): string {
-    return this.data?.images?.[0]?.url || '';
+    return this.data?.images?.[0]?.url ?? '../../../assets/img/music-file.png';
   }
 }
