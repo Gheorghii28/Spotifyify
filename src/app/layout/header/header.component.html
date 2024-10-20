@@ -2,17 +2,17 @@
   <ng-content set=".search-bar"></ng-content>
   
   <div class="user">
-    <div #userNotifications class="user-notifications">
+    <!-- <div #userNotifications class="user-notifications">
       <button mat-icon-button class="hover-effect-on-icons">
         <span class="material-symbols-outlined"> notifications </span>
       </button>
-    </div>
+    </div> -->
 
-    <div #userInbox class="user-inbox">
+    <!-- <div #userInbox class="user-inbox">
       <button mat-icon-button class="hover-effect-on-icons">
         <span class="material-symbols-outlined"> archive </span>
       </button>
-    </div>
+    </div> -->
 
     <div #userInfo *ngIf="user" class="user-info">
       <ng-container *ngIf="user.images[0]; else defaultImg">
