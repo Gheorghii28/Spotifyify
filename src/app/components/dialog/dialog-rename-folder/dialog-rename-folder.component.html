@@ -1,0 +1,19 @@
+<mat-card>
+    <mat-card-header>
+      <mat-card-title>Rename Folder</mat-card-title>
+      <mat-card-subtitle>Enter a new name for the folder</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-form-field appearance="fill">
+            <mat-label>New Folder Name</mat-label>
+            <input matInput placeholder="Enter folder name" [formControl]="formControl" required>
+            @if (formControl.hasError('required')) {
+                <mat-error>Please enter a folder name</mat-error>
+            }
+          </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-button (click)="onNoClick()">Cancel</button>
+      <button mat-button [disabled]="!formControl.value" (click)="renameFolder()">Save</button>
+    </mat-card-actions>
+  </mat-card>

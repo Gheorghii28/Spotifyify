@@ -21,6 +21,7 @@ import { Subscription } from 'rxjs';
 import { DropTargetDirective } from '../../../directives/drop-target.directive';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRemoveFolderComponent } from '../../../components/dialog/dialog-remove-folder/dialog-remove-folder.component';
+import { DialogRenameFolderComponent } from '../../../components/dialog/dialog-rename-folder/dialog-rename-folder.component';
 
 @Component({
   selector: 'app-list-folder',
@@ -103,12 +104,39 @@ export class ListFolderComponent {
     this.panelOpenState = !this.panelOpenState;
   }
 
-  public openDialog(): void {
+  public openDialogDelete(): void {
     const dialogRef = this.dialog.open(DialogRemoveFolderComponent, {
       data: { userFirebaseData: this.userFirebaseData, folder: this.folder },
     });
 
     dialogRef.afterClosed().subscribe((result) => {});
+  }
+
+  public openDialogRename(): void {
+    const dialogRef = this.dialog.open(DialogRenameFolderComponent, {
+      data: { folderName: this.folder.name },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.trim()) {
+        const folderToUpdate = this.userFirebaseData.folders.find((folder) => folder.id === this.folder.id);
+    
+        if (folderToUpdate) {
+          folderToUpdate.name = result.trim();
+          this.firebaseService.updateDocument('users', this.userFirebaseData.userId, this.userFirebaseData)
+            .then(() => {
+              console.log('Folder name updated successfully');
+            })
+            .catch((error) => {
+              console.error('Error updating folder name:', error);
+            });
+        } else {
+          console.error('Folder not found with id:', this.folder.id);
+        }
+      } else {
+        console.warn('No valid folder name provided.');
+      }
+    });    
   }
 
   public movePlaylistToFolder(

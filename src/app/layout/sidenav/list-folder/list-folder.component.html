@@ -61,7 +61,14 @@
       [text]="'Delete'"
       [customClass]="'secondary'"
       [sidenavExpanded]="true"
-      (clickEvent)="openDialog()"
+      (clickEvent)="openDialogDelete()"
+    ></app-custom-button>
+    <app-custom-button
+      [icon]="'folder_managed'"
+      [text]="'Rename'"
+      [customClass]="'secondary'"
+      [sidenavExpanded]="true"
+      (clickEvent)="openDialogRename()"
     ></app-custom-button>
   </ng-template>
 </mat-menu>
