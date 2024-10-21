@@ -53,6 +53,13 @@ export const routes: Routes = [
             (m) => m.SettingsComponent
           ),
       },
+      {
+        path: 'artist/:id',
+        loadComponent: () =>
+          import('./views/artist/artist.component').then(
+            (m) => m.ArtistComponent
+          ),
+      },
     ],
   },
   {

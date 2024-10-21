@@ -4,6 +4,11 @@
   background-color: #242424;
   border-radius: 6px;
   margin-top: 24px;
+  transition: transform 0.3s ease;
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+  }
   img {
     width: 100%;
     height: 100%;
@@ -23,6 +28,16 @@
     .follow-container {
       display: flex;
       gap: 10px;
+      .following-color {
+        width: 90px;
+        padding: 0 12px;
+        color: var(--green-color);
+        border-color: var(--green-color);
+        &:hover {
+          color: var(--hover-green-color);
+          border-color: var(--hover-green-color);
+        }
+      }
       span {
         color: var(--light-grey-color);
       }

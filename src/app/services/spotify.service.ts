@@ -50,6 +50,32 @@ export class SpotifyService {
       })
     );
   }
+  
+  public followArtistsorUsers(followIds: string[], followType: string): Observable<any> {
+    const url = `${this.apiUrl}me/following?type=${followType}&ids=${followIds.join(',')}`;
+    return this.http.put(url, {}).pipe(
+      catchError((error) => {
+        console.error(`Error following artists or users:`, error);
+        return throwError(() => new Error(`Failed to follow artists or users`));
+      })
+    );
+  }
+  
+  public unfollowArtistsorUsers(followIds: string[], followType: string): Observable<any> {
+    const url = `${this.apiUrl}me/following?type=${followType}`;
+    const body = {
+      ids: followIds,
+    };
+    const options = {
+      body: body,
+    };
+    return this.http.request('delete', url, options).pipe(
+      catchError((error) => {
+        console.error(`Error unfollowing artists or users:`, error);
+        return throwError(() => new Error(`Failed to unfollow artists or users`));
+      })
+    );
+  }
 
   public checkIfCurrentUserFollowsPlaylist(
     playlistId: string
@@ -60,6 +86,20 @@ export class SpotifyService {
         console.error(`Error Check if Current User Follows Playlist:`, error);
         return throwError(
           () => new Error(`Failed to Check if Current User Follows Playlist`)
+        );
+      })
+    );
+  }
+
+  public checkIfCurrentUserFollowsArtistsorUsers(
+    ids: string[], type: string
+  ): Observable<any> {
+    const url: string = `${this.apiUrl}me/following/contains?type=${type}&ids=${ids.join(',')}`;
+    return this.http.get(url).pipe(
+      catchError((error) => {
+        console.error(`Error Check if Current User Follows Artists or Users:`, error);
+        return throwError(
+          () => new Error(`Failed to Check if Current User Follows Artists or Users`)
         );
       })
     );
@@ -232,6 +272,26 @@ export class SpotifyService {
       catchError((error) => {
         console.error(`Error Get Artist:`, error);
         return throwError(() => new Error(`Failed to Get Artist`));
+      })
+    );
+  }
+
+  public getArtistAlbums(artistId: string): Observable<any> {
+    const url: string = `${this.apiUrl}artists/${artistId}/albums`;
+    return this.http.get(url).pipe(
+      catchError((error) => {
+        console.error(`Error Get Artist's Albums:`, error);
+        return throwError(() => new Error(`Failed to Get Artist's Albums`));
+      })
+    );
+  }
+
+  public getArtistTopTracks(artistId: string): Observable<any> {
+    const url: string = `${this.apiUrl}artists/${artistId}/top-tracks`;
+    return this.http.get(url).pipe(
+      catchError((error) => {
+        console.error(`Error Get Artist's Topt Tracks:`, error);
+        return throwError(() => new Error(`Failed to Get Artist's Top Tracks`));
       })
     );
   }

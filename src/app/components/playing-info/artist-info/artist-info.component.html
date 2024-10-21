@@ -1,10 +1,15 @@
-<div *ngIf="artist" class="artist-info">
+<div *ngIf="artist" class="artist-info" (click)="navigateToArtist(artist.id)">
   <img src="{{ getArtistImageUrl(artist) }}" />
   <div class="text">
     <span class="name">{{ artist.name }}</span>
     <div class="follow-container">
       <span>{{ artist.followers.total }} monthly listeners</span>
-      <button>Follow</button>
+      <button 
+        [ngClass]="{'following-color': isFollowing}" 
+        (click)="toggleFollowing($event)"
+        >
+        {{ isFollowing ? 'Following' : 'Follow' }}
+      </button>
     </div>
     <p class="description">
       {{ utilsService.truncateText(description, 100) }}

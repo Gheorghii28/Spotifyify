@@ -1,0 +1,8 @@
+<ng-container *ngIf="artist">
+    <app-artist-header class="info-actions" [data]="artist"></app-artist-header>
+</ng-container>
+<div class="tracks">
+  <section resizeObserver>
+    <app-page-in-progress></app-page-in-progress>
+  </section>
+</div>
