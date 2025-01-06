@@ -5,6 +5,7 @@ import { Playlist, ShelfData } from '../../models/spotify.model';
 import { SpotifyService } from '../../services/spotify.service';
 import { ResizeObserverDirective } from '../../directives/resize-observer.directive';
 import { lastValueFrom } from 'rxjs';
+import { UtilsService } from '../../services/utils.service';
 
 @Component({
   selector: 'app-shelf',
@@ -21,7 +22,7 @@ export class ShelfComponent implements OnInit {
   private firstChildWidth!: number;
   private cardWidth: number = 200;
 
-  constructor(private spotifyService: SpotifyService) {}
+  constructor(private spotifyService: SpotifyService, private utilsService: UtilsService) {}
 
   ngOnInit(): void {
     this.fetchAndStoreEndpointData();
@@ -46,6 +47,8 @@ export class ShelfComponent implements OnInit {
       this.data = await lastValueFrom(
         this.spotifyService.getApiData(this.endpoint)
       );
+      const query = this.utilsService.extractQueryFromEndpoint(this.endpoint);
+      this.data.message = query ? `${query}` : '';
       this.loadMoreItems();
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -64,7 +67,7 @@ export class ShelfComponent implements OnInit {
       const newItems = this.data.playlists.items.slice(
         this.currentIndex,
         this.currentIndex + visibleCards
-      );
+      ).filter((item) => item !== null);
       this.displayedItems = [...this.displayedItems, ...newItems];
       this.currentIndex += visibleCards;
     }

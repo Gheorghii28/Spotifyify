@@ -38,4 +38,9 @@ export class UtilsService {
     }
     return text;
   }
+
+  public extractQueryFromEndpoint(endpoint: string): string | null {
+    const urlParams = new URLSearchParams(endpoint.split('?')[1]);
+    return urlParams.get('q');
+  }
 }

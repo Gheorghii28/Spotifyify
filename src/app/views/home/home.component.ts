@@ -1,17 +1,13 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { SpotifyService } from '../../services/spotify.service';
 import { CardComponent } from '../../components/card/card.component';
 import { CommonModule, Location } from '@angular/common';
 import { ShelfComponent } from '../../components/shelf/shelf.component';
-import {
-  CategoryItem,
-  SpotifyCategoryResponse,
-  UserProfile,
-} from '../../models/spotify.model';
+import { UserProfile } from '../../models/spotify.model';
 import { HeaderComponent } from '../../layout/header/header.component';
-import { lastValueFrom, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ScrollService } from '../../services/scroll.service';
 import { PlatformDetectionService } from '../../services/platform-detection.service';
+import { PlaylistQueryService } from '../../services/playlist-query.service';
 
 @Component({
   selector: 'app-home',
@@ -30,10 +26,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   private scrollSubscription!: Subscription;
 
   constructor(
-    private spotifyService: SpotifyService,
     private location: Location,
     private scrollService: ScrollService,
-    private platformDetectionService: PlatformDetectionService
+    private platformDetectionService: PlatformDetectionService,
+    private playlistQueryService: PlaylistQueryService,
   ) {}
 
   ngOnInit() {
@@ -69,16 +65,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   private async getEndpoints(): Promise<void> {
-    const data: SpotifyCategoryResponse = await lastValueFrom(
-      this.spotifyService.getSeveralBrowseCategories()
-    );
-    const featuredEndpoint: string[] = ['browse/featured-playlists'];
-    const categoryEndpoints: string[] = data.categories.items.map(
-      (item: CategoryItem) => {
-        return `browse/categories/${item.id}/playlists`;
-      }
-    );
-    this.endpoints = [...featuredEndpoint, ...categoryEndpoints];
+    const playlistSearchQueries = this.playlistQueryService.getQueries();
+    const playlistSearchEndpoints: string[] = playlistSearchQueries.map((query) => {
+      return `search?q=${query}&type=playlist`;
+    });
+    this.endpoints = [...playlistSearchEndpoints];
     this.loadMoreEndpoints();
   }
 
