@@ -5,6 +5,7 @@ import { CloudFiles, TrackFile } from '../../../models/cloud.model';
 import { CloudService } from '../../../services/cloud.service';
 import { SoundwaveComponent } from '../../soundwave/soundwave.component';
 import { CommonModule } from '@angular/common';
+import { SpotifyService } from '../../../services/spotify.service';
 
 @Component({
   selector: 'app-track-number',
@@ -23,11 +24,13 @@ export class TrackNumberComponent {
 
   constructor(
     public audioService: AudioService,
-    private cloudService: CloudService
+    private cloudService: CloudService,
+    private spotifyService: SpotifyService,
   ) {}
 
   public async togglePlayPause(event: Event): Promise<void> {
     event.stopPropagation();
+    await this.spotifyService.loadPreviewUrlIfMissing(this.track);
     if (this.isCurrentPlayingTrack()) {
       this.audioService.togglePlayPause();
     } else {

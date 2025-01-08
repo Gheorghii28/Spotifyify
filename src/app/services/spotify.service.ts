@@ -1,17 +1,20 @@
 import { Injectable } from '@angular/core';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, lastValueFrom, Observable, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import {
   DialogAddTrackData,
   DialogChangePlaylistDetailsData,
   DialogRemoveTrackData,
 } from '../models/dialog.model';
+import { TrackFile } from '../models/cloud.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SpotifyService {
   private readonly apiUrl: string = 'https://api.spotify.com/v1/';
+  private readonly previewFetcherBaseUrl: string = environment.previewFetchUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -263,6 +266,39 @@ export class SpotifyService {
         );
       })
     );
+  }
+  
+  private getTrackPreviewUrl(trackId: string): Observable<any> {
+    const url = `${this.previewFetcherBaseUrl}?trackId=${trackId}`;
+    return this.http.get(url).pipe(
+      catchError((error) => {
+        console.error(`Error Get Preview Url for Track (trackId:${trackId}):`, error);
+        return throwError(() => new Error(`Failed to Get Preview Url for Track (trackId:${trackId})`));
+      })
+    );
+  }
+
+  private async fetchPreviewUrlForTrack(trackId: string): Promise<string | null> {
+    try {
+      const response = await lastValueFrom(this.getTrackPreviewUrl(trackId));
+      return response.url;
+    } catch (error) {
+      console.error(`Failed to fetch preview URL for trackId: ${trackId}`, error);
+      return null;
+    }
+  }
+
+  public async loadPreviewUrlIfMissing(track: TrackFile): Promise<void> {
+    if (!track.previewUrl) {
+      try {
+        const previewUrl = await this.fetchPreviewUrlForTrack(track.id);
+        if (previewUrl) {
+          track.previewUrl = previewUrl;
+        }
+      } catch (error) {
+        console.error(`Error loading preview URL for trackId: ${track.id}`, error);
+      }
+    }
   }
 
   // ---Artists ---

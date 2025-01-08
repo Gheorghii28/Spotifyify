@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { Subscription } from 'rxjs';
 import { CloudService } from '../../../services/cloud.service';
 import { CloudFiles, TrackFile } from '../../../models/cloud.model';
+import { SpotifyService } from '../../../services/spotify.service';
 
 @Component({
   selector: 'app-btn-play',
@@ -23,7 +24,8 @@ export class BtnPlayComponent implements OnDestroy {
 
   constructor(
     public audioService: AudioService,
-    private cloudService: CloudService
+    private cloudService: CloudService,
+    private spotifyService: SpotifyService,
   ) {
     this.subscribeTo();
   }
@@ -56,9 +58,10 @@ export class BtnPlayComponent implements OnDestroy {
   }
 
   private async openPlaylist(): Promise<void> {
-    await this.setCloudFiles();
     this.audioService.stop();
     const files: CloudFiles = await this.cloudService.getFiles(this.playlistId);
+    this.cloudService.setFiles(files);
+    await this.spotifyService.loadPreviewUrlIfMissing(files.tracks[0]);
     const track: TrackFile = await this.audioService.getPlayingTrack(files, 0);
     this.audioService.setPlayingTrack(track);
   }

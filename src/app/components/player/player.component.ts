@@ -20,6 +20,7 @@ import { VolumeComponent } from './volume/volume.component';
 import { BtnFullScreenComponent } from '../buttons/btn-full-screen/btn-full-screen.component';
 import { LikeButtonComponent } from '../buttons/like-button/like-button.component';
 import { DrawerService } from '../../services/drawer.service';
+import { SpotifyService } from '../../services/spotify.service';
 
 @Component({
   selector: 'app-player',
@@ -55,7 +56,8 @@ export class PlayerComponent implements OnInit, OnDestroy {
     private layoutService: LayoutService,
     public audioService: AudioService,
     private elementRef: ElementRef,
-    private drawerService: DrawerService
+    private drawerService: DrawerService,
+    private spotifyService: SpotifyService,
   ) {}
 
   ngOnInit(): void {
@@ -83,8 +85,9 @@ export class PlayerComponent implements OnInit, OnDestroy {
 
     this.playingTrackSubscription = this.audioService
       .observePlayingTrack()
-      .subscribe((track: TrackFile) => {
+      .subscribe(async (track: TrackFile) => {
         if (track) {
+          await this.spotifyService.loadPreviewUrlIfMissing(track);
           this.playAudio(track, this.files);
           this.playingTrack = track;
         }

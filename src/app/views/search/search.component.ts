@@ -26,7 +26,6 @@ import { CloudService } from '../../services/cloud.service';
 import { StreamState } from '../../models/stream-state.model';
 import { Subscription } from 'rxjs';
 import { AudioService } from '../../services/audio.service';
-import { SpotifyService } from '../../services/spotify.service';
 import { TrackListHeaderComponent } from '../../components/track-list-header/track-list-header.component';
 import { ResizeObserverDirective } from '../../directives/resize-observer.directive';
 
@@ -118,7 +117,7 @@ export class SearchComponent implements OnInit, OnDestroy, AfterViewInit {
     this.playlists = [];
     if (results) {
       this.tracks = await this.getFilteredTracks(results);
-      this.playlists = results.playlists?.items || [];
+      this.playlists = results.playlists?.items.filter((item) => item !== null) || [];
     }
   }
 
@@ -140,7 +139,7 @@ export class SearchComponent implements OnInit, OnDestroy, AfterViewInit {
   private filterTracksWithPreviewUrl(
     tracks: SpotifySearchTrack[]
   ): SpotifySearchTrack[] {
-    return tracks.filter((track) => track.preview_url !== null);
+    return tracks.filter((track) => track.preview_url === null); //spotify wep api endpoint 30-second preview_url is nullable/deprecated
   }
 
   private async createTrackFilesWithLikedStatus(

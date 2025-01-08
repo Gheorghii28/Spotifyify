@@ -87,7 +87,7 @@ export class CloudService {
   private extractPlayableTracks(playlist: Playlist): TrackFile[] {
     if (playlist.tracks.items) {
       return playlist.tracks.items
-        .filter((item) => item.track && item.track.preview_url)
+        .filter((item) => item.track && item.track.preview_url === null) //spotify web api endpoint 30-second preview_url is nullable/deprecated
         .map(
           (item, index) =>
             new TrackFileClass(item.track, index, playlist.id, undefined)
