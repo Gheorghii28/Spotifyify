@@ -41,8 +41,8 @@ export class DialogChangePlaylistDetailsComponent {
     if (this.nameControl.valid) {
       const updatedDetails = {
         id: this.data.id,
-        name: this.nameControl.value,
-        description: this.descriptionControl.value
+        name: this.nameControl.value?.trim(),
+        description: this.descriptionControl.value?.trim()
       };
       this.dialogRef.close(updatedDetails);
     }
