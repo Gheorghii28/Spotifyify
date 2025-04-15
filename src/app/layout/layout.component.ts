@@ -7,7 +7,6 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { HeaderComponent } from './header/header.component';
 import { CommonModule } from '@angular/common';
 import {
   PlaylistsObject,
@@ -34,7 +33,6 @@ import { PlatformDetectionService } from '../services/platform-detection.service
   selector: 'app-layout',
   standalone: true,
   imports: [
-    HeaderComponent,
     SidenavComponent,
     RouterOutlet,
     PlayerComponent,

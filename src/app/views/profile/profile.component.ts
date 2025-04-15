@@ -5,7 +5,6 @@ import { PlatformDetectionService } from '../../services/platform-detection.serv
 import { PlaylistsObject, UserProfile } from '../../models/spotify.model';
 import { lastValueFrom, Subscription } from 'rxjs';
 import { SpotifyService } from '../../services/spotify.service';
-import { CustomScrollbarDirective } from '../../directives/custom-scrollbar.directive';
 import { CardComponent } from '../../components/card/card.component';
 import { ResizeObserverDirective } from '../../directives/resize-observer.directive';
 import { CloudService } from '../../services/cloud.service';
@@ -17,7 +16,6 @@ import { CloudService } from '../../services/cloud.service';
     ProfileHeaderComponent,
     CardComponent,
     CommonModule,
-    CustomScrollbarDirective,
     ResizeObserverDirective,
   ],
   templateUrl: './profile.component.html',

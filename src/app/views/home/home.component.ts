@@ -1,5 +1,4 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { CardComponent } from '../../components/card/card.component';
 import { CommonModule, Location } from '@angular/common';
 import { ShelfComponent } from '../../components/shelf/shelf.component';
 import { UserProfile } from '../../models/spotify.model';
@@ -12,7 +11,7 @@ import { PlaylistQueryService } from '../../services/playlist-query.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CardComponent, CommonModule, ShelfComponent, HeaderComponent],
+  imports: [CommonModule, ShelfComponent, HeaderComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })

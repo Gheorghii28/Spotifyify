@@ -6,7 +6,6 @@ import { CommonModule } from '@angular/common';
 import { CloudFiles, TrackFile } from '../../models/cloud.model';
 import { CloudService } from '../../services/cloud.service';
 import { lastValueFrom, Subscription } from 'rxjs';
-import { CustomScrollbarDirective } from '../../directives/custom-scrollbar.directive';
 import { StreamState } from '../../models/stream-state.model';
 import { AudioService } from '../../services/audio.service';
 import { PlatformDetectionService } from '../../services/platform-detection.service';
@@ -30,7 +29,6 @@ import { DialogChangePlaylistDetailsData } from '../../models/dialog.model';
     ViewHeaderComponent,
     TrackListComponent,
     CommonModule,
-    CustomScrollbarDirective,
     TrackListHeaderComponent,
     BtnPlayComponent,
     BtnFollowComponent,
