@@ -1,0 +1,7 @@
+<div
+  [ngStyle]="{ width: config.width, height: config.height }">
+  <ng-lottie
+    [options]="options"
+    (animationCreated)="animationCreated($event)">
+  </ng-lottie>
+</div>

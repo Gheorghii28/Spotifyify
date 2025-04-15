@@ -1,7 +1,5 @@
 <div class="like-container">
-  <span
-    class="like"
-    [ngClass]="{ animate: likedStatus }"
-    (click)="toggleLiked()"
-  ></span>
+  <button class="btn-non-style c-pointer" (click)="toggleLiked()">
+    <app-lottie-animation [likedStatus]="likedStatus" [config]="heartAnimationConfig" ></app-lottie-animation>
+  </button>
 </div>

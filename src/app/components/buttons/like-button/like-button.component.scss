@@ -4,25 +4,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  .like {
-    background: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/66955/web_heart_animation.png");
-    background-repeat: no-repeat;
-    background-size: 2900%;
-    background-position: left;
-    height: 100%;
-    width: 100%;
-    margin: 0 auto;
-    cursor: pointer;
-  }
-  .animate {
-    animation: heart-burst 0.8s steps(28) forwards;
-  }
-  @keyframes heart-burst {
-    0% {
-      background-position: left;
-    }
-    100% {
-      background-position: right;
+
+  button {
+    transition: transform 0.2s ease-in-out;
+    &:hover {
+      transform: scale(1.4);
     }
   }
 }

@@ -17,9 +17,13 @@ import { getDatabase, provideDatabase } from '@angular/fire/database';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { environment } from '../environments/environment';
 import { tokenInterceptor } from './auth/interceptor/token.interceptor';
+import { provideCacheableAnimationLoader, provideLottieOptions } from 'ngx-lottie';
+import player from 'lottie-web';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideLottieOptions({ player: () => player }),
+    provideCacheableAnimationLoader(),
     provideRouter(routes),
     provideClientHydration(),
     BrowserStorageService,

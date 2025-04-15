@@ -4,11 +4,12 @@ import { TrackFile } from '../../../models/cloud.model';
 import { Subscription } from 'rxjs';
 import { AudioService } from '../../../services/audio.service';
 import { LikedStatusService } from '../../../services/liked-status.service';
+import { LottieAnimationComponent } from '../../lottie-animation/lottie-animation.component';
 
 @Component({
   selector: 'app-like-button',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LottieAnimationComponent],
   templateUrl: './like-button.component.html',
   styleUrl: './like-button.component.scss',
 })
@@ -19,6 +20,21 @@ export class LikeButtonComponent {
   public playingTrack!: TrackFile;
   private playingTrackSubscription!: Subscription;
 
+  public heartAnimationConfig = {
+    path: '/assets/animations/heart-like.json',
+    action: this.likedStatus ? 'like' : 'unlike',
+    frameMap: {
+      like: [0, 70],
+      unlike: [70, 130],
+      idle: [70]
+    },
+    width: '50px',
+    height: '50px',
+    loop: false,
+    autoplay: false,
+    statusType: 'likedStatus'
+  };
+  
   constructor(
     private audioService: AudioService,
     private likedStatusService: LikedStatusService
