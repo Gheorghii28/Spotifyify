@@ -27,7 +27,6 @@ import { SpotifyService } from '../services/spotify.service';
 import { CustomScrollbarDirective } from '../directives/custom-scrollbar.directive';
 import { FirebaseService } from '../services/firebase.service';
 import { ScrollService } from '../services/scroll.service';
-import { PlatformDetectionService } from '../services/platform-detection.service';
 
 @Component({
   selector: 'app-layout',
@@ -67,22 +66,19 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
     private spotifyService: SpotifyService,
     private firebaseService: FirebaseService,
     private scrollService: ScrollService,
-    private platformDetectionService: PlatformDetectionService,
     private ngZone: NgZone
   ) {
     this.subscribeTo();
   }
 
   ngOnInit(): void {
-    if (this.platformDetectionService.isBrowser) {
-      this.ngZone.runOutsideAngular(() => {
-        this.getProfile();
-        this.setMyPlaylists();
-        this.setMyTracks();
-      });
-      this.layoutService.adjustHeightOnWindowResize();
-      this.layoutService.handleDrawerOnResize(this.drawerEndStatus);
-    }
+    this.ngZone.runOutsideAngular(() => {
+      this.getProfile();
+      this.setMyPlaylists();
+      this.setMyTracks();
+    });
+    this.layoutService.adjustHeightOnWindowResize();
+    this.layoutService.handleDrawerOnResize(this.drawerEndStatus);
   }
 
   ngAfterViewInit(): void {
@@ -128,7 +124,7 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
     const profile: UserProfile = await lastValueFrom(
       this.spotifyService.getCurrentUsersProfile()
     );
-    if (!this.platformDetectionService.isBrowser || profile) {
+    if (profile) {
       this.userProfile = profile;
       this.firebaseService.checkUserInFirestore(this.userProfile);
     } else {

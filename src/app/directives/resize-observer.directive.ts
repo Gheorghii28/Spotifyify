@@ -5,7 +5,6 @@ import {
   EventEmitter,
   Output,
 } from '@angular/core';
-import { PlatformDetectionService } from '../services/platform-detection.service';
 
 @Directive({
   selector: '[resizeObserver]',
@@ -18,20 +17,15 @@ export class ResizeObserverDirective implements AfterViewInit {
   private entriesMap = new WeakMap();
   private ro: ResizeObserver | undefined;
 
-  constructor(
-    private el: ElementRef,
-    private platformDetectionService: PlatformDetectionService
-  ) {
-    if (this.platformDetectionService.isBrowser) {
-      this.ro = new ResizeObserver((entries) => {
-        for (const entry of entries) {
-          if (this.entriesMap.has(entry.target)) {
-            const comp = this.entriesMap.get(entry.target);
-            comp._resizeCallback(entry);
-          }
+  constructor( private el: ElementRef ) {
+    this.ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (this.entriesMap.has(entry.target)) {
+          const comp = this.entriesMap.get(entry.target);
+          comp._resizeCallback(entry);
         }
-      });
-    }
+      }
+    });
   }
 
   ngAfterViewInit(): void {

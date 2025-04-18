@@ -17,6 +17,10 @@ export class AuthService {
     private http: HttpClient
   ) {}
 
+  public init(): void {
+    this.storeToken();
+  }
+
   public login(): void {
     window.location.href = environment.loginUrl;
   }

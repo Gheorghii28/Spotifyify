@@ -1,6 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { AuthService } from './auth/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +9,7 @@ import { AuthService } from './auth/services/auth.service';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  constructor(private authService: AuthService) {
-    this.authService.storeToken();
+  constructor(@Inject('APP_INIT') private initFn: () => void) {
+    this.initFn();
   }
 }

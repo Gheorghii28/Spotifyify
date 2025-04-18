@@ -14,7 +14,6 @@ import { CommonModule } from '@angular/common';
 import { CustomScrollbarDirective } from '../../directives/custom-scrollbar.directive';
 import { TrackInfoComponent } from './track-info/track-info.component';
 import { ArtistInfoComponent } from './artist-info/artist-info.component';
-import { PlatformDetectionService } from '../../services/platform-detection.service';
 
 @Component({
   selector: 'app-playing-info',
@@ -38,14 +37,11 @@ export class PlayingInfoComponent implements OnInit, OnDestroy {
   constructor(
     public audioService: AudioService,
     private spotifyService: SpotifyService,
-    private platformDetectionService: PlatformDetectionService
   ) {}
 
   ngOnInit(): void {
     this.subscribeTo();
-    if (this.platformDetectionService.isBrowser) {
-      this.loadUserDefaultTrack();
-    }
+    this.loadUserDefaultTrack();
   }
 
   ngOnDestroy(): void {

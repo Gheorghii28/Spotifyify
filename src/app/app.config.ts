@@ -19,6 +19,7 @@ import { environment } from '../environments/environment';
 import { tokenInterceptor } from './auth/interceptor/token.interceptor';
 import { provideCacheableAnimationLoader, provideLottieOptions } from 'ngx-lottie';
 import player from 'lottie-web';
+import { AuthService } from './auth/services/auth.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -42,5 +43,10 @@ export const appConfig: ApplicationConfig = {
     provideFirestore(() => getFirestore()),
     provideDatabase(() => getDatabase()),
     provideStorage(() => getStorage()),
+    {
+      provide: 'APP_INIT',
+      useFactory: (authService: AuthService) => () => authService.init(),
+      deps: [AuthService],
+    },
   ],
 };

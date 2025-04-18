@@ -8,7 +8,6 @@ import { CloudService } from '../../services/cloud.service';
 import { lastValueFrom, Subscription } from 'rxjs';
 import { StreamState } from '../../models/stream-state.model';
 import { AudioService } from '../../services/audio.service';
-import { PlatformDetectionService } from '../../services/platform-detection.service';
 import { TrackListHeaderComponent } from '../../components/track-list-header/track-list-header.component';
 import { BtnPlayComponent } from '../../components/buttons/btn-play/btn-play.component';
 import { Playlist, PlaylistsObject } from '../../models/spotify.model';
@@ -52,7 +51,6 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private cloudService: CloudService,
     public audioService: AudioService,
-    private platformDetectionService: PlatformDetectionService,
     private spotifyService: SpotifyService,
     private dialog: MatDialog,
   ) {
@@ -63,17 +61,15 @@ export class PlaylistComponent implements OnInit, OnDestroy {
     this.playlistFile = this.cloudService.initialFiles;
     this.route.params.subscribe(async (params) => {
       const playlistId = params['id'];
-      if (this.platformDetectionService.isBrowser) {
-        const myPlaylists: PlaylistsObject = await lastValueFrom(
-          this.spotifyService.getCurrentUsersPlaylists()
-        );
-        const files: CloudFiles = await this.cloudService.getFiles(playlistId);
-        const isUserCreated = myPlaylists.items.some(
-          (playlist: Playlist) => playlist.id === files.id
-        );
-        files.isUserCreated = isUserCreated;
-        this.cloudService.setFiles(files);
-      }
+      const myPlaylists: PlaylistsObject = await lastValueFrom(
+        this.spotifyService.getCurrentUsersPlaylists()
+      );
+      const files: CloudFiles = await this.cloudService.getFiles(playlistId);
+      const isUserCreated = myPlaylists.items.some(
+        (playlist: Playlist) => playlist.id === files.id
+      );
+      files.isUserCreated = isUserCreated;
+      this.cloudService.setFiles(files);
     });
   }
 

@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProfileHeaderComponent } from './profile-header/profile-header.component';
-import { PlatformDetectionService } from '../../services/platform-detection.service';
 import { PlaylistsObject, UserProfile } from '../../models/spotify.model';
 import { lastValueFrom, Subscription } from 'rxjs';
 import { SpotifyService } from '../../services/spotify.service';
@@ -30,7 +29,6 @@ export class ProfileComponent implements OnDestroy, OnInit {
   constructor(
     private spotifyService: SpotifyService,
     private cloudService: CloudService,
-    private platformDetectionService: PlatformDetectionService,
   ) {
     this.subscribeTo();
   }
@@ -52,15 +50,13 @@ export class ProfileComponent implements OnDestroy, OnInit {
   }
 
   public async fetchUserProfile(): Promise<void> {
-    if (this.platformDetectionService.isBrowser) {
-      try {
-        const user: UserProfile = await lastValueFrom(
-          this.spotifyService.getCurrentUsersProfile()
-        );
-        this.user = user;
-      } catch (error) {
-        console.error('Error fetching user profile:', error);
-      }
+    try {
+      const user: UserProfile = await lastValueFrom(
+        this.spotifyService.getCurrentUsersProfile()
+      );
+      this.user = user;
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
     }
   }
   
