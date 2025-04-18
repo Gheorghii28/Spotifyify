@@ -18,7 +18,7 @@ button {
     background: linear-gradient(to bottom right, #460bf3, #b1d6ce);
     border-radius: 4px;
     span {
-      color: #b2b2b2;
+      color: var(--grey-color);
     }
   }
   .text {

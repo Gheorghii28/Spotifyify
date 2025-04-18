@@ -1,12 +1,18 @@
 :root {
+  /* Greens */
   --green-color: #1db954;
   --hover-green-color: #2aa03b;
+
+  /* Neutrals - Light to Dark */
   --white-color: #ffffff;
+  --scrollbar-color: #dddddd;
+  --grey-90:  #b2b2b2;
   --light-grey-color: #b3b3b3;
   --grey-color: #5e5e5e;
-  --dark-grey-color: #121212;
-  --scrollbar-color: #ddd;
+  --dark-base-color: #282828;
   --hover-background-color: #252525;
+  --dark-middle-grey-color: #242424;
+  --dark-grey-color: #121212;
   --black-color: #000000;
 }
 html,
@@ -59,34 +65,6 @@ ul {
 }
 .round-8 {
   border-radius: 8px !important;
-}
-/* user-menu styles */
-.cdk-overlay-container {
-  .cdk-overlay-connected-position-bounding-box {
-    // top: 75px !important;
-    .mat-mdc-menu-panel {
-      background-color: var(--dark-grey-color) !important;
-      .mat-mdc-menu-content {
-        // padding: 0 !important;
-        .mat-mdc-menu-item {
-          // padding: 0 32px !important;
-          &:hover {
-            // background-color: var(--light-grey-color) !important;
-            .mat-mdc-menu-item-text {
-              // color: var(--black-color) !important;
-            }
-          }
-          .mat-mdc-menu-item-text {
-            // color: var(--light-grey-color) !important;
-          }
-        }
-        .mat-divider {
-          // margin: 0 16px !important;
-          // border-top-color: var(--light-grey-color) !important;
-        }
-      }
-    }
-  }
 }
 /* Start of sidenav menu styles */
 .mat-expansion-panel:not([class*="mat-elevation-z"]) {
@@ -148,6 +126,7 @@ ul {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
+  line-clamp: 1;
   overflow: hidden;
 }
 .mat-mdc-slider .mdc-slider__track--active {
@@ -188,3 +167,9 @@ ul {
   z-index: 1;
 }
 /* End - Style for scrollable elements */
+
+.custom-menu-style {
+  .mat-mdc-menu-content {
+    background-color: var(--dark-base-color) !important;
+  }
+}

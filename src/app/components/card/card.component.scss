@@ -1,5 +1,6 @@
 .card {
   width: 200px;
+  height: 287px;
   position: relative;
   background: transparent;
   border-radius: 6px;
@@ -13,6 +14,11 @@
       opacity: 1;
       transform: translateY(-20px);
     }
+  }
+  img {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
   }
   .overlayer {
     top: 145px;

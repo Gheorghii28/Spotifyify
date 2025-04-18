@@ -1,7 +1,7 @@
 .search {
   position: relative;
   input {
-    background-color: #242424;
+    background-color: var(--dark-middle-grey-color);
     border: 0;
     border-radius: 500px;
     color: var(--white-color) !important;

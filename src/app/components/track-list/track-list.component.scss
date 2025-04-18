@@ -5,7 +5,7 @@
   flex-flow: row wrap;
   align-items: center;
   &:hover {
-    background: var(--dark-grey-color);
+    background: var(--hover-background-color);
   }
   &:last-child {
     border-bottom: 1px solid var(--dark-grey-color);

@@ -34,7 +34,7 @@
   [style.top]="contextMenuPosition.y"
   [matMenuTriggerFor]="contextMenu"
 ></div>
-<mat-menu #contextMenu="matMenu">
+<mat-menu #contextMenu="matMenu" class="custom-menu-style">
   <ng-template matMenuContent let-item="item">
     <app-custom-button
       [icon]="'playlist_remove'"

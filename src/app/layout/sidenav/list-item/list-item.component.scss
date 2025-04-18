@@ -21,10 +21,10 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #282828;
+    background-color: var(--dark-base-color);
     border-radius: 4px;
     span {
-      color: #B2B2B2;
+      color: var(--grey-color);
     }
   }
   .text {
