@@ -1,4 +1,4 @@
-import { ApplicationConfig, PLATFORM_ID } from '@angular/core';
+import { ApplicationConfig, PLATFORM_ID, isDevMode } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
@@ -20,6 +20,7 @@ import { tokenInterceptor } from './auth/interceptor/token.interceptor';
 import { provideCacheableAnimationLoader, provideLottieOptions } from 'ngx-lottie';
 import player from 'lottie-web';
 import { AuthService } from './auth/services/auth.service';
+import { provideServiceWorker } from '@angular/service-worker';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -47,6 +48,10 @@ export const appConfig: ApplicationConfig = {
       provide: 'APP_INIT',
       useFactory: (authService: AuthService) => () => authService.init(),
       deps: [AuthService],
-    },
+    }, 
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
   ],
 };
