@@ -16,7 +16,6 @@ import { LayoutService } from '../../../services/layout.service';
 
 @Component({
   selector: 'app-nav-header',
-  standalone: true,
   imports: [
     MatButtonModule,
     MatMenuModule,

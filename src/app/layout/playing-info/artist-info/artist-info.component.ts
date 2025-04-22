@@ -8,7 +8,6 @@ import { NavigationService } from '../../../services/navigation.service';
 
 @Component({
   selector: 'app-artist-info',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './artist-info.component.html',
   styleUrl: './artist-info.component.scss',

@@ -34,7 +34,6 @@ import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-layout',
-  standalone: true,
   imports: [
     SidenavComponent,
     RouterOutlet,

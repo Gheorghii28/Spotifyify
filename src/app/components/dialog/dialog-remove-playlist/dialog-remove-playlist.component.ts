@@ -11,7 +11,6 @@ import { NavigationService } from '../../../services/navigation.service';
 
 @Component({
   selector: 'app-dialog-remove-playlist',
-  standalone: true,
   imports: [MatCardModule, MatButtonModule],
   templateUrl: './dialog-remove-playlist.component.html',
   styleUrl: './dialog-remove-playlist.component.scss',

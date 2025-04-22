@@ -19,7 +19,6 @@ import { CloudService } from '../../../services/cloud.service';
 
 @Component({
   selector: 'app-dialog-add-track',
-  standalone: true,
   imports: [
     MatCardModule,
     MatButtonModule,

@@ -9,7 +9,6 @@ import { UtilsService } from '../../services/utils.service';
 
 @Component({
   selector: 'app-shelf',
-  standalone: true,
   imports: [CardComponent, CommonModule, ResizeObserverDirective],
   templateUrl: './shelf.component.html',
   styleUrl: './shelf.component.scss',

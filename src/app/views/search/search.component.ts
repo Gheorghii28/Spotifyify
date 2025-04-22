@@ -35,7 +35,6 @@ interface ElementConfig {
 }
 @Component({
   selector: 'app-search',
-  standalone: true,
   imports: [
     HeaderComponent,
     SearchBarComponent,

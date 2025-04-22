@@ -17,7 +17,6 @@ import { DialogRemoveTrackComponent } from '../../../components/dialog/dialog-re
 
 @Component({
   selector: 'app-header-playing-info',
-  standalone: true,
   imports: [
     CommonModule,
     MatButtonModule,

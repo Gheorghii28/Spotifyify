@@ -8,7 +8,6 @@ import { LottieAnimationComponent } from '../../lottie-animation/lottie-animatio
 
 @Component({
   selector: 'app-like-button',
-  standalone: true,
   imports: [CommonModule, LottieAnimationComponent],
   templateUrl: './like-button.component.html',
   styleUrl: './like-button.component.scss',

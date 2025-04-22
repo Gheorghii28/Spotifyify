@@ -8,7 +8,6 @@ import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-dialog-rename-folder',
-  standalone: true,
   imports: [
     MatCardModule, 
     MatButtonModule, 

@@ -8,7 +8,6 @@ import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-dialog-remove-track',
-  standalone: true,
   imports: [MatCardModule, MatButtonModule],
   templateUrl: './dialog-remove-track.component.html',
   styleUrl: './dialog-remove-track.component.scss',

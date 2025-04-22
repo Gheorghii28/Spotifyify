@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-track-info',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './track-info.component.html',
   styleUrl: './track-info.component.scss',

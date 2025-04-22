@@ -8,7 +8,6 @@ import { NavigationService } from '../../services/navigation.service';
 
 @Component({
   selector: 'app-user-menu',
-  standalone: true,
   imports: [
     MatMenuModule,
     MatButtonModule,

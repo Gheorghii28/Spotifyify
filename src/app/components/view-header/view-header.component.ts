@@ -5,7 +5,6 @@ import { CloudFiles, MyTracks } from '../../models/cloud.model';
 
 @Component({
   selector: 'app-view-header',
-  standalone: true,
   imports: [CommonModule, MatButtonModule],
   templateUrl: './view-header.component.html',
   styleUrl: './view-header.component.scss',

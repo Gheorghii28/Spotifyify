@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-artist-header',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './artist-header.component.html',
   styleUrl: './artist-header.component.scss'

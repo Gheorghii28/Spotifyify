@@ -5,7 +5,6 @@ import { NavigationService } from '../../../services/navigation.service';
 
 @Component({
   selector: 'app-list-liked-songs',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './list-liked-songs.component.html',
   styleUrl: './list-liked-songs.component.scss',

@@ -10,7 +10,6 @@ import { SpotifyService } from '../../../services/spotify.service';
 
 @Component({
   selector: 'app-btn-play',
-  standalone: true,
   imports: [CommonModule, MatButtonModule],
   templateUrl: './btn-play.component.html',
   styleUrl: './btn-play.component.scss',

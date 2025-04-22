@@ -13,7 +13,6 @@ import { NavigationService } from '../../../services/navigation.service';
 
 @Component({
   selector: 'app-dialog-remove-folder',
-  standalone: true,
   imports: [MatCardModule, MatButtonModule],
   templateUrl: './dialog-remove-folder.component.html',
   styleUrl: './dialog-remove-folder.component.scss',

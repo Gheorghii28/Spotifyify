@@ -23,7 +23,6 @@ import { DrawerService } from '../../services/drawer.service';
 
 @Component({
   selector: 'app-sidenav',
-  standalone: true,
   imports: [
     CommonModule,
     MatExpansionModule,

@@ -5,7 +5,6 @@ import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-btn-follow',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './btn-follow.component.html',
   styleUrl: './btn-follow.component.scss',

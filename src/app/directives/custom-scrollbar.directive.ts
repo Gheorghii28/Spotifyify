@@ -3,7 +3,6 @@ import { DomManipulationService } from '../services/dom-manipulation.service';
 
 @Directive({
   selector: '[scrollable]',
-  standalone: true,
 })
 export class CustomScrollbarDirective {
   hostElement!: HTMLElement;

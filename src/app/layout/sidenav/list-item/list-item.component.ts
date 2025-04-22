@@ -14,7 +14,6 @@ import { NavigationService } from '../../../services/navigation.service';
 
 @Component({
   selector: 'app-list-item',
-  standalone: true,
   imports: [CommonModule, MatMenuModule, CustomButtonComponent],
   templateUrl: './list-item.component.html',
   styleUrl: './list-item.component.scss',

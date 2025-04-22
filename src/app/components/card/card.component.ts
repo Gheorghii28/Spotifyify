@@ -8,7 +8,6 @@ import { NavigationService } from '../../services/navigation.service';
 
 @Component({
   selector: 'app-card',
-  standalone: true,
   imports: [MatCardModule, CommonModule, BtnPlayComponent],
   templateUrl: './card.component.html',
   styleUrl: './card.component.scss',

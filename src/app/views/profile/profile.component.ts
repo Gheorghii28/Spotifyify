@@ -10,7 +10,6 @@ import { CloudService } from '../../services/cloud.service';
 
 @Component({
   selector: 'app-profile',
-  standalone: true,
   imports: [
     ProfileHeaderComponent,
     CardComponent,

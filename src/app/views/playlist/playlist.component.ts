@@ -23,7 +23,6 @@ import { DialogChangePlaylistDetailsData } from '../../models/dialog.model';
 
 @Component({
   selector: 'app-playlist',
-  standalone: true,
   imports: [
     ViewHeaderComponent,
     TrackListComponent,

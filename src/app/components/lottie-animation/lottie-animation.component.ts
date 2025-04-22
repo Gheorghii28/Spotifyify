@@ -6,7 +6,6 @@ import { LottieAnimationConfig } from '../../models/animation.model';
 
 @Component({
   selector: 'app-lottie-animation',
-  standalone: true,
   imports: [CommonModule, LottieComponent],
   templateUrl: './lottie-animation.component.html',
   styleUrl: './lottie-animation.component.scss'

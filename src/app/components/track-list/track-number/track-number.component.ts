@@ -9,7 +9,6 @@ import { SpotifyService } from '../../../services/spotify.service';
 
 @Component({
   selector: 'app-track-number',
-  standalone: true,
   imports: [CommonModule, SoundwaveComponent],
   templateUrl: './track-number.component.html',
   styleUrl: './track-number.component.scss',

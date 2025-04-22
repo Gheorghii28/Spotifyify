@@ -21,7 +21,6 @@ import { DrawerService } from '../../services/drawer.service';
 
 @Component({
   selector: 'app-player',
-  standalone: true,
   imports: [
     MatButtonModule,
     MatIconModule,

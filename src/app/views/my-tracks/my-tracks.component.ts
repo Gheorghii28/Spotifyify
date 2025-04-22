@@ -18,7 +18,6 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-my-tracks',
-  standalone: true,
   imports: [
     ViewHeaderComponent,
     TrackListHeaderComponent,

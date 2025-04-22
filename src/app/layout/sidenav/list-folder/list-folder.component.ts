@@ -24,7 +24,6 @@ import { DialogRenameFolderComponent } from '../../../components/dialog/dialog-r
 
 @Component({
   selector: 'app-list-folder',
-  standalone: true,
   imports: [
     CommonModule,
     MatMenuModule,

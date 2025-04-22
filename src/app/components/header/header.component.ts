@@ -7,7 +7,6 @@ import { UserMenuComponent } from '../../components/user-menu/user-menu.componen
 
 @Component({
   selector: 'app-header',
-  standalone: true,
   imports: [MatButtonModule, FormsModule, CommonModule, UserMenuComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',

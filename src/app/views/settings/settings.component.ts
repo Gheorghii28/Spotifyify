@@ -3,7 +3,6 @@ import { PageInProgressComponent } from '../../components/page-in-progress/page-
 
 @Component({
   selector: 'app-settings',
-  standalone: true,
   imports: [PageInProgressComponent],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss'

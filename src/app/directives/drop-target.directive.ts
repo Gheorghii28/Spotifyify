@@ -11,7 +11,6 @@ import { Playlist } from '../models/spotify.model';
 
 @Directive({
   selector: '[appDropTarget]',
-  standalone: true,
 })
 export class DropTargetDirective {
   @Output() onDrop = new EventEmitter<any>();

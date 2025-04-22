@@ -8,7 +8,6 @@ import {
 
 @Directive({
   selector: '[resizeObserver]',
-  standalone: true,
 })
 export class ResizeObserverDirective implements AfterViewInit {
   @Output()

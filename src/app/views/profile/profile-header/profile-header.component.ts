@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-profile-header',
-  standalone: true,
   imports: [CommonModule, MatButtonModule],
   templateUrl: './profile-header.component.html',
   styleUrl: './profile-header.component.scss'

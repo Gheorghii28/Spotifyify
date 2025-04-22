@@ -17,7 +17,6 @@ import { SpotifyService } from '../../services/spotify.service';
 
 @Component({
   selector: 'app-track-list',
-  standalone: true,
   imports: [
     CommonModule,
     MatMenuModule,

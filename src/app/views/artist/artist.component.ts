@@ -10,7 +10,6 @@ import { PageInProgressComponent } from '../../components/page-in-progress/page-
 
 @Component({
   selector: 'app-artist',
-  standalone: true,
   imports: [
     ArtistHeaderComponent,
     PageInProgressComponent,

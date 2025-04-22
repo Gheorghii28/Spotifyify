@@ -9,7 +9,6 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-volume',
-  standalone: true,
   imports: [
     MatButtonModule,
     MatIconModule,

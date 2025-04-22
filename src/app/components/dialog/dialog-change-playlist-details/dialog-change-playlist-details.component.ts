@@ -9,7 +9,6 @@ import { DialogChangePlaylistDetailsData } from '../../../models/dialog.model';
 
 @Component({
   selector: 'app-dialog-change-playlist-details',
-  standalone: true,
   imports: [
     MatCardModule, 
     MatButtonModule, 

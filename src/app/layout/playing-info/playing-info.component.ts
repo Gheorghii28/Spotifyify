@@ -10,7 +10,6 @@ import { ArtistInfoComponent } from './artist-info/artist-info.component';
 
 @Component({
   selector: 'app-playing-info',
-  standalone: true,
   imports: [
     CommonModule,
     CustomScrollbarDirective,

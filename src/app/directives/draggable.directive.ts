@@ -2,7 +2,6 @@ import { Directive, HostBinding, HostListener, Input } from '@angular/core';
 
 @Directive({
   selector: '[appDraggable]',
-  standalone: true,
 })
 export class DraggableDirective {
   @HostBinding('draggable') draggable = true;

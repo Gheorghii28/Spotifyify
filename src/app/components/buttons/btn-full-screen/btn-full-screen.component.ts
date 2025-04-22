@@ -6,7 +6,6 @@ import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-btn-full-screen',
-  standalone: true,
   imports: [CommonModule, MatButtonModule, MatIconModule],
   templateUrl: './btn-full-screen.component.html',
   styleUrl: './btn-full-screen.component.scss',
