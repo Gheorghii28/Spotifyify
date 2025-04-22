@@ -20,5 +20,5 @@ export class HeaderComponent {
   @ViewChild('userInfo', { read: ElementRef }) userInfo!: ElementRef;
   @ViewChild('userName', { read: ElementRef }) userName!: ElementRef;
   public userProfile!: UserProfile;
-  constructor() {}
+  constructor() { }
 }

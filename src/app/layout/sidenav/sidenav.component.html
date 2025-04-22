@@ -5,14 +5,14 @@
       [text]="'Home'"
       [customClass]="'primary'"
       [sidenavExpanded]="sidenavExpanded"
-      (clickEvent)="navigateTo('home', userProfile)"
+      (clickEvent)="goHome()"
     ></app-custom-button>
     <app-custom-button
       [icon]="'search'"
       [text]="'Search'"
       [customClass]="'primary'"
       [sidenavExpanded]="sidenavExpanded"
-      (clickEvent)="navigateTo('search', userProfile)"
+      (clickEvent)="goToSearch()"
     ></app-custom-button>
   </div>
   <nav
@@ -23,7 +23,6 @@
     <app-nav-header
       [drawerSidenav]="drawerSidenav"
       [sidenavExpanded]="sidenavExpanded"
-      [userId]="userProfile.id"
       [myPlaylists]="myPlaylists"
       [userFirebaseData]="userFirebaseData"
     ></app-nav-header>
@@ -64,7 +63,7 @@
             appDraggable
             [playlist]="playlist"
             [sidenavExpanded]="sidenavExpanded"
-            [appDraggable]="utilsService.toJsonString(playlist)"
+            [appDraggable]="toJson(playlist)"
           ></app-list-item>
         </li>
       </ul>

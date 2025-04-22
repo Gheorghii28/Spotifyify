@@ -2,9 +2,9 @@ import { Component, Input } from '@angular/core';
 import { Artist } from '../../../models/spotify.model';
 import { CommonModule } from '@angular/common';
 import { UtilsService } from '../../../services/utils.service';
-import { Router } from '@angular/router';
 import { SpotifyService } from '../../../services/spotify.service';
 import { lastValueFrom } from 'rxjs';
+import { NavigationService } from '../../../services/navigation.service';
 
 @Component({
   selector: 'app-artist-info',
@@ -22,7 +22,7 @@ export class ArtistInfoComponent {
   constructor(
     public utilsService: UtilsService,
     private spotifyService: SpotifyService,
-    private router: Router,
+    public navigationService: NavigationService
   ) {}
 
   public getArtistImageUrl(artist: Artist): string {
@@ -30,7 +30,7 @@ export class ArtistInfoComponent {
   }
 
   public navigateToArtist(id: string): void {
-    this.router.navigate(['/artist', id]);
+    this.navigationService.artist(id);
   }
 
   public async toggleFollowing(event: Event) {

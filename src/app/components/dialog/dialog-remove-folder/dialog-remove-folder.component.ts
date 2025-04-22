@@ -3,13 +3,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FirebaseService } from '../../../services/firebase.service';
-import { Router } from '@angular/router';
 import { CloudService } from '../../../services/cloud.service';
 import { SpotifyService } from '../../../services/spotify.service';
 import { PlaylistsObject } from '../../../models/spotify.model';
 import { DialogRemoveFolderData } from '../../../models/dialog.model';
 import { UserFolder } from '../../../models/firebase.model';
 import { lastValueFrom } from 'rxjs';
+import { NavigationService } from '../../../services/navigation.service';
 
 @Component({
   selector: 'app-dialog-remove-folder',
@@ -25,7 +25,7 @@ export class DialogRemoveFolderComponent {
     private firebaseService: FirebaseService,
     private spotifyService: SpotifyService,
     private cloudService: CloudService,
-    private router: Router
+    public navigationService: NavigationService
   ) {}
 
   public onNoClick(): void {
@@ -51,7 +51,7 @@ export class DialogRemoveFolderComponent {
       await this.updatePlaylists();
       this.onNoClick();
       if (this.isCurrentPlaylistInDeletedFolder(folderToRemove)) {
-        await this.router.navigate(['/home']);
+        this.navigationService.home();
       }
     } catch (error) {
       console.error('Error removing folder:', error);
@@ -80,7 +80,7 @@ export class DialogRemoveFolderComponent {
   private isCurrentPlaylistInDeletedFolder(
     folderToRemove: UserFolder
   ): boolean {
-    const currentUrl = this.router.url;
+    const currentUrl = this.navigationService.getCurrentUrl();
     const isPlaylistInUrl = (playlistId: string) =>
       currentUrl.includes(playlistId);
     return folderToRemove.playlists.some((playlist) =>

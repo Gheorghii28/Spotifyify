@@ -1,11 +1,12 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ShelfComponent } from '../../components/shelf/shelf.component';
 import { UserProfile } from '../../models/spotify.model';
-import { HeaderComponent } from '../../layout/header/header.component';
+import { HeaderComponent } from '../../components/header/header.component';
 import { Subscription } from 'rxjs';
 import { ScrollService } from '../../services/scroll.service';
 import { PlaylistQueryService } from '../../services/playlist-query.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-home',
@@ -24,13 +25,13 @@ export class HomeComponent implements OnInit, OnDestroy {
   private scrollSubscription!: Subscription;
 
   constructor(
-    private location: Location,
     private scrollService: ScrollService,
     private playlistQueryService: PlaylistQueryService,
+    private userService: UserService,
   ) {}
 
   ngOnInit() {
-    this.setUserProfileFromState();
+    this.setUserProfile();
     this.setScrollSubscription();
     this.windowHeight = window.innerHeight;
     this.getEndpoints();
@@ -54,9 +55,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
   }
 
-  private setUserProfileFromState(): void {
-    const state = this.location.getState() as any;
-    this.userProfile = state?.user;
+  setUserProfile(): void {
+    this.userService.getProfile().then((profile) => {
+      this.userProfile = profile;
+    });
   }
 
   private async getEndpoints(): Promise<void> {

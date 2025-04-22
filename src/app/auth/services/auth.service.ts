@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { BrowserStorageService } from '../../services/browser-storage.service';
 import { CookieService } from 'ngx-cookie-service';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { NavigationService } from '../../services/navigation.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +13,7 @@ export class AuthService {
   constructor(
     private browserStorageService: BrowserStorageService,
     private cookieService: CookieService,
-    private router: Router,
+    public navigationService: NavigationService,
     private http: HttpClient
   ) {}
 
@@ -27,7 +27,7 @@ export class AuthService {
 
   public logout(): void {
     this.clearTokens();
-    this.router.navigate(['/login']);
+    this.navigationService.login();
   }
 
   public isAuthenticated(): boolean {

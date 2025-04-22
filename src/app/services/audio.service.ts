@@ -38,6 +38,36 @@ export class AudioService {
     'loadedmetadata',
     'loadstart',
   ];
+  private repeatMode: number = 0;
+  private repeatMode$: BehaviorSubject<number> = new BehaviorSubject(
+    this.repeatMode
+  );
+  public isShuffled: boolean = false;
+  private isShuffled$: BehaviorSubject<boolean> = new BehaviorSubject(
+    this.isShuffled
+  );
+
+  public async getNextTrack(
+    index: number,
+    files: CloudFiles
+  ): Promise<TrackFile> {
+    const nextIndex = index + 1 >= files.tracks.length ? 0 : index + 1;
+    return await this.getPlayingTrack(files, nextIndex);
+  }
+
+  public async changeTrackIndex(
+    direction: 'next' | 'previous',
+    index?: number,
+    files?: CloudFiles
+  ): Promise<void> {
+    let trackIndex: number = index || 0;
+    trackIndex += direction === 'next' ? 1 : -1;
+    const track: TrackFile = await this.getPlayingTrack(
+      files as CloudFiles,
+      trackIndex
+    );
+    this.setPlayingTrack(track);
+  }
 
   private updateStateEvents(event: Event): void {
     switch (event.type) {
@@ -161,6 +191,22 @@ export class AudioService {
 
   public observeStreamState(): Observable<StreamState> {
     return this.state$.asObservable();
+  }
+
+  public observeRepeatMode(): Observable<number> {
+    return this.repeatMode$.asObservable();
+  }
+
+  public observeIsShuffled(): Observable<boolean> {
+    return this.isShuffled$.asObservable();
+  }
+
+  public setRepeatMode(mode: number): void {
+    this.repeatMode$.next(mode);
+  }
+
+  public setIsShuffled(isShuffled: boolean): void {
+    this.isShuffled$.next(isShuffled);
   }
 
   public observePlayingTrack(): Observable<TrackFile> {

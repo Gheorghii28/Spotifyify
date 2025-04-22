@@ -29,7 +29,6 @@ import { LayoutService } from '../../../services/layout.service';
 export class NavHeaderComponent implements OnDestroy {
   @Input() drawerSidenav!: MatDrawer;
   @Input() sidenavExpanded!: boolean;
-  @Input() userId!: string;
   @Input() myPlaylists!: PlaylistsObject;
   @Input() userFirebaseData!: UserFirebaseData;
   sidenavWidth!: number;
@@ -77,7 +76,7 @@ export class NavHeaderComponent implements OnDestroy {
     try {
       const playlistNr: number = this.myPlaylists.items.length + 1;
       const playlist: Playlist = await lastValueFrom(
-        this.spotifyService.createPlaylist(this.userId, playlistNr)
+        this.spotifyService.createPlaylist(this.userFirebaseData.userId, playlistNr)
       );
       this.addPlaylistToUser(playlist);
     } catch (error) {
@@ -87,7 +86,7 @@ export class NavHeaderComponent implements OnDestroy {
 
   public async createPlaylistFolder(): Promise<void> {
     const folderId = this.utilsService.randomString(11);
-    await this.firebaseService.updateDocument('users', this.userId, {
+    await this.firebaseService.updateDocument('users', this.userFirebaseData.userId, {
       folders: [
         ...this.userFirebaseData.folders,
         { id: folderId, name: 'New Folder', playlists: [] },

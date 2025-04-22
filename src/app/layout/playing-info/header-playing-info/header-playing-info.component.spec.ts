@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HeaderComponent } from './header.component';
+import { HeaderPlayingInfoComponent } from './header-playing-info.component';
 
 describe('HeaderComponent', () => {
-  let component: HeaderComponent;
-  let fixture: ComponentFixture<HeaderComponent>;
+  let component: HeaderPlayingInfoComponent;
+  let fixture: ComponentFixture<HeaderPlayingInfoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HeaderComponent]
+      imports: [HeaderPlayingInfoComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(HeaderComponent);
+    fixture = TestBed.createComponent(HeaderPlayingInfoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -9,9 +9,13 @@
         mode="side"
       >
         <app-sidenav
-          *ngIf="userProfile"
           [drawerSidenav]="drawerSidenav"
-          [userProfile]="userProfile"
+          [sidenavExpanded]="sidenavExpanded"
+          [myPlaylists]="myPlaylists"
+          [userFirebaseData]="userFirebaseData"
+          [folderUnassignedPlaylists]="folderUnassignedPlaylists"
+          [myTracksTotal]="myTracksTotal"
+          [movedToFolderStatus]="movedToFolderStatus"
           class="h-100"
         ></app-sidenav>
       </mat-drawer>
@@ -24,18 +28,27 @@
         #drawerInfo
         [opened]="drawerEndStatus"
         class="round-8 mat-drawer-left"
-        style="width: 289px"
         mode="side"
         position="end"
+        class="info-drawer"
       >
-        <app-playing-info></app-playing-info>
+        <app-playing-info
+          [playingTrack]="playingTrack"
+          [playlist]="playlist"
+          [artists]="artists"
+        ></app-playing-info>
       </mat-drawer>
     </mat-drawer-container>
   </div>
   <app-player
-    *ngIf="files"
+    *ngIf="files.id.length > 0"
     [files]="files"
     [playlistId]="files.id"
     [drawerEndStatus]="drawerEndStatus"
+    [playingTrack]="playingTrack"
+    [repeatMode]="repeatMode"
+    [isShuffled]="isShuffled"
+    [state]="state"
+    [isFullScreen]="isFullScreen"
   ></app-player>
 </div>

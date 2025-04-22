@@ -2,9 +2,9 @@ import { Component, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { Playlist } from '../../models/spotify.model';
-import { Router } from '@angular/router';
 import { BtnPlayComponent } from '../buttons/btn-play/btn-play.component';
 import { UtilsService } from '../../services/utils.service';
+import { NavigationService } from '../../services/navigation.service';
 
 @Component({
   selector: 'app-card',
@@ -16,10 +16,10 @@ import { UtilsService } from '../../services/utils.service';
 export class CardComponent {
   @Input() data!: Playlist;
 
-  constructor(private router: Router, public utilsService: UtilsService) {}
+  constructor(public utilsService: UtilsService, public navigationService: NavigationService) {}
 
   navigateToPlaylist(id: string): void {
-    this.router.navigate(['/playlist', id]);
+    this.navigationService.playlist(id);
   }
 
   public get imgUrl(): string {

@@ -5,9 +5,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogRemovePlaylistData } from '../../../models/dialog.model';
 import { CloudService } from '../../../services/cloud.service';
 import { SpotifyService } from '../../../services/spotify.service';
-import { Router } from '@angular/router';
 import { PlaylistsObject } from '../../../models/spotify.model';
 import { lastValueFrom } from 'rxjs';
+import { NavigationService } from '../../../services/navigation.service';
 
 @Component({
   selector: 'app-dialog-remove-playlist',
@@ -22,7 +22,7 @@ export class DialogRemovePlaylistComponent {
     @Inject(MAT_DIALOG_DATA) public data: DialogRemovePlaylistData,
     private spotifyService: SpotifyService,
     private cloudService: CloudService,
-    private router: Router
+    public navigationService: NavigationService
   ) {}
 
   public onNoClick(): void {
@@ -34,11 +34,11 @@ export class DialogRemovePlaylistComponent {
       await lastValueFrom(this.spotifyService.unfollowPlaylist(this.data.id));
       await this.updatePlaylists();
       this.onNoClick();
-      const currentUrl = this.router.url;
+      const currentUrl = this.navigationService.getCurrentUrl();
       const isPlaylistInUrl = (playlistId: string) =>
         currentUrl.includes(playlistId);
       if (isPlaylistInUrl(this.data.id)) {
-        this.router.navigate(['/home']);
+        this.navigationService.home();
       }
     } catch (error) {
       console.error('Error removing playlist:', error);

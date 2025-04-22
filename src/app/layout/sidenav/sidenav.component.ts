@@ -1,32 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
-import { Router } from '@angular/router';
 import { NavHeaderComponent } from './nav-header/nav-header.component';
 import { MatDrawer } from '@angular/material/sidenav';
-import { Subscription } from 'rxjs';
-import { DrawerService } from '../../services/drawer.service';
 import { ListItemComponent } from './list-item/list-item.component';
-import {
-  Playlist,
-  PlaylistsObject,
-  TracksObject,
-  UserProfile,
-} from '../../models/spotify.model';
-import { CloudService } from '../../services/cloud.service';
+import { Playlist, PlaylistsObject } from '../../models/spotify.model';
 import { CustomButtonComponent } from '../../components/buttons/custom-button/custom-button.component';
 import { ListLikedSongsComponent } from './list-liked-songs/list-liked-songs.component';
 import { CustomScrollbarDirective } from '../../directives/custom-scrollbar.directive';
-import { UserFirebaseData, UserFolder } from '../../models/firebase.model';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { UserFirebaseData } from '../../models/firebase.model';
 import { FirebaseService } from '../../services/firebase.service';
 import { ListFolderComponent } from './list-folder/list-folder.component';
 import { DraggableDirective } from '../../directives/draggable.directive';
 import { DropTargetDirective } from '../../directives/drop-target.directive';
 import { UtilsService } from '../../services/utils.service';
-import { Firestore } from '@angular/fire/firestore';
+import { PlaylistManagerService } from '../services/playlist-manager.service';
+import { NavigationService } from '../../services/navigation.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -48,21 +39,15 @@ import { Firestore } from '@angular/fire/firestore';
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss',
 })
-export class SidenavComponent implements OnDestroy, OnInit {
+export class SidenavComponent {
   @Input() drawerSidenav!: MatDrawer;
-  @Input() userProfile!: UserProfile;
-  sidenavExpanded!: boolean;
-  myPlaylists!: PlaylistsObject;
-  myTracksTotal!: number;
-  private movedToFolderStatus!: boolean;
-  private sidenavExpandedSubscription!: Subscription;
-  private myPlaylistsSubscription!: Subscription;
-  private myTracksSubscription!: Subscription;
-  private movedToFolderStatusSubscription!: Subscription;
-  private unsub!: () => void;
-  public userFirebaseData!: UserFirebaseData;
-  public folderUnassignedPlaylists!: Playlist[];
-  private firestore: Firestore = inject(Firestore);
+  @Input() sidenavExpanded!: boolean;
+  @Input() myPlaylists!: PlaylistsObject;
+  @Input() userFirebaseData!: UserFirebaseData;
+  @Input() folderUnassignedPlaylists!: Playlist[];
+  @Input() myTracksTotal!: number;
+  @Input() movedToFolderStatus!: boolean;
+
   public navExpandedStyles = { 'padding-left': '15px' };
   public navCollapsedStyles = {
     display: 'flex',
@@ -75,109 +60,33 @@ export class SidenavComponent implements OnDestroy, OnInit {
   public liFolderCollapsedStyles = { width: '48px' };
 
   constructor(
-    private router: Router,
-    private drawerService: DrawerService,
-    private cloudService: CloudService,
     private firebaseService: FirebaseService,
-    public utilsService: UtilsService
-  ) {
-    this.subscribeTo();
+    private utilsService: UtilsService,
+    private playlistManagerService: PlaylistManagerService,
+    public navigationService: NavigationService
+  ) { }
+
+  goHome(): void {
+    this.navigationService.home();
   }
 
-  ngOnInit() {
-    this.unsub = onSnapshot(
-      doc(this.firestore, 'users', this.userProfile.id),
-      (doc) => {
-        this.userFirebaseData = doc.data() as UserFirebaseData;
-        this.findUnassignedPlaylists();
-      }
-    );
+  goToSearch(): void {
+    this.navigationService.search();
   }
-
-  ngOnDestroy(): void {
-    this.sidenavExpandedSubscription.unsubscribe();
-    this.myPlaylistsSubscription.unsubscribe();
-    this.myTracksSubscription.unsubscribe();
-    this.movedToFolderStatusSubscription.unsubscribe();
-    this.unsub();
-  }
-
-  private subscribeTo(): void {
-    this.sidenavExpandedSubscription = this.drawerService
-      .observeSidenavExpanded()
-      .subscribe((expanded: boolean) => {
-        this.sidenavExpanded = expanded;
-      });
-    this.myPlaylistsSubscription = this.cloudService
-      .observeMyPlaylists()
-      .subscribe((playlists: PlaylistsObject) => {
-        this.myPlaylists = playlists;
-        if (this.userFirebaseData) {
-          this.updateFirebaseWithMyPlaylists();
-        }
-        this.findUnassignedPlaylists();
-      });
-    this.myTracksSubscription = this.cloudService
-      .observeMyTracks()
-      .subscribe((tracks: TracksObject) => {
-        this.myTracksTotal = tracks.total;
-      });
-    this.movedToFolderStatusSubscription = this.utilsService
-      .observeToFolderStatus()
-      .subscribe((movedToFolderStatus: boolean) => {
-        this.movedToFolderStatus = movedToFolderStatus;
-      });
-  }
-
-  public navigateTo(route: string, data?: UserProfile): void {
-    if (data) {
-      this.router.navigate([route], { state: { user: data } });
-    } else {
-      this.router.navigate([route]);
-    }
-  }
-
-  private findUnassignedPlaylists(): void {
-    if (!this.userFirebaseData) {
-      return;
-    }
-    const folderAssignedPlaylistIds = new Set<string>();
-    this.userFirebaseData.folders.forEach((folder: UserFolder) => {
-      folder.playlists.forEach((assignedPlaylist: Playlist) => {
-        folderAssignedPlaylistIds.add(assignedPlaylist.id);
-      });
-    });
-    this.folderUnassignedPlaylists = this.myPlaylists.items?.filter(
-      (playlist) => !folderAssignedPlaylistIds.has(playlist.id)
-    );
-  }
-
+  
   public removePlaylistFromFolders(playlistToRemove: Playlist): void {
     if (!this.movedToFolderStatus) {
-      this.userFirebaseData.folders.forEach((folder: UserFolder) => {
-        folder.playlists = folder.playlists.filter(
-          (playlist) => playlist.id !== playlistToRemove.id
-        );
-      });
-      this.firebaseService.updateDocument('users', this.userProfile.id, {
-        folders: [...this.userFirebaseData.folders],
+      const updatedFolders = this.playlistManagerService.removePlaylistFromAllFolders(
+        this.userFirebaseData,
+        playlistToRemove.id
+      );
+      this.firebaseService.updateDocument('users', this.userFirebaseData.userId, {
+        folders: updatedFolders,
       });
     }
   }
 
-  private updateFirebaseWithMyPlaylists(): void {
-    const items: Playlist[] = this.myPlaylists.items;
-    const userData: UserFirebaseData = this.userFirebaseData;
-    userData.folders.forEach((folder: UserFolder) => {
-      folder.playlists.forEach((playlist: Playlist) => {
-        const matchedPlaylist = items.find((item) => item.id === playlist.id);
-        if (matchedPlaylist && matchedPlaylist.tracks) {
-          playlist.tracks.total = matchedPlaylist.tracks.total;
-        }
-      });
-    });
-    this.firebaseService.updateDocument('users', this.userProfile.id, {
-      folders: [...userData.folders],
-    });
+  toJson(playlist: any): string {
+    return this.utilsService.toJsonString(playlist);
   }
 }

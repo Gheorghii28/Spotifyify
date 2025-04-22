@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { Subscription } from 'rxjs';
 import { DrawerService } from '../../../services/drawer.service';
-import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRemovePlaylistComponent } from '../../../components/dialog/dialog-remove-playlist/dialog-remove-playlist.component';
 import { CustomButtonComponent } from '../../../components/buttons/custom-button/custom-button.component';
@@ -13,6 +12,7 @@ import { DialogChangePlaylistDetailsComponent } from '../../../components/dialog
 import { SpotifyService } from '../../../services/spotify.service';
 import { CloudService } from '../../../services/cloud.service';
 import { DialogChangePlaylistDetailsData } from '../../../models/dialog.model';
+import { NavigationService } from '../../../services/navigation.service';
 
 @Component({
   selector: 'app-list-item',
@@ -33,11 +33,11 @@ export class ListItemComponent {
   
   constructor(
     private drawerService: DrawerService,
-    private router: Router,
     private dialog: MatDialog,
     public utilsService: UtilsService,
     private spotifyService: SpotifyService,
     private cloudService : CloudService,
+    public navigationService: NavigationService
   ) {
     this.subscribeTo();
   }
@@ -65,7 +65,7 @@ export class ListItemComponent {
   }
 
   public navigateToPlaylist(): void {
-    this.router.navigate(['/playlist', this.playlist.id]);
+    this.navigationService.playlist(this.playlist.id);
   }
 
   public openDeleteDialog(): void {

@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { DrawerService } from '../../../services/drawer.service';
+import { NavigationService } from '../../../services/navigation.service';
 
 @Component({
   selector: 'app-list-liked-songs',
@@ -23,7 +23,7 @@ export class ListLikedSongsComponent {
 
   constructor(
     private drawerService: DrawerService,
-    private router: Router
+    public navigationService: NavigationService
   ) {
     this.subscribeTo();
   }
@@ -41,6 +41,6 @@ export class ListLikedSongsComponent {
   }
 
   public navigateToPlaylist(): void {
-    this.router.navigate(['/my-tracks']);
+    this.navigationService.likedSongs();
   }
 }

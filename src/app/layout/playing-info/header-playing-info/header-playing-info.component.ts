@@ -1,33 +1,33 @@
-import { CommonModule } from '@angular/common';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
-import { CustomButtonComponent } from '../../buttons/custom-button/custom-button.component';
-import { DrawerService } from '../../../services/drawer.service';
-import { CloudFiles, TrackFile } from '../../../models/cloud.model';
-import { Playlist, PlaylistsObject } from '../../../models/spotify.model';
-import { DialogAddTrackComponent } from '../../dialog/dialog-add-track/dialog-add-track.component';
 import { MatDialog } from '@angular/material/dialog';
+import { lastValueFrom, Subscription } from 'rxjs';
+import { DrawerService } from '../../../services/drawer.service';
 import { SpotifyService } from '../../../services/spotify.service';
 import { CloudService } from '../../../services/cloud.service';
-import { DialogRemoveTrackComponent } from '../../dialog/dialog-remove-track/dialog-remove-track.component';
-import { lastValueFrom, Subscription } from 'rxjs';
 import { AudioService } from '../../../services/audio.service';
 import { LikedStatusService } from '../../../services/liked-status.service';
+import { CloudFiles, TrackFile } from '../../../models/cloud.model';
+import { Playlist, PlaylistsObject } from '../../../models/spotify.model';
+import { CustomButtonComponent } from '../../../components/buttons/custom-button/custom-button.component';
+import { DialogAddTrackComponent } from '../../../components/dialog/dialog-add-track/dialog-add-track.component';
+import { DialogRemoveTrackComponent } from '../../../components/dialog/dialog-remove-track/dialog-remove-track.component';
 
 @Component({
-  selector: 'app-header',
+  selector: 'app-header-playing-info',
   standalone: true,
   imports: [
+    CommonModule,
     MatButtonModule,
     MatMenuModule,
-    CommonModule,
     CustomButtonComponent,
   ],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.scss',
+  templateUrl: './header-playing-info.component.html',
+  styleUrl: './header-playing-info.component.scss',
 })
-export class HeaderComponent implements OnInit, OnDestroy {
+export class HeaderPlayingInfoComponent implements OnInit, OnDestroy {
   @Input() track!: TrackFile;
   @Input() playlist!: Playlist;
   private files!: CloudFiles;

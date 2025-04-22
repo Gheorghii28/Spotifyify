@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { HeaderComponent } from '../../layout/header/header.component';
+import { HeaderComponent } from '../../components/header/header.component';
 import {
   Playlist,
   SpotifySearchResults,

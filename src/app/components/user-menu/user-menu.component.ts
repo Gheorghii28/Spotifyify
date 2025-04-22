@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../auth/services/auth.service';
 import { CustomButtonComponent } from '../buttons/custom-button/custom-button.component';
-import { Router } from '@angular/router';
+import { NavigationService } from '../../services/navigation.service';
 
 @Component({
   selector: 'app-user-menu',
@@ -21,7 +21,7 @@ import { Router } from '@angular/router';
 export class UserMenuComponent {
   constructor(
     private authService: AuthService,
-    private router: Router,
+    public navigationService: NavigationService
   ) {}
 
   public logout(): void {
@@ -29,10 +29,10 @@ export class UserMenuComponent {
   }
 
   public async toProfile(): Promise<void> {
-    this.router.navigate(['/profile']);
+    this.navigationService.profile();
   }
 
   public toSettings(): void {
-    this.router.navigate(['/settings']);
+    this.navigationService.settings();
   }
 }
