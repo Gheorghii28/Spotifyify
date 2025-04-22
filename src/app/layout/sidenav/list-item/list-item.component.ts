@@ -2,8 +2,6 @@ import { Component, Input, ViewChild } from '@angular/core';
 import { Playlist } from '../../../models/spotify.model';
 import { CommonModule } from '@angular/common';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
-import { Subscription } from 'rxjs';
-import { DrawerService } from '../../../services/drawer.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRemovePlaylistComponent } from '../../../components/dialog/dialog-remove-playlist/dialog-remove-playlist.component';
 import { CustomButtonComponent } from '../../../components/buttons/custom-button/custom-button.component';
@@ -24,35 +22,19 @@ import { NavigationService } from '../../../services/navigation.service';
 export class ListItemComponent {
   @Input() playlist!: Playlist;
   @Input() sidenavExpanded!: boolean;
+  @Input() sidenavWidth!: number;
   @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
-  public sidenavWidth!: number;
   public contextMenuPosition = { x: '0px', y: '0px' };
-  private sidenavWidthSubscription!: Subscription;
   public btnExpandedStyles = { width: '100%', padding: '8px' };
   public btnCollapsedStyles = { width: '48px', padding: 0 };
   
   constructor(
-    private drawerService: DrawerService,
     private dialog: MatDialog,
     public utilsService: UtilsService,
     private spotifyService: SpotifyService,
     private cloudService : CloudService,
     public navigationService: NavigationService
-  ) {
-    this.subscribeTo();
-  }
-
-  ngOnDestroy(): void {
-    this.sidenavWidthSubscription.unsubscribe();
-  }
-
-  private subscribeTo(): void {
-    this.sidenavWidthSubscription = this.drawerService
-      .observeSidenavWidth()
-      .subscribe((width: number) => {
-        this.sidenavWidth = width;
-      });
-  }
+  ) { }
 
   public onContextMenu(event: MouseEvent) {
     event.preventDefault();

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatListModule } from '@angular/material/list';
@@ -18,6 +18,8 @@ import { DropTargetDirective } from '../../directives/drop-target.directive';
 import { UtilsService } from '../../services/utils.service';
 import { PlaylistManagerService } from '../services/playlist-manager.service';
 import { NavigationService } from '../../services/navigation.service';
+import { Subject } from 'rxjs';
+import { DrawerService } from '../../services/drawer.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -39,7 +41,7 @@ import { NavigationService } from '../../services/navigation.service';
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss',
 })
-export class SidenavComponent {
+export class SidenavComponent implements OnDestroy {
   @Input() drawerSidenav!: MatDrawer;
   @Input() sidenavExpanded!: boolean;
   @Input() myPlaylists!: PlaylistsObject;
@@ -58,13 +60,30 @@ export class SidenavComponent {
   public listCollapsedStyles = { 'align-items': 'center' };
   public liFolderExpandedStyles = {};
   public liFolderCollapsedStyles = { width: '48px' };
+  public sidenavWidth!: number;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private firebaseService: FirebaseService,
     private utilsService: UtilsService,
     private playlistManagerService: PlaylistManagerService,
-    public navigationService: NavigationService
-  ) { }
+    public navigationService: NavigationService,
+    private drawerService: DrawerService,
+  ) {
+    this.subscribeTo();
+  }
+
+  private subscribeTo(): void {
+    this.drawerService.observeSidenavWidth()
+      .subscribe((width: number) => {
+        this.sidenavWidth = width;
+      });
+  }
+  
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   goHome(): void {
     this.navigationService.home();

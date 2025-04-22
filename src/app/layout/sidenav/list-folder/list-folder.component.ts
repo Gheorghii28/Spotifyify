@@ -17,7 +17,6 @@ import {
 import { DraggableDirective } from '../../../directives/draggable.directive';
 import { UtilsService } from '../../../services/utils.service';
 import { FirebaseService } from '../../../services/firebase.service';
-import { Subscription } from 'rxjs';
 import { DropTargetDirective } from '../../../directives/drop-target.directive';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRemoveFolderComponent } from '../../../components/dialog/dialog-remove-folder/dialog-remove-folder.component';
@@ -65,12 +64,11 @@ export class ListFolderComponent {
   @Input() playlists!: Playlist[];
   @Input() userFirebaseData!: UserFirebaseData;
   @Input() sidenavExpanded!: boolean;
+  @Input() movedToFolderStatus!: boolean;
   @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
   public sidenavWidth!: number;
   public contextMenuPosition = { x: '0px', y: '0px' };
   public panelOpenState = false;
-  private movedToFolderStatus!: boolean;
-  private movedToFolderStatusSubscription!: Subscription;
   public btnExpandedStyles = { width: '100%', padding: '8px' };
   public btnCollapsedStyles = { width: '48px', padding: 0 };
 
@@ -78,17 +76,7 @@ export class ListFolderComponent {
     public utilsService: UtilsService,
     private firebaseService: FirebaseService,
     private dialog: MatDialog
-  ) {
-    this.subscribeTo();
-  }
-
-  private subscribeTo(): void {
-    this.movedToFolderStatusSubscription = this.utilsService
-      .observeToFolderStatus()
-      .subscribe((movedToFolderStatus: boolean) => {
-        this.movedToFolderStatus = movedToFolderStatus;
-      });
-  }
+  ) { }
 
   public onContextMenu(event: MouseEvent): void {
     event.preventDefault();

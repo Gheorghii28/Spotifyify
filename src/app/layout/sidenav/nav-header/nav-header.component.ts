@@ -1,8 +1,8 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDrawer } from '@angular/material/sidenav';
 import { DrawerService } from '../../../services/drawer.service';
-import { lastValueFrom, Subscription } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { SpotifyService } from '../../../services/spotify.service';
@@ -26,13 +26,12 @@ import { LayoutService } from '../../../services/layout.service';
   templateUrl: './nav-header.component.html',
   styleUrl: './nav-header.component.scss',
 })
-export class NavHeaderComponent implements OnDestroy {
+export class NavHeaderComponent {
   @Input() drawerSidenav!: MatDrawer;
   @Input() sidenavExpanded!: boolean;
   @Input() myPlaylists!: PlaylistsObject;
   @Input() userFirebaseData!: UserFirebaseData;
-  sidenavWidth!: number;
-  private sidenavWidthSubscription!: Subscription;
+  @Input() sidenavWidth!: number;
 
   constructor(
     private drawerService: DrawerService,
@@ -41,21 +40,7 @@ export class NavHeaderComponent implements OnDestroy {
     private firebaseService: FirebaseService,
     private utilsService: UtilsService,
     public layoutService: LayoutService
-  ) {
-    this.subscribeTo();
-  }
-
-  ngOnDestroy(): void {
-    this.sidenavWidthSubscription.unsubscribe();
-  }
-
-  private subscribeTo(): void {
-    this.sidenavWidthSubscription = this.drawerService
-      .observeSidenavWidth()
-      .subscribe((width: number) => {
-        this.sidenavWidth = width;
-      });
-  }
+  ) { }
 
   public toggleDrawer(): void {
     const newExpandedState = !this.sidenavExpanded;

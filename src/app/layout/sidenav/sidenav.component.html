@@ -25,6 +25,7 @@
       [sidenavExpanded]="sidenavExpanded"
       [myPlaylists]="myPlaylists"
       [userFirebaseData]="userFirebaseData"
+      [sidenavWidth]="sidenavWidth"
     ></app-nav-header>
     <div style="position: relative; height: calc(100% - 33px)">
       <ul
@@ -41,6 +42,7 @@
           <app-list-liked-songs
             [myTracksTotal]="myTracksTotal"
             [sidenavExpanded]="sidenavExpanded"
+            [sidenavWidth]="sidenavWidth"
           ></app-list-liked-songs>
         </li>
         <li
@@ -56,6 +58,7 @@
             [playlists]="folder.playlists"
             [userFirebaseData]="userFirebaseData"
             [sidenavExpanded]="sidenavExpanded"
+            [movedToFolderStatus]="movedToFolderStatus"
           ></app-list-folder>
         </li>
         <li *ngFor="let playlist of folderUnassignedPlaylists">
@@ -63,6 +66,7 @@
             appDraggable
             [playlist]="playlist"
             [sidenavExpanded]="sidenavExpanded"
+            [sidenavWidth]="sidenavWidth"
             [appDraggable]="toJson(playlist)"
           ></app-list-item>
         </li>
