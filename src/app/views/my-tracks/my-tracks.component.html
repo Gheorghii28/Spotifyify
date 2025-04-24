@@ -7,9 +7,9 @@
     <app-track-list
       [track]="track"
       [trackIndex]="track.index"
-      [files]="playlistFile"
-      [playingTrack]="playingTrack"
-      [state]="state"
+      [files]="cloudService.files()"
+      [playingTrack]="audioService.currentPlayingTrack()"
+      [state]="audioService.state()"
       [showDeleteBtn]="false"
     ></app-track-list>
   </ng-container>

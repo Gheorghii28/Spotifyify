@@ -2,7 +2,7 @@
   class="current-track"
   [ngClass]="{ fullscreen: isFullScreen }"
   [style.background-color]="!isFullScreen ? '#000' : ''"
-  *ngIf="playingTrack"
+  *ngIf="playingTrack.id.length > 0"
 >
   <div class="song-bar">
     <div class="song-infos">

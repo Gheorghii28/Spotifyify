@@ -70,7 +70,7 @@ export class DialogRemoveFolderComponent {
       const updatedPlaylists: PlaylistsObject = await lastValueFrom(
         this.spotifyService.getCurrentUsersPlaylists()
       );
-      this.cloudService.setMyPlaylists(updatedPlaylists);
+      this.cloudService.myPlaylists.set(updatedPlaylists);
     } catch (error) {
       console.error('Error updating playlists:', error);
     }

@@ -1,12 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ViewHeaderComponent } from '../../components/view-header/view-header.component';
 import { TrackListComponent } from '../../components/track-list/track-list.component';
 import { CommonModule } from '@angular/common';
-import { CloudFiles, TrackFile } from '../../models/cloud.model';
+import { CloudFiles } from '../../models/cloud.model';
 import { CloudService } from '../../services/cloud.service';
-import { lastValueFrom, Subscription } from 'rxjs';
-import { StreamState } from '../../models/stream-state.model';
+import { lastValueFrom } from 'rxjs';
 import { AudioService } from '../../services/audio.service';
 import { TrackListHeaderComponent } from '../../components/track-list-header/track-list-header.component';
 import { BtnPlayComponent } from '../../components/buttons/btn-play/btn-play.component';
@@ -37,27 +36,28 @@ import { DialogChangePlaylistDetailsData } from '../../models/dialog.model';
   templateUrl: './playlist.component.html',
   styleUrl: './playlist.component.scss',
 })
-export class PlaylistComponent implements OnInit, OnDestroy {
-  playlistFile!: CloudFiles;
+export class PlaylistComponent implements OnInit {
   isFollowing!: boolean;
-  private cloudSubscription!: Subscription;
-  public state!: StreamState;
-  public playingTrack!: TrackFile;
-  private stateSubscription!: Subscription;
-  private playingTrackSubscription!: Subscription;
 
   constructor(
     private route: ActivatedRoute,
-    private cloudService: CloudService,
+    public cloudService: CloudService,
     public audioService: AudioService,
     private spotifyService: SpotifyService,
     private dialog: MatDialog,
   ) {
-    this.subscribeTo();
+    effect(async () => {
+      const files: CloudFiles = this.cloudService.files();
+      if (files.id.length > 0) {
+        const response: boolean[] = await lastValueFrom(
+          this.spotifyService.checkIfCurrentUserFollowsPlaylist(files.id)
+        );
+        this.isFollowing = response[0];
+      }
+    });
   }
 
   ngOnInit(): void {
-    this.playlistFile = this.cloudService.initialFiles;
     this.route.params.subscribe(async (params) => {
       const playlistId = params['id'];
       const myPlaylists: PlaylistsObject = await lastValueFrom(
@@ -68,43 +68,13 @@ export class PlaylistComponent implements OnInit, OnDestroy {
         (playlist: Playlist) => playlist.id === files.id
       );
       files.isUserCreated = isUserCreated;
-      this.cloudService.setFiles(files);
+      this.cloudService.files.set(files);
     });
   }
-
-  ngOnDestroy(): void {
-    this.cloudSubscription.unsubscribe();
-    this.stateSubscription.unsubscribe();
-    this.playingTrackSubscription.unsubscribe();
-  }
-
-  private subscribeTo(): void {
-    this.cloudSubscription = this.cloudService
-      .observeFiles()
-      .subscribe(async (files: CloudFiles) => {
-        if (files.id.length > 0) {
-          this.playlistFile = files;
-          const response: boolean[] = await lastValueFrom(
-            this.spotifyService.checkIfCurrentUserFollowsPlaylist(files.id)
-          );
-          this.isFollowing = response[0];
-        }
-      });
-    this.stateSubscription = this.audioService
-      .observeStreamState()
-      .subscribe((state: StreamState) => {
-        this.state = state;
-      });
-    this.playingTrackSubscription = this.audioService
-      .observePlayingTrack()
-      .subscribe((track: TrackFile) => {
-        this.playingTrack = track;
-      });
-  } 
   
   public openDeleteDialog(): void {
     const dialogRef = this.dialog.open(DialogRemovePlaylistComponent, {
-      data: { name: this.playlistFile.name, id: this.playlistFile.id },
+      data: { name: this.cloudService.files().name, id: this.cloudService.files().id },
     });
 
     dialogRef.afterClosed().subscribe((result) => {});
@@ -113,9 +83,9 @@ export class PlaylistComponent implements OnInit, OnDestroy {
   public openChangeDialog(): void {
     const dialogRef = this.dialog.open(DialogChangePlaylistDetailsComponent, {
       data: { 
-        id: this.playlistFile.id, 
-        name: this.playlistFile.name, 
-        description: this.playlistFile.description 
+        id: this.cloudService.files().id, 
+        name: this.cloudService.files().name, 
+        description: this.cloudService.files().description 
       },
     });
 

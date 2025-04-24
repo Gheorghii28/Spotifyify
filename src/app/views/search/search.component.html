@@ -11,9 +11,9 @@
       <app-track-list
         [track]="track"
         [trackIndex]="i"
-        [files]="playlistFile"
-        [playingTrack]="playingTrack"
-        [state]="state"
+        [files]="cloudService.files()"
+        [playingTrack]="audioService.currentPlayingTrack()"
+        [state]="audioService.state()"
       ></app-track-list>
     </ng-container>
   </div>

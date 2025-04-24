@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 })
 export class NavigationService {
 
-  constructor(private router: Router) { }
+  constructor(@Inject(Router) private router: Router) { }
 
   private go(path: string | any[], extras?: any): Promise<boolean> {
     return this.router.navigate(Array.isArray(path) ? path : [path], extras);

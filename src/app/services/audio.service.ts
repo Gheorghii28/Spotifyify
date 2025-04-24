@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject, Subject, of } from 'rxjs';
+import { Injectable, signal, WritableSignal } from '@angular/core';
+import { Observable, Subject, of } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
@@ -12,7 +12,7 @@ import { CloudFiles, TrackFile } from '../models/cloud.model';
 export class AudioService {
   private stop$ = new Subject();
   private audioObj = new Audio();
-  private state: StreamState = {
+  private initialState: StreamState = {
     playing: false,
     readableCurrentTime: '',
     readableDuration: '',
@@ -21,12 +21,22 @@ export class AudioService {
     canplay: false,
     error: false,
   };
-  private state$: BehaviorSubject<StreamState> = new BehaviorSubject(
-    this.state
-  );
-  private currentPlayingTrack!: TrackFile;
-  private currentPlayingTrack$: BehaviorSubject<TrackFile> =
-    new BehaviorSubject(this.currentPlayingTrack);
+  private initialTrackFile: TrackFile = {
+    name: "",
+    albumName: "",
+    artists: [],
+    durationMs: 0,
+    id: "",
+    previewUrl: "",
+    index: 0,
+    img: "",
+    likedStatus: false,
+    uri: "",
+    playlistId: undefined,
+    albumId: undefined,
+  };
+  state: WritableSignal<StreamState> = signal(this.initialState);
+  currentPlayingTrack: WritableSignal<TrackFile> = signal(this.initialTrackFile);
   private audioEvents = [
     'ended',
     'error',
@@ -38,14 +48,8 @@ export class AudioService {
     'loadedmetadata',
     'loadstart',
   ];
-  private repeatMode: number = 0;
-  private repeatMode$: BehaviorSubject<number> = new BehaviorSubject(
-    this.repeatMode
-  );
-  public isShuffled: boolean = false;
-  private isShuffled$: BehaviorSubject<boolean> = new BehaviorSubject(
-    this.isShuffled
-  );
+  repeatMode: WritableSignal<number> = signal(0);
+  isShuffled: WritableSignal<boolean> = signal(false);
 
   public async getNextTrack(
     index: number,
@@ -66,46 +70,38 @@ export class AudioService {
       files as CloudFiles,
       trackIndex
     );
-    this.setPlayingTrack(track);
+    this.currentPlayingTrack.set(track);
   }
 
   private updateStateEvents(event: Event): void {
     switch (event.type) {
       case 'canplay':
-        this.state.duration = this.audioObj.duration;
-        this.state.readableDuration = this.formatTime(this.state.duration);
-        this.state.canplay = true;
+        this.state().duration = this.audioObj.duration;
+        this.state().readableDuration = this.formatTime(this.state().duration);
+        this.state().canplay = true;
         break;
       case 'playing':
-        this.state.playing = true;
+        this.state().playing = true;
         break;
       case 'pause':
-        this.state.playing = false;
+        this.state().playing = false;
         break;
       case 'timeupdate':
-        this.state.currentTime = this.audioObj.currentTime;
-        this.state.readableCurrentTime = this.formatTime(
-          this.state.currentTime
+        this.state().currentTime = this.audioObj.currentTime;
+        this.state().readableCurrentTime = this.formatTime(
+          this.state().currentTime
         );
         break;
       case 'error':
         this.resetState();
-        this.state.error = true;
+        this.state().error = true;
         break;
     }
-    this.state$.next(this.state);
+    this.state.set(this.state());
   }
 
   private resetState(): void {
-    this.state = {
-      playing: false,
-      readableCurrentTime: '',
-      readableDuration: '',
-      duration: 0,
-      currentTime: 0,
-      canplay: false,
-      error: false,
-    };
+    this.state.set(this.initialState);
   }
 
   private streamObservable(url: any): Observable<Event> {
@@ -146,7 +142,7 @@ export class AudioService {
   }
 
   public togglePlayPause(): void {
-    if (this.state.playing) {
+    if (this.state().playing) {
       this.pause();
     } else {
       this.play();
@@ -189,32 +185,16 @@ export class AudioService {
     return format(zonedDate, formatString);
   }
 
-  public observeStreamState(): Observable<StreamState> {
-    return this.state$.asObservable();
-  }
-
-  public observeRepeatMode(): Observable<number> {
-    return this.repeatMode$.asObservable();
-  }
-
-  public observeIsShuffled(): Observable<boolean> {
-    return this.isShuffled$.asObservable();
-  }
-
   public setRepeatMode(mode: number): void {
-    this.repeatMode$.next(mode);
+    this.repeatMode.set(mode);
   }
 
   public setIsShuffled(isShuffled: boolean): void {
-    this.isShuffled$.next(isShuffled);
-  }
-
-  public observePlayingTrack(): Observable<TrackFile> {
-    return this.currentPlayingTrack$.asObservable();
+    this.isShuffled.set(isShuffled);
   }
 
   public async setPlayingTrack(track: TrackFile): Promise<void> {
-    this.currentPlayingTrack$.next(track);
+    this.currentPlayingTrack.set(track);
   }
 
   public async getPlayingTrack(

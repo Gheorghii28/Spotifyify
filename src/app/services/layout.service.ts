@@ -1,37 +1,19 @@
 import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, Subscription, fromEvent } from 'rxjs';
+import { Inject, Injectable, signal, WritableSignal } from '@angular/core';
+import { fromEvent } from 'rxjs';
 import { getWindow, getDocument } from 'ssr-window';
 import { DrawerService } from './drawer.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class LayoutService implements OnDestroy {
-  private isFullScreen: boolean = false;
-  private isFullSreen$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-    this.isFullScreen
-  );
-  private sidenavWidth!: number;
-  private sidenavWidthSubscription!: Subscription;
+export class LayoutService {
+  isFullScreen: WritableSignal<boolean> = signal(false);
+  
   constructor(
     @Inject(DOCUMENT) private document: any,
     private drawerService: DrawerService
-  ) {
-    this.sidenavWidthSubscription = this.drawerService
-      .observeSidenavWidth()
-      .subscribe((width: number) => {
-        this.sidenavWidth = width;
-      });
-  }
-
-  ngOnDestroy(): void {
-    this.sidenavWidthSubscription.unsubscribe();
-  }
-
-  public observeFullscreenState(): Observable<boolean> {
-    return this.isFullSreen$.asObservable();
-  }
+  ) { }
 
   public adjustHeightOnWindowResize(): void {
     const window = getWindow();
@@ -63,9 +45,9 @@ export class LayoutService implements OnDestroy {
 
   public updateFullscreenState(): void {
     if (this.document.fullscreenElement) {
-      this.isFullSreen$.next(true);
+      this.isFullScreen.set(true);
     } else {
-      this.isFullSreen$.next(false);
+      this.isFullScreen.set(false);
       setTimeout(() => {
         this.adjustElementHeights();
       });
@@ -96,19 +78,19 @@ export class LayoutService implements OnDestroy {
     }
   }
 
-  public handleDrawerOnResize(drawerEndStatus: boolean): void {
+  public handleDrawerOnResize(): void {
     const window = getWindow();
     const checkWindowSize = () => {
       const isSmallScreen = this.isWindowWidthLessThan(1008);
-      const shouldCollapseDrawer = isSmallScreen && drawerEndStatus;
-      this.drawerService.setSidenavExpanded(!shouldCollapseDrawer);
+      const shouldCollapseDrawer = isSmallScreen && this.drawerService.isDrawerInfoOpened();
+      this.drawerService.sidenavExpanded.set(!shouldCollapseDrawer);
       if (this.isWindowWidthLessThan(1300)) {
         this.drawerService.updateDrawerEndStatusBasedOnSidenavWidth(
-          this.sidenavWidth
+          this.drawerService.sidenavWidth()
         );
       }
       this.drawerService.updateDrawerConfiguration(
-        drawerEndStatus,
+        this.drawerService.isDrawerInfoOpened(),
         this.isWindowWidthLessThan(1300),
         this.isWindowWidthLessThan(1020)
       );

@@ -1,44 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, WritableSignal } from '@angular/core';
 import { MatDrawer } from '@angular/material/sidenav';
-import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DrawerService {
-  private sidenavExpanded$: BehaviorSubject<boolean> =
-    new BehaviorSubject<boolean>(true);
-  private sidenavWidth$: BehaviorSubject<number> = new BehaviorSubject<number>(
-    289
-  );
-  private isDrawerInfoOpened$: BehaviorSubject<boolean> =
-    new BehaviorSubject<boolean>(true);
+  sidenavExpanded: WritableSignal<boolean> = signal(true);
+  sidenavWidth: WritableSignal<number> = signal(289);
+  isDrawerInfoOpened: WritableSignal<boolean> = signal(true);
 
   constructor() {}
-
-  public observeSidenavExpanded(): Observable<boolean> {
-    return this.sidenavExpanded$.asObservable();
-  }
-
-  public observeSidenavWidth(): Observable<number> {
-    return this.sidenavWidth$.asObservable();
-  }
-
-  public observedrawerEndStatus(): Observable<boolean> {
-    return this.isDrawerInfoOpened$.asObservable();
-  }
-
-  public setSidenavExpanded(value: boolean): void {
-    this.sidenavExpanded$.next(value);
-  }
-
-  public setSidenavWidth(value: number): void {
-    this.sidenavWidth$.next(value);
-  }
-
-  public setdrawerEndStatus(isOpened: boolean): void {
-    this.isDrawerInfoOpened$.next(isOpened);
-  }
 
   public toggleDrawer(drawerInstance: MatDrawer): void {
     if (drawerInstance) {
@@ -48,9 +19,9 @@ export class DrawerService {
 
   public updateDrawerEndStatusBasedOnSidenavWidth(newWidth: number): void {
     if (newWidth === 631) {
-      this.setdrawerEndStatus(false);
+      this.isDrawerInfoOpened.set(false);
     } else {
-      this.setdrawerEndStatus(true);
+      this.isDrawerInfoOpened.set(true);
     }
   }
 
@@ -61,11 +32,11 @@ export class DrawerService {
   ): void {
     if (drawerEndStatus) {
       if (isConditionForWidthUpdate) {
-        this.setSidenavWidth(289);
+        this.sidenavWidth.set(289);
         this.updateDrawerEndStatusBasedOnSidenavWidth(289);
       }
       if (isConditionForExpansionUpdate) {
-        this.setSidenavExpanded(false);
+        this.sidenavExpanded.set(false);
       }
     }
   }

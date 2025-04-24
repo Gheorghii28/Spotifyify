@@ -21,6 +21,7 @@ import { DropTargetDirective } from '../../../directives/drop-target.directive';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRemoveFolderComponent } from '../../../components/dialog/dialog-remove-folder/dialog-remove-folder.component';
 import { DialogRenameFolderComponent } from '../../../components/dialog/dialog-rename-folder/dialog-rename-folder.component';
+import { DrawerService } from '../../../services/drawer.service';
 
 @Component({
   selector: 'app-list-folder',
@@ -65,7 +66,6 @@ export class ListFolderComponent {
   @Input() sidenavExpanded!: boolean;
   @Input() movedToFolderStatus!: boolean;
   @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
-  public sidenavWidth!: number;
   public contextMenuPosition = { x: '0px', y: '0px' };
   public panelOpenState = false;
   public btnExpandedStyles = { width: '100%', padding: '8px' };
@@ -74,6 +74,7 @@ export class ListFolderComponent {
   constructor(
     public utilsService: UtilsService,
     private firebaseService: FirebaseService,
+    public drawerService: DrawerService,
     private dialog: MatDialog
   ) { }
 

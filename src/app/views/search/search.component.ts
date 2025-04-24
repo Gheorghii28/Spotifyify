@@ -2,7 +2,6 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -16,15 +15,9 @@ import {
 import { CommonModule, Location } from '@angular/common';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
 import { TrackListComponent } from '../../components/track-list/track-list.component';
-import {
-  CloudFiles,
-  TrackFile,
-  TrackFileClass,
-} from '../../models/cloud.model';
+import { TrackFile, TrackFileClass } from '../../models/cloud.model';
 import { CardComponent } from '../../components/card/card.component';
 import { CloudService } from '../../services/cloud.service';
-import { StreamState } from '../../models/stream-state.model';
-import { Subscription } from 'rxjs';
 import { AudioService } from '../../services/audio.service';
 import { TrackListHeaderComponent } from '../../components/track-list-header/track-list-header.component';
 import { ResizeObserverDirective } from '../../directives/resize-observer.directive';
@@ -47,17 +40,12 @@ interface ElementConfig {
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
 })
-export class SearchComponent implements OnInit, OnDestroy, AfterViewInit {
+export class SearchComponent implements OnInit, AfterViewInit {
   @ViewChild(HeaderComponent) headerComponent!: HeaderComponent;
   public userProfile!: UserProfile;
   tracks: TrackFile[] = [];
   playlists: Playlist[] = [];
-  state!: StreamState;
-  playingTrack!: TrackFile;
-  playlistFile!: CloudFiles;
-  private cloudSubscription!: Subscription;
-  private stateSubscription!: Subscription;
-  private playingTrackSubscription!: Subscription;
+
   private elements: { [key in keyof HeaderComponent]?: ElementConfig } = {
     userNotifications: { nativeElement: undefined, threshold: 630 },
     userInbox: { nativeElement: undefined, threshold: 520 },
@@ -67,41 +55,16 @@ export class SearchComponent implements OnInit, OnDestroy, AfterViewInit {
 
   constructor(
     private location: Location,
-    private cloudService: CloudService,
+    public cloudService: CloudService,
     public audioService: AudioService
   ) {}
 
   ngOnInit() {
     this.setUserProfileFromState();
-    this.subscribeTo();
   }
 
   ngAfterViewInit(): void {
     this.initializeElements();
-  }
-
-  ngOnDestroy(): void {
-    this.cloudSubscription.unsubscribe();
-    this.stateSubscription.unsubscribe();
-    this.playingTrackSubscription.unsubscribe();
-  }
-
-  private subscribeTo(): void {
-    this.cloudSubscription = this.cloudService
-      .observeFiles()
-      .subscribe((files: CloudFiles) => {
-        this.playlistFile = files;
-      });
-    this.stateSubscription = this.audioService
-      .observeStreamState()
-      .subscribe((state: StreamState) => {
-        this.state = state;
-      });
-    this.playingTrackSubscription = this.audioService
-      .observePlayingTrack()
-      .subscribe((track: TrackFile) => {
-        this.playingTrack = track;
-      });
   }
 
   private setUserProfileFromState(): void {

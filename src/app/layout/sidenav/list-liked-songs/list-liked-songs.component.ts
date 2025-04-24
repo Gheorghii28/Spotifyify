@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, ViewChild } from '@angular/core';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { NavigationService } from '../../../services/navigation.service';
+import { CloudService } from '../../../services/cloud.service';
 
 @Component({
   selector: 'app-list-liked-songs',
@@ -18,7 +19,8 @@ export class ListLikedSongsComponent {
   public btnCollapsedStyles = { width: '48px', padding: 0 };
 
   constructor(
-    public navigationService: NavigationService
+    public navigationService: NavigationService,
+    public cloudService: CloudService,
   ) { }
 
   public navigateToPlaylist(): void {

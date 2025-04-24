@@ -59,7 +59,6 @@ export class SidenavComponent implements OnDestroy {
   public listCollapsedStyles = { 'align-items': 'center' };
   public liFolderExpandedStyles = {};
   public liFolderCollapsedStyles = { width: '48px' };
-  public sidenavWidth!: number;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -67,16 +66,12 @@ export class SidenavComponent implements OnDestroy {
     private utilsService: UtilsService,
     private playlistManagerService: PlaylistManagerService,
     public navigationService: NavigationService,
-    private drawerService: DrawerService,
+    public drawerService: DrawerService,
   ) {
     this.subscribeTo();
   }
 
   private subscribeTo(): void {
-    this.drawerService.observeSidenavWidth()
-      .subscribe((width: number) => {
-        this.sidenavWidth = width;
-      });
   }
   
   ngOnDestroy(): void {

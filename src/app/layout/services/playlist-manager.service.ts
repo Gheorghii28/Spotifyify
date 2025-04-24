@@ -80,14 +80,14 @@ export class PlaylistManagerService {
     const playlists: PlaylistsObject = await lastValueFrom(
       this.spotifyService.getCurrentUsersPlaylists()
     );
-    this.cloudService.setMyPlaylists(playlists);
+    this.cloudService.myPlaylists.set(playlists);
   }
 
   async setMyTracks(): Promise<void> {
     const tracks: TracksObject = await lastValueFrom(
       this.spotifyService.getUsersSavedTracks()
     );
-    this.cloudService.setMyTracks(tracks);
+    this.cloudService.myTracks.set(tracks);
   }
 
   async loadUserDefaultTrack(): Promise<TrackFile> {

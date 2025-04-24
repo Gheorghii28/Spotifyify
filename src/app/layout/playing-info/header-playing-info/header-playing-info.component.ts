@@ -1,15 +1,15 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
-import { lastValueFrom, Subscription } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 import { DrawerService } from '../../../services/drawer.service';
 import { SpotifyService } from '../../../services/spotify.service';
 import { CloudService } from '../../../services/cloud.service';
 import { AudioService } from '../../../services/audio.service';
 import { LikedStatusService } from '../../../services/liked-status.service';
-import { CloudFiles, TrackFile } from '../../../models/cloud.model';
+import { TrackFile } from '../../../models/cloud.model';
 import { Playlist, PlaylistsObject } from '../../../models/spotify.model';
 import { CustomButtonComponent } from '../../../components/buttons/custom-button/custom-button.component';
 import { DialogAddTrackComponent } from '../../../components/dialog/dialog-add-track/dialog-add-track.component';
@@ -26,13 +26,9 @@ import { DialogRemoveTrackComponent } from '../../../components/dialog/dialog-re
   templateUrl: './header-playing-info.component.html',
   styleUrl: './header-playing-info.component.scss',
 })
-export class HeaderPlayingInfoComponent implements OnInit, OnDestroy {
+export class HeaderPlayingInfoComponent {
   @Input() track!: TrackFile;
   @Input() playlist!: Playlist;
-  private files!: CloudFiles;
-  private playingTrack!: TrackFile;
-  private cloudSubscription!: Subscription;
-  private playingTrackSubscription!: Subscription;
   public isOwnedByUser: boolean = false;
   constructor(
     private drawerService: DrawerService,
@@ -41,35 +37,15 @@ export class HeaderPlayingInfoComponent implements OnInit, OnDestroy {
     private audioService: AudioService,
     private likedStatusService: LikedStatusService,
     private dialog: MatDialog
-  ) {}
-
-  ngOnInit(): void {
-    this.subscribeTo();
-  }
-
-  ngOnDestroy(): void {
-    this.cloudSubscription.unsubscribe();
-    this.playingTrackSubscription.unsubscribe();
-  }
-
-  private subscribeTo(): void {
-    this.cloudSubscription = this.cloudService
-      .observeFiles()
-      .subscribe((files: CloudFiles) => {
-        this.files = files;
-        this.checkIfPlaylistOwnedByUser();
-      });
-    this.playingTrackSubscription = this.audioService
-      .observePlayingTrack()
-      .subscribe((track: TrackFile) => {
-        if (track) {
-          this.playingTrack = track;
-        }
-      });
+  ) {
+    effect(() => {
+      this.cloudService.files();
+      this.checkIfPlaylistOwnedByUser();
+    });
   }
 
   public closePlayingInfo(): void {
-    this.drawerService.setdrawerEndStatus(false);
+    this.drawerService.isDrawerInfoOpened.set(false);
   }
 
   public getDisplayName(): string {
@@ -94,15 +70,15 @@ export class HeaderPlayingInfoComponent implements OnInit, OnDestroy {
   public openRemoveDialog(): void {
     const dialogRef = this.dialog.open(DialogRemoveTrackComponent, {
       data: {
-        playlistId: this.files.id,
-        snapshot_id: this.files.snapshot_id,
+        playlistId: this.cloudService.files().id,
+        snapshot_id: this.cloudService.files().snapshot_id,
         uri: this.track.uri,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.cloudService.deleteTrackFromPlaylist(this.files, this.track);
+        this.cloudService.deleteTrackFromPlaylist(this.cloudService.files(), this.track);
       }
     });
   }
@@ -110,7 +86,7 @@ export class HeaderPlayingInfoComponent implements OnInit, OnDestroy {
   public async saveToLikedSongs(): Promise<void> {
     if (!this.track.likedStatus) {
       this.likedStatusService.saveTrack(this.track.id);
-      await this.likedStatusService.checkAndUpdateLikedStatus(this.track.id, this.playingTrack);
+      await this.likedStatusService.checkAndUpdateLikedStatus(this.track.id, this.audioService.currentPlayingTrack());
       await this.likedStatusService.updateUserSavedTracks();
     }
   }
@@ -121,7 +97,7 @@ export class HeaderPlayingInfoComponent implements OnInit, OnDestroy {
     );
     
     return playlists.items.some(
-      (playlist: Playlist) => playlist.id === this.files.id
+      (playlist: Playlist) => playlist.id === this.cloudService.files().id
     );
   }  
 

@@ -14,7 +14,7 @@
   <div *ngIf="sidenavExpanded" class="text">
     <span>
       {{
-        sidenavWidth === 631
+        drawerService.sidenavWidth() === 631
           ? folder.name
           : utilsService.truncateText(folder.name, 22)
       }}</span

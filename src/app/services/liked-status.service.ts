@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SpotifyService } from './spotify.service';
 import { CloudService } from './cloud.service';
-import { CloudFiles, TrackFile } from '../models/cloud.model';
+import { TrackFile } from '../models/cloud.model';
 import { lastValueFrom } from 'rxjs';
 import { TracksObject } from '../models/spotify.model';
 
@@ -19,14 +19,14 @@ export class LikedStatusService {
     trackId: string,
     newStatus: boolean
   ): Promise<void> {
-    const currentFiles = (await this.cloudService.getCurrentFiles()) as CloudFiles;
+    const currentFiles = this.cloudService.files();
     if (currentFiles) {
       const track = currentFiles.tracks.find(
         (track: TrackFile) => track.id === trackId
       );
       if (track) {
         track.likedStatus = newStatus;
-        this.cloudService.setFiles(currentFiles);
+        this.cloudService.files.set(currentFiles);
       }
     }
   }
@@ -64,6 +64,6 @@ export class LikedStatusService {
     const tracks: TracksObject = await lastValueFrom(
       this.spotifyService.getUsersSavedTracks()
     );
-    this.cloudService.setMyTracks(tracks);
+    this.cloudService.myTracks.set(tracks);
   }
 }

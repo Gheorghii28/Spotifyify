@@ -25,7 +25,7 @@
       [sidenavExpanded]="sidenavExpanded"
       [myPlaylists]="myPlaylists"
       [userFirebaseData]="userFirebaseData"
-      [sidenavWidth]="sidenavWidth"
+      [sidenavWidth]="drawerService.sidenavWidth()"
     ></app-nav-header>
     <div style="position: relative; height: calc(100% - 33px)">
       <ul
@@ -42,7 +42,7 @@
           <app-list-liked-songs
             [myTracksTotal]="myTracksTotal"
             [sidenavExpanded]="sidenavExpanded"
-            [sidenavWidth]="sidenavWidth"
+            [sidenavWidth]="drawerService.sidenavWidth()"
           ></app-list-liked-songs>
         </li>
         <li
@@ -66,7 +66,7 @@
             appDraggable
             [playlist]="playlist"
             [sidenavExpanded]="sidenavExpanded"
-            [sidenavWidth]="sidenavWidth"
+            [sidenavWidth]="drawerService.sidenavWidth()"
             [appDraggable]="toJson(playlist)"
           ></app-list-item>
         </li>

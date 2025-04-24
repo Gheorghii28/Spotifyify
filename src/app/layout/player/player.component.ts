@@ -122,7 +122,7 @@ export class PlayerComponent implements OnInit {
   }
 
   public toggleDrawerEnd(): void {
-    this.drawerService.setdrawerEndStatus(!this.drawerEndStatus);
+    this.drawerService.isDrawerInfoOpened.set(!this.drawerEndStatus);
     this.drawerService.updateDrawerConfiguration(
       !this.drawerEndStatus,
       this.layoutService.isWindowWidthLessThan(1300),

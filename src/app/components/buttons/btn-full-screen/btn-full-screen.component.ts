@@ -12,17 +12,11 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class BtnFullScreenComponent {
   @Input() elem: any;
-  public isFullScreen: boolean = false;
 
-  constructor(private layoutService: LayoutService) {}
+  constructor(public layoutService: LayoutService) {}
 
   ngOnInit(): void {
     this.updateFullscreenState();
-    this.layoutService
-      .observeFullscreenState()
-      .subscribe((isFullScreen: boolean) => {
-        this.isFullScreen = isFullScreen;
-      });
   }
 
   @HostListener('document:fullscreenchange', ['$event'])

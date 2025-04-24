@@ -45,14 +45,14 @@ export class NavHeaderComponent {
     const newExpandedState = !this.sidenavExpanded;
     const newDrawerEndState = this.sidenavExpanded;
     if (this.layoutService.isWindowWidthLessThan(1008)) {
-      this.drawerService.setdrawerEndStatus(newDrawerEndState);
+      this.drawerService.isDrawerInfoOpened.set(newDrawerEndState);
     }
-    this.drawerService.setSidenavExpanded(newExpandedState);
+    this.drawerService.sidenavExpanded.set(newExpandedState);
   }
 
   public toggleSidenavWidth(): void {
     const newWidth = this.sidenavWidth === 631 ? 289 : 631;
-    this.drawerService.setSidenavWidth(newWidth);
+    this.drawerService.sidenavWidth.set(newWidth);
     this.drawerService.updateDrawerEndStatusBasedOnSidenavWidth(newWidth);
   }
 
@@ -80,6 +80,6 @@ export class NavHeaderComponent {
 
   private addPlaylistToUser(playlist: Playlist): void {
     this.myPlaylists.items.push(playlist);
-    this.cloudService.setMyPlaylists(this.myPlaylists);
+    this.cloudService.myPlaylists.set(this.myPlaylists);
   }
 }

@@ -1,19 +1,13 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, signal, WritableSignal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UtilsService {
-  private movedToFolderSubject: BehaviorSubject<boolean> =
-    new BehaviorSubject<boolean>(false);
+  movedToFolder: WritableSignal<boolean> = signal(false);
 
   setMovedToFolderStatus(status: boolean): void {
-    this.movedToFolderSubject.next(status);
-  }
-
-  observeToFolderStatus(): Observable<boolean> {
-    return this.movedToFolderSubject.asObservable();
+    this.movedToFolder.set(status);
   }
 
   public randomString(length: number): string {

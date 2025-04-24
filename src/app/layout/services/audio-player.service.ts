@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AudioService } from '../../services/audio.service';
 import { CloudFiles, TrackFile } from '../../models/cloud.model';
-import { Observable } from 'rxjs';
-import { StreamState } from '../../models/stream-state.model';
 
 @Injectable({
   providedIn: 'root'
@@ -60,24 +58,8 @@ export class AudioPlayerService {
     return Math.floor(Math.random() * files.tracks.length);
   }
 
-  observeState(): Observable<StreamState> {
-    return this.audioService.observeStreamState();
-  }
-
-  observeRepeatMode(): Observable<number> {
-    return this.audioService.observeRepeatMode();
-  }
-
-  observeShuffled(): Observable<boolean> {
-    return this.audioService.observeIsShuffled();
-  }
-
-  observePlayingTrack(): Observable<TrackFile> {
-    return this.audioService.observePlayingTrack();
-  }
-
   setPlayingTrack(track: TrackFile): void {
-    this.audioService.setPlayingTrack(track);
+    this.audioService.currentPlayingTrack.set(track);
   }
 
   async handleTrackPlaybackEnd(

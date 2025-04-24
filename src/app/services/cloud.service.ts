@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, lastValueFrom, Observable } from 'rxjs';
+import { Injectable, signal, WritableSignal } from '@angular/core';
+import { lastValueFrom } from 'rxjs';
 import {
   CloudFiles,
   CloudFilesClass,
@@ -30,39 +30,28 @@ export class CloudService {
     snapshot_id: ';',
     isUserCreated: false,
   };
-  private files$: BehaviorSubject<any> = new BehaviorSubject(this.initialFiles);
-  private myPlaylists$: BehaviorSubject<any> = new BehaviorSubject({});
-  private myTracks$: BehaviorSubject<any> = new BehaviorSubject({});
-
+  initialMyPlaylists: PlaylistsObject = {
+    href: '',
+    items: [],
+    limit: 0,
+    next: '',
+    offset: 0,
+    previous: '',
+    total: 0
+  };
+  initialMyTracks: TracksObject = {
+    href: '',
+    items: [],
+    limit: 0,
+    next: '',
+    offset: 0,
+    previous: '',
+    total: 0
+  }
+  files: WritableSignal<CloudFiles> = signal(this.initialFiles); // TODO: Cloud files have to contain the liked songs, too. To be able to play them as playlist
+  myPlaylists: WritableSignal<PlaylistsObject> = signal(this.initialMyPlaylists);
+  myTracks: WritableSignal<TracksObject> = signal(this.initialMyTracks);
   constructor(private spotifyService: SpotifyService) {}
-
-  public observeFiles(): Observable<any> {
-    return this.files$.asObservable();
-  }
-
-  public setFiles(newFiles: CloudFiles): void {
-    this.files$.next(newFiles);
-  }
-
-  public observeMyPlaylists(): Observable<PlaylistsObject> {
-    return this.myPlaylists$.asObservable();
-  }
-
-  public setMyPlaylists(newPlaylists: PlaylistsObject): void {
-    this.myPlaylists$.next(newPlaylists);
-  }
-
-  public observeMyTracks(): Observable<TracksObject> {
-    return this.myTracks$.asObservable();
-  }
-
-  public setMyTracks(newTracks: TracksObject): void {
-    this.myTracks$.next(newTracks);
-  }
-
-  public getCurrentFiles(): Promise<CloudFiles> {
-    return Promise.resolve(this.files$.getValue());
-  }  
 
   public async getFiles(playlistId: string): Promise<CloudFiles> {
     try {
@@ -139,11 +128,11 @@ export class CloudService {
     if (trackIndex !== -1) {
       files.tracks.splice(trackIndex, 1);
       this.updateTrackIndexesAndImage(files);
-      this.setFiles(files);
+      this.files.set(files);
       const playlists: PlaylistsObject = await lastValueFrom(
         this.spotifyService.getCurrentUsersPlaylists()
       );
-      this.setMyPlaylists(playlists);
+      this.myPlaylists.set(playlists);
     }
   }
 
@@ -151,7 +140,7 @@ export class CloudService {
     const playlists: PlaylistsObject = await lastValueFrom(
       this.spotifyService.getCurrentUsersPlaylists()
     );
-    this.setMyPlaylists(playlists);
+    this.myPlaylists.set(playlists);
   }
 
   public async updatePlaylistDetails(details: DialogChangePlaylistDetailsData): Promise<void> {
@@ -164,13 +153,13 @@ export class CloudService {
       if (playlistToUpdate && (playlistToUpdate.name !== newName || playlistToUpdate.description !== newDescription)) {
         playlistToUpdate.name = newName;
         playlistToUpdate.description = newDescription;
-        this.setMyPlaylists(playlists);
+        this.myPlaylists.set(playlists);
 
-        const currentFiles = (await this.getCurrentFiles()) as CloudFiles;
+        const currentFiles = this.files();
         if(details.id === currentFiles.id) {
           currentFiles.name = newName;
           currentFiles.description = newDescription;
-          this.setFiles(currentFiles);
+          this.files.set(currentFiles);
         }
       } else {
         console.log('No changes detected or playlist not found.');

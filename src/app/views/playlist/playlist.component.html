@@ -1,15 +1,15 @@
-<ng-container *ngIf="playlistFile"
-  ><app-view-header class="info-actions" [data]="playlistFile">
+<ng-container *ngIf="cloudService.files()"
+  ><app-view-header class="info-actions" [data]="cloudService.files()">
     <app-btn-play
       small-play-btn
       class="small-play-btn mr-10"
-      [playlistId]="playlistFile.id"
+      [playlistId]="cloudService.files().id"
     ></app-btn-play>
     <div class="info-actons" info-actions>
-      <app-btn-play class="mr-10" [playlistId]="playlistFile.id"></app-btn-play>
-      <app-btn-follow [isFollowing]="isFollowing" [playlistId]="playlistFile.id"></app-btn-follow>
+      <app-btn-play class="mr-10" [playlistId]="cloudService.files().id"></app-btn-play>
+      <app-btn-follow [isFollowing]="isFollowing" [playlistId]="cloudService.files().id"></app-btn-follow>
       <button
-        [style.display]="!playlistFile.isUserCreated ? 'none' : ''"
+        [style.display]="!cloudService.files().isUserCreated ? 'none' : ''"
         mat-icon-button
         class="hover-effect-on-icons btn-non-style"
         [matMenuTriggerFor]="menu"
@@ -37,14 +37,14 @@
 >
 <div class="tracks">
   <app-track-list-header></app-track-list-header>
-  <ng-container *ngFor="let track of playlistFile?.tracks; let i = index">
+  <ng-container *ngFor="let track of cloudService.files()?.tracks; let i = index">
     <app-track-list
       [track]="track"
       [trackIndex]="track.index"
-      [files]="playlistFile"
-      [playingTrack]="playingTrack"
-      [state]="state"
-      [showDeleteBtn]="playlistFile.isUserCreated"
+      [files]="cloudService.files()"
+      [playingTrack]="audioService.currentPlayingTrack()"
+      [state]="audioService.state()"
+      [showDeleteBtn]="cloudService.files().isUserCreated"
     ></app-track-list>
   </ng-container>
 </div>

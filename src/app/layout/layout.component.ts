@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   Component,
+  effect,
   ElementRef,
   inject,
   OnDestroy,
@@ -8,13 +9,12 @@ import {
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Artist, Playlist, PlaylistsObject } from '../models/spotify.model';
+import { Artist, Playlist } from '../models/spotify.model';
 import { SidenavComponent } from './sidenav/sidenav.component';
-import { combineLatest, Subject, takeUntil } from 'rxjs';
 import { LayoutService } from '../services/layout.service';
 import { RouterOutlet } from '@angular/router';
 import { PlayerComponent } from './player/player.component';
-import { CloudFiles, TrackFile } from '../models/cloud.model';
+import { TrackFile } from '../models/cloud.model';
 import { CloudService } from '../services/cloud.service';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { PlayingInfoComponent } from './playing-info/playing-info.component';
@@ -26,7 +26,6 @@ import { UtilsService } from '../services/utils.service';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { Firestore } from '@angular/fire/firestore';
 import { AudioService } from '../services/audio.service';
-import { StreamState } from '../models/stream-state.model';
 import { AudioPlayerService } from './services/audio-player.service';
 import { PlaylistManagerService } from './services/playlist-manager.service';
 import { ScrollManagerService } from './services/scroll-manager.service';
@@ -49,31 +48,19 @@ import { UserService } from '../services/user.service';
 })
 export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('scrollContainer', { static: false }) scrollContainer!: ElementRef;
-  files!: CloudFiles; // TODO: Cloud files have to contain the liked songs, too. To be able to play them as playlist
+  initialTrack!: TrackFile;
   trackIndex!: number;
-  sidenavExpanded: boolean = false;
-  sidenavWidth!: number;
-  drawerEndStatus: boolean = false;
   userFirebaseData!: UserFirebaseData;
-  movedToFolderStatus!: boolean;
-  myPlaylists!: PlaylistsObject;
-  myTracksTotal!: number;
   folderUnassignedPlaylists!: Playlist[];
-  playingTrack!: TrackFile;
   playlist!: Playlist;
   artists!: Artist[];
-  state!: StreamState;
-  repeatMode!: number;
-  isFullScreen: boolean = false;
-  isShuffled: boolean = false;
   private unsub!: () => void;
   private firestore: Firestore = inject(Firestore);
-  private destroy$ = new Subject<void>();
 
   constructor(
-    private layoutService: LayoutService,
-    private cloudService: CloudService,
-    private drawerService: DrawerService,
+    public layoutService: LayoutService,
+    public cloudService: CloudService,
+    public drawerService: DrawerService,
     private spotifyService: SpotifyService,
     public utilsService: UtilsService,
     public audioService: AudioService,
@@ -82,13 +69,38 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
     private scrollManager: ScrollManagerService,
     private userService: UserService,
   ) {
-    this.subscribeTo();
+    effect(() => {
+      if (this.userFirebaseData) {
+        this.folderUnassignedPlaylists = this.playlistManager.updateUserPlaylists(
+          this.userFirebaseData,
+          this.cloudService.myPlaylists()
+        );
+      }
+    });
+    effect(async() => {
+      if (audioService.currentPlayingTrack().id.length > 0) {
+        const track = audioService.currentPlayingTrack();
+        const playlistId = track.playlistId;
+        if (playlistId && this.playlist?.id !== playlistId) {
+          this.playlist = await this.playlistManager.loadPlaylist(playlistId);
+        }
+        this.artists = await this.playlistManager.loadArtists(track);
+        await this.spotifyService.loadPreviewUrlIfMissing(track);
+        this.audioPlayerService.playAudio(track, this.cloudService.files(), () => this.audioPlayerService.handleTrackPlaybackEnd(
+          track,
+          this.cloudService.files(),
+          this.audioService.repeatMode(),
+          this.audioService.isShuffled(),
+          this.isLastPlaying
+        ));
+      }
+    });
   }
 
   ngOnInit(): void {
     this.initializeMyMusicData();
     this.layoutService.adjustHeightOnWindowResize();
-    this.layoutService.handleDrawerOnResize(this.drawerEndStatus);
+    this.layoutService.handleDrawerOnResize();
     this.setupUserSnapshotListener();
   }
 
@@ -97,77 +109,8 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
     this.scrollManager.unregister();
     this.unsub();
-  }
-  
-  private subscribeTo(): void {
-    this.subscribeToPlaylists();
-    this.subscribeToPlayingTrack();
-    combineLatest([
-      this.cloudService.observeFiles(),
-      this.drawerService.observeSidenavExpanded(),
-      this.drawerService.observeSidenavWidth(),
-      this.drawerService.observedrawerEndStatus(),
-      this.audioService.observeStreamState(),
-      this.audioService.observeRepeatMode(),
-      this.audioService.observeIsShuffled(),
-      this.layoutService.observeFullscreenState(),
-      this.cloudService.observeMyTracks(),
-      this.utilsService.observeToFolderStatus(),
-      ])
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(([files, expanded, width, status, state, mode, shuffled, isFullScreen, tracks, movedStatus]) => {
-        this.files = files;
-        this.sidenavExpanded = expanded;
-        this.sidenavWidth = width;
-        this.drawerEndStatus = status;
-        this.state = state;
-        this.repeatMode = mode;
-        this.isShuffled = shuffled;
-        this.isFullScreen = isFullScreen;
-        this.myTracksTotal = tracks.total;
-        this.movedToFolderStatus = movedStatus;
-      });
-  }
-
-  private subscribeToPlaylists(): void {
-    this.cloudService.observeMyPlaylists()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(playlists => {
-        this.myPlaylists = playlists;
-        if (this.userFirebaseData) {
-          this.folderUnassignedPlaylists = this.playlistManager.updateUserPlaylists(
-            this.userFirebaseData,
-            this.myPlaylists
-          );
-        }
-      });
-  }
-
-  private subscribeToPlayingTrack(): void {
-    this.audioPlayerService.observePlayingTrack()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(async (track: TrackFile) => {
-        if (track) {
-          this.playingTrack = track;
-          const playlistId = track.playlistId;
-          if (playlistId && this.playlist?.id !== playlistId) {
-            this.playlist = await this.playlistManager.loadPlaylist(playlistId);
-          }
-          this.artists = await this.playlistManager.loadArtists(track);
-          await this.spotifyService.loadPreviewUrlIfMissing(track);
-          this.audioPlayerService.playAudio(track, this.files, () => this.audioPlayerService.handleTrackPlaybackEnd(
-            track,
-            this.files,
-            this.repeatMode,
-            this.isShuffled,
-            this.isLastPlaying
-          ));
-        }
-      });
   }
 
   async setupUserSnapshotListener() {
@@ -178,7 +121,7 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
       this.userFirebaseData = doc.data() as UserFirebaseData;
       this.folderUnassignedPlaylists = this.playlistManager.findUnassignedPlaylists(
         this.userFirebaseData,
-        this.myPlaylists
+        this.cloudService.myPlaylists()
       );
     });
   }
@@ -186,13 +129,14 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
   async initializeMyMusicData() {
     this.playlistManager.setMyTracks();
     this.playlistManager.setMyPlaylists();
-    this.playingTrack = await this.playlistManager.loadUserDefaultTrack();
-    this.artists = await this.playlistManager.loadArtists(this.playingTrack);
+    const playingTrack = await this.playlistManager.loadUserDefaultTrack();
+    this.initialTrack = playingTrack;
+    this.artists = await this.playlistManager.loadArtists(playingTrack);
   }
 
   public get isLastPlaying(): boolean {
-    return this.playingTrack?.playlistId
-    ? this.playingTrack.index >= this.files.tracks.length - 1
+    return this.audioService.currentPlayingTrack().playlistId
+    ? this.audioService.currentPlayingTrack().index >= this.cloudService.files().tracks.length - 1
     : true;
   }
 }

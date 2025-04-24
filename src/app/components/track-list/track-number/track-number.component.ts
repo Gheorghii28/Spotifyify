@@ -68,6 +68,6 @@ export class TrackNumberComponent {
     const files: CloudFiles = await this.cloudService.getFiles(
       this.track.playlistId as string
     );
-    this.cloudService.setFiles(files);
+    this.cloudService.files.set(files);
   }
 }
