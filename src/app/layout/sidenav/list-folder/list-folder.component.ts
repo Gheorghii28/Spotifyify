@@ -1,9 +1,7 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, inject, Input, ViewChild } from '@angular/core';
 import { CustomButtonComponent } from '../../../components/buttons/custom-button/custom-button.component';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
-import { UserFirebaseData, UserFolder } from '../../../models/firebase.model';
-import { Playlist } from '../../../models/spotify.model';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { ListItemComponent } from '../list-item/list-item.component';
 import { MatListModule } from '@angular/material/list';
@@ -15,13 +13,14 @@ import {
   trigger,
 } from '@angular/animations';
 import { DraggableDirective } from '../../../directives/draggable.directive';
-import { UtilsService } from '../../../services/utils.service';
-import { FirebaseService } from '../../../services/firebase.service';
 import { DropTargetDirective } from '../../../directives/drop-target.directive';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRemoveFolderComponent } from '../../../components/dialog/dialog-remove-folder/dialog-remove-folder.component';
 import { DialogRenameFolderComponent } from '../../../components/dialog/dialog-rename-folder/dialog-rename-folder.component';
-import { DrawerService } from '../../../services/drawer.service';
+import { Playlist } from '../../../models';
+import { User, UserFolder } from '../../../models/user.model';
+import { PlaylistManagerService } from '../../services/playlist-manager.service';
+import { DrawerService, UserService, UtilsService } from '../../../services';
 
 @Component({
   selector: 'app-list-folder',
@@ -60,9 +59,15 @@ import { DrawerService } from '../../../services/drawer.service';
   ],
 })
 export class ListFolderComponent {
+  private playlistManager = inject(PlaylistManagerService);
+  private userService = inject(UserService);
+  private utilsService = inject(UtilsService);
+  private drawerService = inject(DrawerService);
+  private dialog = inject(MatDialog);
+
   @Input() folder!: UserFolder;
   @Input() playlists!: Playlist[];
-  @Input() userFirebaseData!: UserFirebaseData;
+  @Input() user!: User;
   @Input() sidenavExpanded!: boolean;
   @Input() movedToFolderStatus!: boolean;
   @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
@@ -70,13 +75,6 @@ export class ListFolderComponent {
   public panelOpenState = false;
   public btnExpandedStyles = { width: '100%', padding: '8px' };
   public btnCollapsedStyles = { width: '48px', padding: 0 };
-
-  constructor(
-    public utilsService: UtilsService,
-    private firebaseService: FirebaseService,
-    public drawerService: DrawerService,
-    private dialog: MatDialog
-  ) { }
 
   public onContextMenu(event: MouseEvent): void {
     event.preventDefault();
@@ -94,10 +92,10 @@ export class ListFolderComponent {
 
   public openDeleteDialog(): void {
     const dialogRef = this.dialog.open(DialogRemoveFolderComponent, {
-      data: { userFirebaseData: this.userFirebaseData, folder: this.folder },
+      data: { user: this.user, folder: this.folder },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed().subscribe((result) => { });
   }
 
   public openRenameDialog(): void {
@@ -105,46 +103,43 @@ export class ListFolderComponent {
       data: { folderName: this.folder.name },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result && result.trim()) {
-        const folderToUpdate = this.userFirebaseData.folders.find((folder) => folder.id === this.folder.id);
-    
-        if (folderToUpdate) {
-          folderToUpdate.name = result.trim();
-          this.firebaseService.updateDocument('users', this.userFirebaseData.userId, this.userFirebaseData)
-            .then(() => {
-              console.log('Folder name updated successfully');
-            })
-            .catch((error) => {
-              console.error('Error updating folder name:', error);
-            });
-        } else {
-          console.error('Folder not found with id:', this.folder.id);
-        }
+    dialogRef.afterClosed().subscribe((newName) => {
+      if (newName && newName.trim()) {
+        const user = this.userService.user()!;
+        this.playlistManager.renamePlaylistFolder(user?.id, this.folder.id, newName);
       } else {
         console.warn('No valid folder name provided.');
       }
-    });    
+    });
   }
 
   public movePlaylistToFolder(
     playlistToMove: Playlist,
     destinationFolderId: string
   ): void {
-    this.userFirebaseData.folders.forEach((folder: UserFolder) => {
-      folder.playlists = folder.playlists.filter(
-        (playlist: Playlist) => playlist.id !== playlistToMove.id
-      );
-      if (folder.id === destinationFolderId) {
-        folder.playlists.push(playlistToMove);
-      }
-    });
-    this.firebaseService.updateDocument('users', this.userFirebaseData.userId, {
-      folders: [...this.userFirebaseData.folders],
-    });
+    const user = this.userService.user()!;
+    this.playlistManager.updatePlaylistInFolder(
+      this.playlistManager.folders(),
+      playlistToMove,
+      destinationFolderId,
+      user.id,
+      'add'
+    );
     this.utilsService.setMovedToFolderStatus(true);
     setTimeout(() => {
       this.utilsService.setMovedToFolderStatus(false);
     }, 1000);
+  }
+
+  public get sidenavWidth(): number {
+    return this.drawerService.sidenavWidth()!;
+  }
+
+  public truncateText(value: string): string {
+    return this.utilsService.truncateText(value, 22);
+  }
+
+  public toJsonString(value: any): string {
+    return this.utilsService.toJsonString(value);
   }
 }

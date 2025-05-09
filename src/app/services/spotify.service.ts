@@ -1,32 +1,46 @@
-import { Injectable } from '@angular/core';
-import { catchError, lastValueFrom, Observable, throwError } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import {
-  DialogAddTrackData,
-  DialogChangePlaylistDetailsData,
-  DialogRemoveTrackData,
-} from '../models/dialog.model';
-import { TrackFile } from '../models/cloud.model';
+import { DialogChangePlaylistDetailsData, DialogRemoveTrackData } from '../models/dialog.model';
 import { environment } from '../../environments/environment';
+import {
+  SpotifyArtistDto,
+  SpotifyPlaylistDto,
+  SpotifyTrackDto,
+  SpotifyUserDto,
+  SpotifyUserPlaylistsDto,
+  SpotifyUserSavedTracksDto
+} from '../dto';
+import { AlbumMapper, ArtistMapper, PlaylistMapper, TrackMapper, UserMapper } from '../mappers';
+import { Album, Artist, Playlist, Track, User } from '../models';
+import { SpotifyAlbumDto, SpotifyArtistAlbumsDto } from '../dto/spotify-album.dto';
+import { SpotifySearchedResultDto } from '../dto/spotify-search-results.dto';
+import { SpotifyPlaylistTracksDto } from '../dto/spotify-track.dto';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SpotifyService {
+  private http = inject(HttpClient);
   private readonly apiUrl: string = 'https://api.spotify.com/v1/';
   private readonly previewFetcherBaseUrl: string = environment.previewFetchUrl;
 
-  constructor(private http: HttpClient) {}
-
   // --- Users ---
-  public getCurrentUsersProfile(): Observable<any> {
+  public getCurrentUser(): Observable<User> {
+    return this.fetchCurrentUser(UserMapper.toModel);
+  }
+
+  public getCurrentUserAsJson(): Observable<User> {
+    return this.fetchCurrentUser(UserMapper.toJSON);
+  }
+
+  private fetchCurrentUser<T>(transform: (dto: SpotifyUserDto) => T): Observable<T> {
     const url = `${this.apiUrl}me`;
-    return this.http.get(url).pipe(
+    return this.http.get<SpotifyUserDto>(url).pipe(
+      map(transform),
       catchError((error) => {
         console.error('Error Get Current Users Profile:', error);
-        return throwError(
-          () => new Error('Failed to Get Current Users Profile')
-        );
+        return throwError(() => new Error('Failed to Get Current Users Profile'));
       })
     );
   }
@@ -53,7 +67,7 @@ export class SpotifyService {
       })
     );
   }
-  
+
   public followArtistsorUsers(followIds: string[], followType: string): Observable<any> {
     const url = `${this.apiUrl}me/following?type=${followType}&ids=${followIds.join(',')}`;
     return this.http.put(url, {}).pipe(
@@ -63,7 +77,7 @@ export class SpotifyService {
       })
     );
   }
-  
+
   public unfollowArtistsorUsers(followIds: string[], followType: string): Observable<any> {
     const url = `${this.apiUrl}me/following?type=${followType}`;
     const body = {
@@ -82,9 +96,10 @@ export class SpotifyService {
 
   public checkIfCurrentUserFollowsPlaylist(
     playlistId: string
-  ): Observable<any> {
+  ): Observable<boolean> {
     const url: string = `${this.apiUrl}playlists/${playlistId}/followers/contains`;
-    return this.http.get(url).pipe(
+    return this.http.get<boolean[]>(url).pipe(
+      map(arr => arr[0]),
       catchError((error) => {
         console.error(`Error Check if Current User Follows Playlist:`, error);
         return throwError(
@@ -96,9 +111,9 @@ export class SpotifyService {
 
   public checkIfCurrentUserFollowsArtistsorUsers(
     ids: string[], type: string
-  ): Observable<any> {
+  ): Observable<boolean[]> {
     const url: string = `${this.apiUrl}me/following/contains?type=${type}&ids=${ids.join(',')}`;
-    return this.http.get(url).pipe(
+    return this.http.get<boolean[]>(url).pipe(
       catchError((error) => {
         console.error(`Error Check if Current User Follows Artists or Users:`, error);
         return throwError(
@@ -109,9 +124,10 @@ export class SpotifyService {
   }
 
   // --- Playlists ---
-  public getPlaylist(playlistId: string): Observable<any> {
+  public getPlaylist(playlistId: string): Observable<Playlist> {
     const url: string = `${this.apiUrl}playlists/${playlistId}`;
-    return this.http.get(url).pipe(
+    return this.http.get<SpotifyPlaylistDto>(url).pipe(
+      map(playlistDto => PlaylistMapper.toModel(playlistDto)),
       catchError((error) => {
         console.error(`Error Get Playlist (playlistId:${playlistId}):`, error);
         return throwError(
@@ -121,9 +137,32 @@ export class SpotifyService {
     );
   }
 
+  public getPlaylistSnapshotId(playlistId: string): Observable<string> {
+    return this.getPlaylist(playlistId).pipe(
+      map(playlist => playlist.snapshotId)
+    );
+  }
+
+  getPlaylistTracks(playlistId: string): Observable<Track[]> {
+    const url: string = `${this.apiUrl}playlists/${playlistId}/tracks`;
+    return this.http.get<SpotifyPlaylistTracksDto>(url).pipe(
+      map((response: SpotifyPlaylistTracksDto) => {
+        return response.items.map((item, index) => {
+          return TrackMapper.toModel(item.track, index);
+        });
+      }),
+      catchError((error) => {
+        console.error(`Error Get Playlist Tracks (playlistId:${playlistId}):`, error);
+        return throwError(
+          () => new Error(`Failed to Get Playlist Tracks (playlistId:${playlistId})`)
+        );
+      })
+    );
+  }
+
   public addItemsToPlaylist(
     playlistId: string,
-    data: DialogAddTrackData
+    data: { uri: string, position: number }
   ): Observable<any> {
     const url = `${this.apiUrl}playlists/${playlistId}/tracks`;
     const body = {
@@ -164,9 +203,10 @@ export class SpotifyService {
     );
   }
 
-  public getCurrentUsersPlaylists(): Observable<any> {
+  public getUsersPlaylists(): Observable<Playlist[]> {
     const url: string = `${this.apiUrl}me/playlists`;
-    return this.http.get(url).pipe(
+    return this.http.get<SpotifyUserPlaylistsDto>(url).pipe(
+      map((userPlaylistsDto) => userPlaylistsDto.items.map(PlaylistMapper.toModel)),
       catchError((error) => {
         console.error('Error Get Current Users Playlists:', error);
         return throwError(
@@ -176,14 +216,15 @@ export class SpotifyService {
     );
   }
 
-  public createPlaylist(userId: string, playlistNr: number): Observable<any> {
+  public createPlaylist(userId: string, playlistNr: number): Observable<Playlist> {
     const url = `${this.apiUrl}users/${userId}/playlists`;
     const body = {
       name: `My Playlist #${playlistNr}`,
       description: 'New playlist description',
       public: true,
     };
-    return this.http.post(url, body).pipe(
+    return this.http.post<SpotifyPlaylistDto>(url, body).pipe(
+      map(playlistDto => PlaylistMapper.toModel(playlistDto)),
       catchError((error) => {
         console.error('Error create playlist:', error);
         return throwError(() => new Error('Failed to create playlist'));
@@ -206,20 +247,11 @@ export class SpotifyService {
     );
   }
 
-  public getApiData(endpoint: string): Observable<any> {
-    const url = `${this.apiUrl}${endpoint}`;
-    return this.http.get(url).pipe(
-      catchError((error) => {
-        console.error('Error Get Api Data:', error);
-        return throwError(() => new Error('Failed to Get Api Data'));
-      })
-    );
-  }
-
   // --- Tracks ---
-  public getUsersSavedTracks(): Observable<any> {
+  public getUsersSavedTracks(): Observable<Track[]> {
     const url: string = `${this.apiUrl}me/tracks`;
-    return this.http.get(url).pipe(
+    return this.http.get<SpotifyUserSavedTracksDto>(url).pipe(
+      map(userSavedTracksDto => userSavedTracksDto.items.map((item, index) => TrackMapper.toModel(item.track, index))),
       catchError((error) => {
         console.error('Error Get Users Saved Tracks:', error);
         return throwError(() => new Error('Failed to Get Users Saved Tracks'));
@@ -254,11 +286,11 @@ export class SpotifyService {
     );
   }
 
-  public checkUsersSavedTracks(trackIds: string[]): Observable<any> {
+  public checkUsersSavedTracks(trackIds: string[]): Observable<boolean[]> {
     const url: string = `${this.apiUrl}me/tracks/contains?ids=${trackIds.join(
       ','
     )}`;
-    return this.http.get(url).pipe(
+    return this.http.get<boolean[]>(url).pipe(
       catchError((error) => {
         console.error(`Error check users saved tracks:`, error);
         return throwError(
@@ -267,44 +299,23 @@ export class SpotifyService {
       })
     );
   }
-  
-  private getTrackPreviewUrl(trackId: string): Observable<any> {
-    const url = `${this.previewFetcherBaseUrl}?trackId=${trackId}`;
-    return this.http.get(url).pipe(
+
+  public getTrackPreviewUrl(id: string): Observable<string> {
+    const url = `${this.previewFetcherBaseUrl}?trackId=${id}`;
+    return this.http.get<{ url: string }>(url).pipe(
+      map((response) => response.url),
       catchError((error) => {
-        console.error(`Error Get Preview Url for Track (trackId:${trackId}):`, error);
-        return throwError(() => new Error(`Failed to Get Preview Url for Track (trackId:${trackId})`));
+        console.error(`Error Get Preview Url for Track (trackId:${id}):`, error);
+        return throwError(() => new Error(`Failed to Get Preview Url for Track (trackId:${id})`));
       })
     );
   }
 
-  private async fetchPreviewUrlForTrack(trackId: string): Promise<string | null> {
-    try {
-      const response = await lastValueFrom(this.getTrackPreviewUrl(trackId));
-      return response.url;
-    } catch (error) {
-      console.error(`Failed to fetch preview URL for trackId: ${trackId}`, error);
-      return null;
-    }
-  }
-
-  public async loadPreviewUrlIfMissing(track: TrackFile): Promise<void> {
-    if (!track.previewUrl) {
-      try {
-        const previewUrl = await this.fetchPreviewUrlForTrack(track.id);
-        if (previewUrl) {
-          track.previewUrl = previewUrl;
-        }
-      } catch (error) {
-        console.error(`Error loading preview URL for trackId: ${track.id}`, error);
-      }
-    }
-  }
-
   // ---Artists ---
-  public getArtist(artistIds: string[]): Observable<any> {
+  public getArtist(artistIds: string[]): Observable<Artist[]> {
     const url: string = `${this.apiUrl}artists?ids=${artistIds.join(',')}`;
-    return this.http.get(url).pipe(
+    return this.http.get<{ artists: SpotifyArtistDto[] }>(url).pipe(
+      map(response => response.artists.map(ArtistMapper.toModel)),
       catchError((error) => {
         console.error(`Error Get Artist:`, error);
         return throwError(() => new Error(`Failed to Get Artist`));
@@ -312,9 +323,10 @@ export class SpotifyService {
     );
   }
 
-  public getArtistAlbums(artistId: string): Observable<any> {
+  public getArtistAlbums(artistId: string): Observable<Album[]> {
     const url: string = `${this.apiUrl}artists/${artistId}/albums`;
-    return this.http.get(url).pipe(
+    return this.http.get<SpotifyArtistAlbumsDto>(url).pipe(
+      map(artistAlbumsDto => artistAlbumsDto.items.map(AlbumMapper.toModel)),
       catchError((error) => {
         console.error(`Error Get Artist's Albums:`, error);
         return throwError(() => new Error(`Failed to Get Artist's Albums`));
@@ -322,9 +334,10 @@ export class SpotifyService {
     );
   }
 
-  public getArtistTopTracks(artistId: string): Observable<any> {
+  public getArtistTopTracks(artistId: string): Observable<Track[]> {
     const url: string = `${this.apiUrl}artists/${artistId}/top-tracks`;
-    return this.http.get(url).pipe(
+    return this.http.get<SpotifyTrackDto[]>(url).pipe(
+      map(trackDtos => trackDtos.map((trackDto: SpotifyTrackDto, index: number) => TrackMapper.toModel(trackDto, index))),
       catchError((error) => {
         console.error(`Error Get Artist's Topt Tracks:`, error);
         return throwError(() => new Error(`Failed to Get Artist's Top Tracks`));
@@ -332,27 +345,37 @@ export class SpotifyService {
     );
   }
 
-  // --- Categories ---
-  public getSeveralBrowseCategories(): Observable<any> {
-    const url = `${this.apiUrl}browse/categories`;
-    return this.http.get(url).pipe(
-      catchError((error) => {
-        console.error('Error Get Several Browse Categories:', error);
-        return throwError(
-          () => new Error('Failed to Get Several Browse Categories')
-        );
-      })
-    );
-  }
+  public searchByType<T>(query: string, type: string): Observable<T[]> {
+    if (query.length === 0) { return new Observable<T[]>(observer => observer.next([])); }
+    const endpoint = `search?q=${encodeURIComponent(query)}&type=${encodeURIComponent(type)}`;
+    const url = `${this.apiUrl}${endpoint}`;
 
-  // --- Search ---
-  public searchForItem(searchQuery: string, type: string): Observable<any> {
-    const encodedQuery = encodeURIComponent(searchQuery);
-    const url = `${this.apiUrl}search?q=${encodedQuery}&type=${type}&limit=10`;
-    return this.http.get(url).pipe(
-      catchError((error) => {
-        console.error('Error search for item:', error);
-        return throwError(() => new Error('Failed to search for item'));
+    return this.http.get<SpotifySearchedResultDto<T>>(url).pipe(
+      map(response => {
+        const resultSection = (response as any)[type + 's'];
+        const items = resultSection?.items ?? [];
+        let mappedItems: T[] = [];
+        if (type === 'playlist') {
+          mappedItems = items.filter(Boolean).map((item: SpotifyPlaylistDto) => PlaylistMapper.toModel(item));
+        } else if (type === 'track') {
+          mappedItems = items.filter(Boolean).map((item: SpotifyTrackDto, index: number) => TrackMapper.toModel(item, index));
+        } else if (type === 'album') {
+          mappedItems = items.filter(Boolean).map((item: SpotifyAlbumDto) => AlbumMapper.toModel(item));
+        } else if (type === 'artist') {
+          mappedItems = items.filter(Boolean).map((item: SpotifyArtistDto) => ArtistMapper.toModel(item));
+        } else if (type === 'show') {
+          mappedItems = items.filter(Boolean).map((item: any) => item); // Adjust here if Show DTO is available
+        } else if (type === 'episode') {
+          mappedItems = items.filter(Boolean).map((item: any) => item); // Adjust here if Episode DTO is available
+        } else if (type === 'audiobook') {
+          mappedItems = items.filter(Boolean).map((item: any) => item); // Adjust here if Audiobook DTO is available
+        }
+
+        return mappedItems.filter(Boolean);
+      }),
+      catchError(error => {
+        console.error('Error Search:', error);
+        return throwError(() => new Error('Failed to Search'));
       })
     );
   }

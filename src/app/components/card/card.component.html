@@ -1,16 +1,16 @@
-<mat-card class="card c-pointer" (click)="navigateToPlaylist(data.id)">
-  <app-btn-play class="overlayer" [playlistId]="data.id"></app-btn-play>
+<mat-card class="card c-pointer" (click)="navigateToPlaylist(playlist.id)">
+  <app-btn-play class="overlayer" [playlist]="playlist"></app-btn-play>
   <img mat-card-image src="{{ imgUrl }}" />
   <mat-card-content>
     <span
       class="mt-10 card-name"
       style="font-weight: bold; color: var(--white-color)"
-      >{{ data.name }}</span
+      >{{ playlist.name }}</span
     >
     <span
       class="mt-10 card-description"
       style="color: var(--light-grey-color)"
-      >{{ utilsService.truncateText(data.description, 45) }}</span
+      >{{ utilsService.truncateText(playlist.description, 45) }}</span
     >
   </mat-card-content>
 </mat-card>

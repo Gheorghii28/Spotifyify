@@ -7,7 +7,7 @@ import {
   Output,
   Renderer2,
 } from '@angular/core';
-import { Playlist } from '../models/spotify.model';
+import { Playlist } from '../models';
 
 @Directive({
   selector: '[appDropTarget]',

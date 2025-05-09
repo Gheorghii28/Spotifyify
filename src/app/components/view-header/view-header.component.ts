@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { CloudFiles, MyTracks } from '../../models/cloud.model';
+import { Playlist } from '../../models';
 
 @Component({
   selector: 'app-view-header',
@@ -10,5 +10,5 @@ import { CloudFiles, MyTracks } from '../../models/cloud.model';
   styleUrl: './view-header.component.scss',
 })
 export class ViewHeaderComponent {
-  @Input() data!: CloudFiles | MyTracks;
+  @Input() playlist!: Playlist;
 }

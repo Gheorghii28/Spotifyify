@@ -1,18 +1,12 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDrawer } from '@angular/material/sidenav';
-import { DrawerService } from '../../../services/drawer.service';
-import { lastValueFrom } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
-import { SpotifyService } from '../../../services/spotify.service';
-import { Playlist, PlaylistsObject } from '../../../models/spotify.model';
-import { CloudService } from '../../../services/cloud.service';
 import { CustomButtonComponent } from '../../../components/buttons/custom-button/custom-button.component';
-import { FirebaseService } from '../../../services/firebase.service';
-import { UserFirebaseData } from '../../../models/firebase.model';
-import { UtilsService } from '../../../services/utils.service';
-import { LayoutService } from '../../../services/layout.service';
+import { Playlist } from '../../../models';
+import { PlaylistManagerService } from '../../services/playlist-manager.service';
+import { DrawerService, LayoutService, UserService } from '../../../services';
 
 @Component({
   selector: 'app-nav-header',
@@ -26,20 +20,15 @@ import { LayoutService } from '../../../services/layout.service';
   styleUrl: './nav-header.component.scss',
 })
 export class NavHeaderComponent {
+  private playlistManager = inject(PlaylistManagerService);
+  private userService = inject(UserService);
+  private drawerService = inject(DrawerService);
+  private layoutService = inject(LayoutService);
+
   @Input() drawerSidenav!: MatDrawer;
   @Input() sidenavExpanded!: boolean;
-  @Input() myPlaylists!: PlaylistsObject;
-  @Input() userFirebaseData!: UserFirebaseData;
+  @Input() myPlaylists!: Playlist[];
   @Input() sidenavWidth!: number;
-
-  constructor(
-    private drawerService: DrawerService,
-    private spotifyService: SpotifyService,
-    private cloudService: CloudService,
-    private firebaseService: FirebaseService,
-    private utilsService: UtilsService,
-    public layoutService: LayoutService
-  ) { }
 
   public toggleDrawer(): void {
     const newExpandedState = !this.sidenavExpanded;
@@ -57,29 +46,16 @@ export class NavHeaderComponent {
   }
 
   public async createNewPlaylist(): Promise<void> {
-    try {
-      const playlistNr: number = this.myPlaylists.items.length + 1;
-      const playlist: Playlist = await lastValueFrom(
-        this.spotifyService.createPlaylist(this.userFirebaseData.userId, playlistNr)
-      );
-      this.addPlaylistToUser(playlist);
-    } catch (error) {
-      console.error('Error created playlist:', error);
-    }
+    const user = this.userService.user()!;
+    await this.playlistManager.createPlaylist(user.id);
   }
 
-  public async createPlaylistFolder(): Promise<void> {
-    const folderId = this.utilsService.randomString(11);
-    await this.firebaseService.updateDocument('users', this.userFirebaseData.userId, {
-      folders: [
-        ...this.userFirebaseData.folders,
-        { id: folderId, name: 'New Folder', playlists: [] },
-      ],
-    });
+  public createPlaylistFolder(): void {
+    const user = this.userService.user()!;
+    this.playlistManager.createPlaylistFolder(user.id);
   }
 
-  private addPlaylistToUser(playlist: Playlist): void {
-    this.myPlaylists.items.push(playlist);
-    this.cloudService.myPlaylists.set(this.myPlaylists);
+  public isWindowWidthLessThan(value: number): boolean {
+    return this.layoutService.isWindowWidthLessThan(value);
   }
 }

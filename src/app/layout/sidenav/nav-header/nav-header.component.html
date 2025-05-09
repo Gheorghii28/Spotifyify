@@ -20,22 +20,22 @@
         [icon]="'playlist_add'"
         [text]="'Create a new playlist'"
         [customClass]="'secondary'"
-        style="display: block; width: 202px"
         [sidenavExpanded]="true"
+        style="display: block; width: 202px"
         (clickEvent)="createNewPlaylist()"
       ></app-custom-button>
       <app-custom-button
         [icon]="'create_new_folder'"
         [text]="'Create a playlist folder'"
         [customClass]="'secondary'"
-        style="display: block; width: 202px"
         [sidenavExpanded]="true"
+        style="display: block; width: 202px"
         (clickEvent)="createPlaylistFolder()"
       ></app-custom-button>
     </mat-menu>
     <button
       mat-menu-item
-      *ngIf="sidenavExpanded && !this.layoutService.isWindowWidthLessThan(1020)"
+      *ngIf="sidenavExpanded && !isWindowWidthLessThan(1020)"
       class="hover-effect-on-icons"
       (click)="toggleSidenavWidth()"
     >

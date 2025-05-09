@@ -3,8 +3,8 @@
     <ng-container
       *ngIf="
         state.playing &&
-          playingTrack.index === trackIndex &&
-          playingTrack.playlistId === track.playlistId;
+          playingTrack?.index === trackIndex &&
+          playingTrack?.id === track.playlistId;
         else soundNr
       "
     >
@@ -18,13 +18,13 @@
     class="btn-non-style btn-toggle" [class.hovered]="!isHovered"
     *ngIf="state"
     [disabled]="state.error"
-    (click)="togglePlayPause($event)"
+    (click)="onPlayPauseClicked()"
   >
     <ng-container
       *ngIf="
         state.playing &&
-          playingTrack.index === trackIndex &&
-          playingTrack.playlistId === track.playlistId;
+          playingTrack?.index === trackIndex &&
+          playingTrack?.id === track.id;
         else playIcon
       "
     >

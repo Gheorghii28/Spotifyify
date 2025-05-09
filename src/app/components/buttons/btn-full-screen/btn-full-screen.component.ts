@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener, Input } from '@angular/core';
-import { LayoutService } from '../../../services/layout.service';
+import { Component, HostListener, inject, Input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { LayoutService } from '../../../services';
 
 @Component({
   selector: 'app-btn-full-screen',
@@ -11,9 +11,9 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrl: './btn-full-screen.component.scss',
 })
 export class BtnFullScreenComponent {
-  @Input() elem: any;
+  private layoutService = inject(LayoutService);
 
-  constructor(public layoutService: LayoutService) {}
+  @Input() elem: any;
 
   ngOnInit(): void {
     this.updateFullscreenState();
@@ -37,5 +37,9 @@ export class BtnFullScreenComponent {
 
   public exitFullscreen(): void {
     this.layoutService.exitFullscreen();
+  }
+
+  public get isFullScreen(): boolean {
+    return this.layoutService.isFullScreen()!;
   }
 }

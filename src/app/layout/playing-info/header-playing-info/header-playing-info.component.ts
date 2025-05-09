@@ -1,19 +1,15 @@
-import { Component, effect, Input } from '@angular/core';
+import { Component, computed, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { lastValueFrom } from 'rxjs';
-import { DrawerService } from '../../../services/drawer.service';
-import { SpotifyService } from '../../../services/spotify.service';
-import { CloudService } from '../../../services/cloud.service';
-import { AudioService } from '../../../services/audio.service';
-import { LikedStatusService } from '../../../services/liked-status.service';
-import { TrackFile } from '../../../models/cloud.model';
-import { Playlist, PlaylistsObject } from '../../../models/spotify.model';
 import { CustomButtonComponent } from '../../../components/buttons/custom-button/custom-button.component';
 import { DialogAddTrackComponent } from '../../../components/dialog/dialog-add-track/dialog-add-track.component';
 import { DialogRemoveTrackComponent } from '../../../components/dialog/dialog-remove-track/dialog-remove-track.component';
+import { Track } from '../../../models';
+import { AudioService, DrawerService, LikedTracksService, SpotifyService } from '../../../services';
+import { PlaylistManagerService } from '../../services/playlist-manager.service';
 
 @Component({
   selector: 'app-header-playing-info',
@@ -27,29 +23,32 @@ import { DialogRemoveTrackComponent } from '../../../components/dialog/dialog-re
   styleUrl: './header-playing-info.component.scss',
 })
 export class HeaderPlayingInfoComponent {
-  @Input() track!: TrackFile;
-  @Input() playlist!: Playlist;
-  public isOwnedByUser: boolean = false;
-  constructor(
-    private drawerService: DrawerService,
-    private spotifyService: SpotifyService,
-    private cloudService: CloudService,
-    private audioService: AudioService,
-    private likedStatusService: LikedStatusService,
-    private dialog: MatDialog
-  ) {
-    effect(() => {
-      this.cloudService.files();
-      this.checkIfPlaylistOwnedByUser();
-    });
-  }
+  private likedTracksService = inject(LikedTracksService);
+  private drawerService = inject(DrawerService);
+  private spotifyService = inject(SpotifyService);
+  private audioService = inject(AudioService);
+  private playlistManager = inject(PlaylistManagerService);
+  private dialog = inject(MatDialog);
+
+  trackIsLiked = computed(() => {
+    const id = this.audioService.playingTrack()?.id;
+    if (!id) return false;
+    return this.likedTracksService.isLiked(id)();
+  });
+  isOwnedByUser = computed(() => {
+    const id = this.audioService.playingTrack()?.playlistId;
+    if (!id) return false;
+    return this.playlistManager.myPlaylists().some(p => p.id === id);
+  });
+
+  @Input() track!: Track;
 
   public closePlayingInfo(): void {
     this.drawerService.isDrawerInfoOpened.set(false);
   }
 
   public getDisplayName(): string {
-    return this.playlist ? this.playlist.name : this.track?.name || '';
+    return this.track?.name || '';
   }
 
   public openAddDialog(): void {
@@ -57,51 +56,33 @@ export class HeaderPlayingInfoComponent {
       data: {
         position: 0,
         uri: this.track.uri,
+        track: this.track
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.cloudService.addTrackToPlaylist();
-      }
-    });
+    dialogRef.afterClosed().subscribe((result) => { });
   }
 
-  public openRemoveDialog(): void {
+  public async openRemoveDialog(): Promise<void> {
+    const snapshotId = await lastValueFrom(
+      this.spotifyService.getPlaylistSnapshotId(this.track.playlistId as string)
+    );
     const dialogRef = this.dialog.open(DialogRemoveTrackComponent, {
       data: {
-        playlistId: this.cloudService.files().id,
-        snapshot_id: this.cloudService.files().snapshot_id,
+        playlistId: this.track.playlistId,
+        snapshot_id: snapshotId,
         uri: this.track.uri,
+        trackId: this.track.id,
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.cloudService.deleteTrackFromPlaylist(this.cloudService.files(), this.track);
-      }
-    });
+    dialogRef.afterClosed().subscribe((result) => { });
   }
 
   public async saveToLikedSongs(): Promise<void> {
-    if (!this.track.likedStatus) {
-      this.likedStatusService.saveTrack(this.track.id);
-      await this.likedStatusService.checkAndUpdateLikedStatus(this.track.id, this.audioService.currentPlayingTrack());
-      await this.likedStatusService.updateUserSavedTracks();
-    }
-  }
-
-  public async isPlaylistOwnedByUser(): Promise<boolean> {
-    const playlists: PlaylistsObject = await lastValueFrom(
-      this.spotifyService.getCurrentUsersPlaylists()
+    this.likedTracksService.toggleLike(this.track.id as string);
+    await lastValueFrom(
+      this.spotifyService.saveTracksForCurrentUser(this.track.id as string)
     );
-    
-    return playlists.items.some(
-      (playlist: Playlist) => playlist.id === this.cloudService.files().id
-    );
-  }  
-
-  private async checkIfPlaylistOwnedByUser(): Promise<void> {
-    this.isOwnedByUser = await this.isPlaylistOwnedByUser();
   }
 }

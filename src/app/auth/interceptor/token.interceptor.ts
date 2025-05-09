@@ -2,7 +2,7 @@ import { HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
-import { BrowserStorageService } from '../../services/browser-storage.service';
+import { BrowserStorageService } from '../../services';
 
 export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);

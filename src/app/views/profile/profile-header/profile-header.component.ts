@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
-import { UserProfile } from '../../../models/spotify.model';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
+import { User } from '../../../models';
 
 @Component({
   selector: 'app-profile-header',
@@ -10,6 +10,6 @@ import { CommonModule } from '@angular/common';
   styleUrl: './profile-header.component.scss'
 })
 export class ProfileHeaderComponent {
-  @Input() data!: UserProfile;
+  @Input() user!: User;
   @Input() playlistCount!: number;
 }

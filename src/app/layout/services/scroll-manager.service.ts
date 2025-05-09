@@ -1,5 +1,5 @@
 import { ElementRef, Injectable, NgZone } from '@angular/core';
-import { ScrollService } from '../../services/scroll.service';
+import { ScrollService } from '../../services';
 
 @Injectable({
   providedIn: 'root'

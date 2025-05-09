@@ -1,5 +1,5 @@
 <div
-  *ngIf="data as Artist"
+  *ngIf="artist as Artist"
   class="header"
   [ngStyle]="{
     'background-image':
@@ -9,8 +9,8 @@
   }">
   <div class="info">
     <div class="profile-img">
-      <ng-container *ngIf="data.images[0]; else noImage">
-        <img src="{{ data.images[0].url }}" />
+      <ng-container *ngIf="artist.imageUrl; else noImage">
+        <img src="{{ artist.imageUrl }}" />
       </ng-container>
       <ng-template #noImage>
         <div class="div-no-img">
@@ -20,9 +20,9 @@
     </div>
 
     <div class="info-meta">
-        <div class="info-name">{{ data.name }}</div>
-      <div class="info-details">{{ data.genres }}</div>
-      <div class="info-details">{{ data.followers.total }} Followers</div>
+        <div class="info-name">{{ artist.name }}</div>
+      <div class="info-details">{{ artist.genres }}</div>
+      <div class="info-details">{{ artist.followers }} Followers</div>
     </div>
   </div>
 </div>

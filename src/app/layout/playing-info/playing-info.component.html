@@ -1,9 +1,9 @@
-<div *ngIf="playingTrack" class="drawer-end">
-  <app-header-playing-info [track]="playingTrack" [playlist]="playlist"></app-header-playing-info>
+<div class="drawer-end">
+  <app-header-playing-info *ngIf="playingTrack" [track]="playingTrack"></app-header-playing-info>
   <div class="content">
     <div scrollable style="height: 100%; padding: 0 16px">
-      <app-track-info [track]="playingTrack"></app-track-info>
-      <ng-container *ngFor="let artist of artists">
+      <app-track-info *ngIf="playingTrack" [track]="playingTrack"></app-track-info>
+      <ng-container *ngFor="let artist of artistsList">
         <app-artist-info [artist]="artist"></app-artist-info>
       </ng-container>
     </div>

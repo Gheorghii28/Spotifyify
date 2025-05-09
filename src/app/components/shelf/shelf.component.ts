@@ -1,11 +1,10 @@
-import { Component, HostListener, Input, OnInit } from '@angular/core';
+import { Component, HostListener, inject, Input, OnInit } from '@angular/core';
 import { CardComponent } from '../card/card.component';
 import { CommonModule } from '@angular/common';
-import { Playlist, ShelfData } from '../../models/spotify.model';
-import { SpotifyService } from '../../services/spotify.service';
 import { ResizeObserverDirective } from '../../directives/resize-observer.directive';
 import { lastValueFrom } from 'rxjs';
-import { UtilsService } from '../../services/utils.service';
+import { Playlist } from '../../models';
+import { SpotifyService } from '../../services';
 
 @Component({
   selector: 'app-shelf',
@@ -14,17 +13,17 @@ import { UtilsService } from '../../services/utils.service';
   styleUrl: './shelf.component.scss',
 })
 export class ShelfComponent implements OnInit {
-  @Input() endpoint!: string;
-  data!: ShelfData;
-  displayedItems: Playlist[] = [];
+  private spotifyService = inject(SpotifyService);
+
+  @Input() query!: string;
+  private playlists!: Playlist[];
+  displayedPlaylists: Playlist[] = [];
   private currentIndex: number = 0;
   private firstChildWidth!: number;
   private cardWidth: number = 200;
 
-  constructor(private spotifyService: SpotifyService, private utilsService: UtilsService) {}
-
   ngOnInit(): void {
-    this.fetchAndStoreEndpointData();
+    this.getInitialPlaylists();
   }
 
   @HostListener('scroll', ['$event'])
@@ -41,13 +40,11 @@ export class ShelfComponent implements OnInit {
     this.loadMoreItems();
   }
 
-  private async fetchAndStoreEndpointData(): Promise<void> {
+  private async getInitialPlaylists(): Promise<void> {
     try {
-      this.data = await lastValueFrom(
-        this.spotifyService.getApiData(this.endpoint)
+      this.playlists = await lastValueFrom(
+        this.spotifyService.searchByType<Playlist>(this.query, 'playlist')
       );
-      const query = this.utilsService.extractQueryFromEndpoint(this.endpoint);
-      this.data.message = query ? `${query}` : '';
       this.loadMoreItems();
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -61,13 +58,13 @@ export class ShelfComponent implements OnInit {
   }
 
   private loadMoreItems(): void {
-    if (this.data) {
+    if (this.playlists) {
       const visibleCards = Math.ceil(this.firstChildWidth / this.cardWidth);
-      const newItems = this.data.playlists.items.slice(
+      const newItems = this.playlists.slice(
         this.currentIndex,
         this.currentIndex + visibleCards
-      ).filter((item) => item !== null);
-      this.displayedItems = [...this.displayedItems, ...newItems];
+      ).filter((playlist) => playlist !== null);
+      this.displayedPlaylists = [...this.displayedPlaylists, ...newItems];
       this.currentIndex += visibleCards;
     }
   }

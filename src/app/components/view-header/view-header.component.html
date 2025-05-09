@@ -1,10 +1,10 @@
 <div
-  *ngIf="data"
+  *ngIf="playlist"
   class="header"
   [ngStyle]="{
     'background-image':
       'linear-gradient(to bottom, ' +
-      (data.color ? data.color : '#545454') +
+      (playlist.color ? playlist.color : '#545454') +
       ', var(--black-color))'
   }"
 >
@@ -13,14 +13,14 @@
     [ngStyle]="{
       'background-image':
         'linear-gradient(to bottom, ' +
-        (data.color ? data.color : '#545454') +
+        (playlist.color ? playlist.color : '#545454') +
         ', var(--black-color))'
     }"
   >
     <div class="profile-img">
       <ng-content select=[small-play-btn]></ng-content>
-      <ng-container *ngIf="data.imageUrl; else noImage">
-        <img src="{{ data.imageUrl }}" />
+      <ng-container *ngIf="playlist.imageUrl; else noImage">
+        <img src="{{ playlist.imageUrl }}" />
       </ng-container>
       <ng-template #noImage>
         <div class="div-no-img">
@@ -28,13 +28,13 @@
         </div>
       </ng-template>
     </div>
-    <p class="info-name">{{ data.name }}</p>
+    <p class="info-name">{{ playlist.name }}</p>
   </div>
 
   <div class="info">
     <div class="profile-img">
-      <ng-container *ngIf="data.imageUrl; else noImage">
-        <img src="{{ data.imageUrl }}" />
+      <ng-container *ngIf="playlist.imageUrl; else noImage">
+        <img src="{{ playlist.imageUrl }}" />
       </ng-container>
       <ng-template #noImage>
         <div class="div-no-img">
@@ -44,9 +44,9 @@
     </div>
 
     <div class="info-meta">
-      <div class="info-type">{{ data.type }}</div>
-      <div class="info-name">{{ data.name }}</div>
-      <div class="info-description">{{ data.description }}</div>
+      <div class="info-type">{{ playlist.type }}</div>
+      <div class="info-name">{{ playlist.name }}</div>
+      <div class="info-description">{{ playlist.description }}</div>
 
       <ng-content select=[info-actions]></ng-content>
     </div>

@@ -1,16 +1,14 @@
-import { Component, Input, ViewChild } from '@angular/core';
-import { Playlist } from '../../../models/spotify.model';
+import { Component, inject, Input, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRemovePlaylistComponent } from '../../../components/dialog/dialog-remove-playlist/dialog-remove-playlist.component';
 import { CustomButtonComponent } from '../../../components/buttons/custom-button/custom-button.component';
-import { UtilsService } from '../../../services/utils.service';
 import { DialogChangePlaylistDetailsComponent } from '../../../components/dialog/dialog-change-playlist-details/dialog-change-playlist-details.component';
-import { SpotifyService } from '../../../services/spotify.service';
-import { CloudService } from '../../../services/cloud.service';
 import { DialogChangePlaylistDetailsData } from '../../../models/dialog.model';
-import { NavigationService } from '../../../services/navigation.service';
+import { Playlist } from '../../../models';
+import { PlaylistManagerService } from '../../services/playlist-manager.service';
+import { NavigationService, UtilsService } from '../../../services';
 
 @Component({
   selector: 'app-list-item',
@@ -19,6 +17,11 @@ import { NavigationService } from '../../../services/navigation.service';
   styleUrl: './list-item.component.scss',
 })
 export class ListItemComponent {
+  private dialog = inject(MatDialog);
+  private playlistManager = inject(PlaylistManagerService);
+  private utilsService = inject(UtilsService);
+  private navigationService = inject(NavigationService);
+
   @Input() playlist!: Playlist;
   @Input() sidenavExpanded!: boolean;
   @Input() sidenavWidth!: number;
@@ -26,14 +29,6 @@ export class ListItemComponent {
   public contextMenuPosition = { x: '0px', y: '0px' };
   public btnExpandedStyles = { width: '100%', padding: '8px' };
   public btnCollapsedStyles = { width: '48px', padding: 0 };
-  
-  constructor(
-    private dialog: MatDialog,
-    public utilsService: UtilsService,
-    private spotifyService: SpotifyService,
-    private cloudService : CloudService,
-    public navigationService: NavigationService
-  ) { }
 
   public onContextMenu(event: MouseEvent) {
     event.preventDefault();
@@ -54,31 +49,26 @@ export class ListItemComponent {
       data: { name: this.playlist.name, id: this.playlist.id },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {});
+    dialogRef.afterClosed().subscribe((result) => { });
   }
 
   public openChangeDialog(): void {
     const dialogRef = this.dialog.open(DialogChangePlaylistDetailsComponent, {
-      data: { 
-        id: this.playlist.id, 
-        name: this.playlist.name, 
-        description: this.playlist.description 
+      data: {
+        id: this.playlist.id,
+        name: this.playlist.name,
+        description: this.playlist.description
       },
     });
 
-    dialogRef.afterClosed().subscribe((result: DialogChangePlaylistDetailsData) => {
+    dialogRef.afterClosed().subscribe(async (result: DialogChangePlaylistDetailsData) => {
       if (result) {
-        this.spotifyService.changePlaylistDetails(result).subscribe({
-          next: (response) => {
-            this.cloudService.updatePlaylistDetails(result);
-         },
-          error: (err) => {
-            console.error('Failed to update playlist:', err);
-          }
-        });
-      } else {
-        console.log('Dialog was closed without changes');
+        await this.playlistManager.changePlaylistDetails(result);
       }
     });
+  }
+
+  public truncateText(value: string): string {
+    return this.utilsService.truncateText(value, 22);
   }
 }

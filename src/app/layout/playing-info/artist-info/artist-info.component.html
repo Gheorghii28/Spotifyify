@@ -3,7 +3,7 @@
   <div class="text">
     <span class="name">{{ artist.name }}</span>
     <div class="follow-container">
-      <span>{{ artist.followers.total }} monthly listeners</span>
+      <span>{{ artist.followers }} monthly listeners</span>
       <button 
         [ngClass]="{'following-color': isFollowing}" 
         (click)="toggleFollowing($event)"
@@ -12,7 +12,7 @@
       </button>
     </div>
     <p class="description">
-      {{ utilsService.truncateText(description, 100) }}
+      {{ truncateDescription() }}
     </p>
   </div>
 </div>

@@ -5,17 +5,13 @@
         #drawerSidenav
         [opened]="true"
         class="round-8"
-        [style.width.px]="drawerService.sidenavExpanded() ? drawerService.sidenavWidth() : 81"
+        [style.width.px]="sidenavExpanded ? sidenavWidth : 81"
         mode="side"
       >
         <app-sidenav
           [drawerSidenav]="drawerSidenav"
-          [sidenavExpanded]="drawerService.sidenavExpanded()"
-          [myPlaylists]="cloudService.myPlaylists()"
-          [userFirebaseData]="userFirebaseData"
-          [folderUnassignedPlaylists]="folderUnassignedPlaylists"
-          [myTracksTotal]="cloudService.myTracks().items.length"
-          [movedToFolderStatus]="utilsService.movedToFolder()"
+          [sidenavExpanded]="sidenavExpanded"
+          [movedToFolderStatus]="movedToFolder"
           class="h-100"
         ></app-sidenav>
       </mat-drawer>
@@ -26,29 +22,21 @@
       </mat-drawer-content>
       <mat-drawer
         #drawerInfo
-        [opened]="drawerService.isDrawerInfoOpened()"
+        [opened]="isDrawerInfoOpened"
         class="round-8 mat-drawer-left"
         mode="side"
         position="end"
         class="info-drawer"
       >
-        <app-playing-info
-          [playingTrack]="audioService.currentPlayingTrack()"
-          [playlist]="playlist"
-          [artists]="artists"
-        ></app-playing-info>
+        <app-playing-info></app-playing-info>
       </mat-drawer>
     </mat-drawer-container>
   </div>
   <app-player
-    *ngIf="cloudService.files().id.length > 0"
-    [files]="cloudService.files()"
-    [playlistId]="cloudService.files().id"
-    [drawerEndStatus]="drawerService.isDrawerInfoOpened()"
-    [playingTrack]="audioService.currentPlayingTrack()"
-    [repeatMode]="audioService.repeatMode()"
-    [isShuffled]="audioService.isShuffled()"
-    [state]="audioService.state()"
-    [isFullScreen]="layoutService.isFullScreen()"
+    *ngIf="playingTrack"
+    [playlistId]="playingTrack.playlistId || ''"
+    [drawerEndStatus]="isDrawerInfoOpened"
+    [state]="state"
+    [isFullScreen]="isFullScreen"
   ></app-player>
 </div>

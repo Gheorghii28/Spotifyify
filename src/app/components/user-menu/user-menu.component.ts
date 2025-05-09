@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
-import { AuthService } from '../../auth/services/auth.service';
 import { CustomButtonComponent } from '../buttons/custom-button/custom-button.component';
-import { NavigationService } from '../../services/navigation.service';
+import { AuthService } from '../../auth/services/auth.service';
+import { AudioService, NavigationService } from '../../services';
 
 @Component({
   selector: 'app-user-menu',
@@ -18,13 +18,13 @@ import { NavigationService } from '../../services/navigation.service';
   styleUrl: './user-menu.component.scss',
 })
 export class UserMenuComponent {
-  constructor(
-    private authService: AuthService,
-    public navigationService: NavigationService
-  ) {}
+  private authService = inject(AuthService);
+  private audioService = inject(AudioService);
+  private navigationService = inject(NavigationService);
 
   public logout(): void {
     this.authService.logout();
+    this.audioService.stop();
   }
 
   public async toProfile(): Promise<void> {

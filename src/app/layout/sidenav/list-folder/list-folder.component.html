@@ -14,9 +14,9 @@
   <div *ngIf="sidenavExpanded" class="text">
     <span>
       {{
-        drawerService.sidenavWidth() === 631
+        sidenavWidth === 631
           ? folder.name
-          : utilsService.truncateText(folder.name, 22)
+          : truncateText(folder.name)
       }}</span
     >
     <span
@@ -44,7 +44,7 @@
       appDraggable
       [playlist]="playlist"
       [sidenavExpanded]="sidenavExpanded"
-      [appDraggable]="utilsService.toJsonString(playlist)"
+      [appDraggable]="toJsonString(playlist)"
     ></app-list-item>
   </li>
 </ul>

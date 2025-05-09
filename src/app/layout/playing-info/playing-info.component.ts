@@ -1,12 +1,12 @@
-import { Component, Input } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AudioService } from '../../services/audio.service';
 import { CustomScrollbarDirective } from '../../directives/custom-scrollbar.directive';
-import { TrackFile } from '../../models/cloud.model';
-import { Artist, Playlist } from '../../models/spotify.model';
 import { HeaderPlayingInfoComponent } from './header-playing-info/header-playing-info.component';
 import { TrackInfoComponent } from './track-info/track-info.component';
 import { ArtistInfoComponent } from './artist-info/artist-info.component';
+import { Artist, Track } from '../../models';
+import { AudioService } from '../../services';
+import { PlaylistManagerService } from '../services/playlist-manager.service';
 
 @Component({
   selector: 'app-playing-info',
@@ -21,11 +21,26 @@ import { ArtistInfoComponent } from './artist-info/artist-info.component';
   styleUrl: './playing-info.component.scss',
 })
 export class PlayingInfoComponent {
-  @Input() playingTrack!: TrackFile;
-  @Input() playlist!: Playlist;
-  @Input() artists!: Artist[];
+  private audioService = inject(AudioService);
+  private playlistManager = inject(PlaylistManagerService);
+  artistsList: Artist[] = [];
 
-  constructor(
-    public audioService: AudioService,
-  ) {}
+  constructor() {
+    effect(() => {
+      this.loadArtists();
+    });
+  }
+
+  private async loadArtists(): Promise<void> {
+    if (this.audioService.playingTrack()?.artists[0].imageUrl?.length === 0) {
+      this.artistsList = await this.playlistManager.loadArtists(this.audioService.playingTrack()!);
+    }
+    else {
+      this.artistsList = this.audioService.playingTrack()?.artists || [];
+    }
+  }
+
+  public get playingTrack(): Track {
+    return this.audioService.playingTrack()!;
+  }
 }

@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { Artist } from '../../../models/spotify.model';
 import { CommonModule } from '@angular/common';
+import { Artist } from '../../../models';
 
 @Component({
   selector: 'app-artist-header',
@@ -9,5 +9,5 @@ import { CommonModule } from '@angular/common';
   styleUrl: './artist-header.component.scss'
 })
 export class ArtistHeaderComponent {
-  @Input() data!: Artist;
+  @Input() artist!: Artist;
 }

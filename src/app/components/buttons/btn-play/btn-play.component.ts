@@ -1,10 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AudioService } from '../../../services/audio.service';
 import { MatButtonModule } from '@angular/material/button';
-import { CloudService } from '../../../services/cloud.service';
-import { CloudFiles, TrackFile } from '../../../models/cloud.model';
-import { SpotifyService } from '../../../services/spotify.service';
+import { Playlist, Track } from '../../../models';
+import { firstValueFrom } from 'rxjs';
+import { StreamState } from '../../../models/stream-state.model';
+import { AudioService, DrawerService, SpotifyService } from '../../../services';
 
 @Component({
   selector: 'app-btn-play',
@@ -13,41 +13,41 @@ import { SpotifyService } from '../../../services/spotify.service';
   styleUrl: './btn-play.component.scss',
 })
 export class BtnPlayComponent {
-  @Input() playlistId!: string;
+  private audioService = inject(AudioService);
+  private spotifyService = inject(SpotifyService);
+  private drawerService = inject(DrawerService);
 
-  constructor(
-    public audioService: AudioService,
-    private cloudService: CloudService,
-    private spotifyService: SpotifyService,
-  ) { }
+  @Input() playlist!: Playlist;
 
-  public togglePlayPause(event: Event): void {
+  public get playingTrack(): Track | null {
+    return this.audioService.playingTrack();
+  }
+
+  public get state(): StreamState {
+    return this.audioService.state();
+  }
+
+  public async onPlayPauseClicked(event: Event): Promise<void> {
     event.stopPropagation();
-    if (this.isCurrentPlaylist()) {
-      this.audioService.togglePlayPause();
-    } else {
-      this.openPlaylist();
+  
+    // If the playlist has no tracks loaded yet, fetch them from the Spotify API
+    if (this.playlist.tracks.length === 0) {
+      this.playlist.tracks = await firstValueFrom(
+        this.spotifyService.getPlaylistTracks(this.playlist.id)
+      );
     }
-  }
-
-  private async openPlaylist(): Promise<void> {
-    this.audioService.stop();
-    const files: CloudFiles = await this.cloudService.getFiles(this.playlistId);
-    this.cloudService.files.set(files);
-    await this.spotifyService.loadPreviewUrlIfMissing(files.tracks[0]);
-    const track: TrackFile = await this.audioService.getPlayingTrack(files, 0);
-    this.audioService.currentPlayingTrack.set(track);
-  }
-
-  private async setCloudFiles(): Promise<void> {
-    const files: CloudFiles = await this.cloudService.getFiles(this.playlistId);
-    this.cloudService.files.set(files);
-  }
-
-  private isCurrentPlaylist(): boolean {
-    if (!this.audioService.currentPlayingTrack()) {
-      return false;
+  
+    // By default, select the first track from the playlist
+    let track = this.playlist.tracks[0];
+    // If a track from this playlist is already playing, use that track instead
+    if (this.audioService.playingTrack()?.playlistId === this.playlist.id) {
+      track = this.audioService.playingTrack() as Track;
     }
-    return this.audioService.currentPlayingTrack().playlistId === this.playlistId;
+  
+    await this.audioService.prepareAndPlayTrack(
+      this.playlist,
+      track
+    );
+    this.drawerService.handlePlayButtonClick();
   }
 }

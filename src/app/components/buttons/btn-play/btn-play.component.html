@@ -1,12 +1,12 @@
 <button
   class="btn-non-style"
-  *ngIf="audioService.state()"
-  [disabled]="audioService.state().error"
-  (click)="togglePlayPause($event)"
+  *ngIf="state"
+  [disabled]="state.error"
+  (click)="onPlayPauseClicked($event)"
 >
   <ng-container
     *ngIf="
-      audioService.state().playing && audioService.currentPlayingTrack().playlistId === playlistId;
+      state.playing && playingTrack?.playlistId === playlist?.id;
       else playIcon
     "
   >

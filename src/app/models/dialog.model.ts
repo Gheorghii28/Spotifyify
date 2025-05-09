@@ -1,4 +1,6 @@
-import { UserFirebaseData, UserFolder } from './firebase.model';
+import { Track } from "./track.model";
+import { User, UserFolder } from "./user.model";
+
 
 export interface DialogRemovePlaylistData {
   name: string;
@@ -11,7 +13,7 @@ export interface DialogChangePlaylistDetailsData {
 }
 
 export interface DialogRemoveFolderData {
-  userFirebaseData: UserFirebaseData;
+  user: User;
   folder: UserFolder;
 }
 
@@ -19,9 +21,11 @@ export interface DialogRemoveTrackData {
   playlistId: string;
   snapshot_id: string;
   uri: string;
+  trackId: string;
 }
 
 export interface DialogAddTrackData {
   position: number;
   uri: string;
+  track: Track
 }

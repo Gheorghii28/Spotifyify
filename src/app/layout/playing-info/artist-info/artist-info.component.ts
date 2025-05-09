@@ -1,10 +1,8 @@
-import { Component, Input } from '@angular/core';
-import { Artist } from '../../../models/spotify.model';
+import { Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UtilsService } from '../../../services/utils.service';
-import { SpotifyService } from '../../../services/spotify.service';
 import { lastValueFrom } from 'rxjs';
-import { NavigationService } from '../../../services/navigation.service';
+import { Artist } from '../../../models';
+import { NavigationService, SpotifyService, UtilsService } from '../../../services';
 
 @Component({
   selector: 'app-artist-info',
@@ -13,19 +11,20 @@ import { NavigationService } from '../../../services/navigation.service';
   styleUrl: './artist-info.component.scss',
 })
 export class ArtistInfoComponent {
+  private utilsService = inject(UtilsService);
+  private spotifyService = inject(SpotifyService);
+  private navigationService = inject(NavigationService)
   @Input() artist!: Artist;
   isFollowing!: boolean;
   description: string =
     'text Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deleniti, nihil. Error explicabo, saepe dolorem sapiente odit, natus at aspernatur impedit repellat minima similique. Tempora sint repellat a possimus, nobis atque?';
 
-  constructor(
-    public utilsService: UtilsService,
-    private spotifyService: SpotifyService,
-    public navigationService: NavigationService
-  ) {}
-
   public getArtistImageUrl(artist: Artist): string {
-    return artist.images[0]?.url || '';
+    return artist.imageUrl || '';
+  }
+
+  public truncateDescription(): string {
+    return this.utilsService.truncateText(this.description, 100);
   }
 
   public navigateToArtist(id: string): void {

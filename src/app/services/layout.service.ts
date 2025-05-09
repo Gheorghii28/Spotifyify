@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable, signal, WritableSignal } from '@angular/core';
+import { inject, Inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { fromEvent } from 'rxjs';
 import { getWindow, getDocument } from 'ssr-window';
 import { DrawerService } from './drawer.service';
@@ -8,11 +8,12 @@ import { DrawerService } from './drawer.service';
   providedIn: 'root',
 })
 export class LayoutService {
+  private drawerService = inject(DrawerService);
+
   isFullScreen: WritableSignal<boolean> = signal(false);
   
   constructor(
     @Inject(DOCUMENT) private document: any,
-    private drawerService: DrawerService
   ) { }
 
   public adjustHeightOnWindowResize(): void {

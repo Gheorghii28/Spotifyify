@@ -2,25 +2,20 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  inject,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import { HeaderComponent } from '../../components/header/header.component';
-import {
-  Playlist,
-  SpotifySearchResults,
-  SpotifySearchTrack,
-  UserProfile,
-} from '../../models/spotify.model';
 import { CommonModule, Location } from '@angular/common';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
 import { TrackListComponent } from '../../components/track-list/track-list.component';
-import { TrackFile, TrackFileClass } from '../../models/cloud.model';
 import { CardComponent } from '../../components/card/card.component';
-import { CloudService } from '../../services/cloud.service';
-import { AudioService } from '../../services/audio.service';
 import { TrackListHeaderComponent } from '../../components/track-list-header/track-list-header.component';
 import { ResizeObserverDirective } from '../../directives/resize-observer.directive';
+import { Playlist, Track, User } from '../../models';
+import { AudioService, SearchService } from '../../services';
+import { StreamState } from '../../models/stream-state.model';
 
 interface ElementConfig {
   nativeElement: HTMLElement | undefined;
@@ -41,10 +36,12 @@ interface ElementConfig {
   styleUrl: './search.component.scss',
 })
 export class SearchComponent implements OnInit, AfterViewInit {
+  private location = inject(Location);
+  private searchService = inject(SearchService);
+  private audioService = inject(AudioService);
+
   @ViewChild(HeaderComponent) headerComponent!: HeaderComponent;
-  public userProfile!: UserProfile;
-  tracks: TrackFile[] = [];
-  playlists: Playlist[] = [];
+  public user!: User;
 
   private elements: { [key in keyof HeaderComponent]?: ElementConfig } = {
     userNotifications: { nativeElement: undefined, threshold: 630 },
@@ -52,12 +49,6 @@ export class SearchComponent implements OnInit, AfterViewInit {
     userName: { nativeElement: undefined, threshold: 470 },
     userInfo: { nativeElement: undefined, threshold: 420 },
   };
-
-  constructor(
-    private location: Location,
-    public cloudService: CloudService,
-    public audioService: AudioService
-  ) {}
 
   ngOnInit() {
     this.setUserProfileFromState();
@@ -69,55 +60,23 @@ export class SearchComponent implements OnInit, AfterViewInit {
 
   private setUserProfileFromState(): void {
     const state = this.location.getState() as any;
-    this.userProfile = state?.user;
+    this.user = state?.user;
   }
 
-  public async onSearchResultsChange(
-    results: SpotifySearchResults | null
-  ): Promise<void> {
-    this.tracks = [];
-    this.playlists = [];
-    if (results) {
-      this.tracks = await this.getFilteredTracks(results);
-      this.playlists = results.playlists?.items.filter((item) => item !== null) || [];
-    }
+  public get tracks(): Track[] {
+    return this.searchService.searchResults().tracks;
   }
 
-  private async getFilteredTracks(
-    results: SpotifySearchResults | null
-  ): Promise<TrackFile[]> {
-    if (!results || !results.tracks || !results.tracks.items) {
-      return [];
-    }
-    const filteredTracks = this.filterTracksWithPreviewUrl(
-      results.tracks.items
-    );
-    const trackFiles = await this.createTrackFilesWithLikedStatus(
-      filteredTracks
-    );
-    return trackFiles;
+  public get playlists(): Playlist[] {
+    return this.searchService.searchResults().playlists;
   }
 
-  private filterTracksWithPreviewUrl(
-    tracks: SpotifySearchTrack[]
-  ): SpotifySearchTrack[] {
-    return tracks.filter((track) => track.preview_url === null); //spotify wep api endpoint 30-second preview_url is nullable/deprecated
+  public get searchResultPlaylist(): Playlist {
+    return this.searchService.searchResultPlaylist() as Playlist;
   }
 
-  private async createTrackFilesWithLikedStatus(
-    tracks: SpotifySearchTrack[]
-  ): Promise<TrackFile[]> {
-    const searchedTracks = this.createTrackFile(tracks).slice(0, 50);
-    const updatedTracks: TrackFile[] =
-      await this.cloudService.updateTrackLikedStatus(searchedTracks);
-    return updatedTracks;
-  }
-
-  private createTrackFile(tracks: SpotifySearchTrack[]): TrackFile[] {
-    return tracks.map(
-      (track, index) =>
-        new TrackFileClass(track, index, undefined, track.album.id)
-    );
+  public get searchQuery(): string {
+    return this.searchService.searchQuery();
   }
 
   private initializeElements(): void {
@@ -146,5 +105,13 @@ export class SearchComponent implements OnInit, AfterViewInit {
         }
       }
     }
+  }
+
+  public get playingTrack(): Track {
+    return this.audioService.playingTrack()!;
+  }
+
+  public get state(): StreamState {
+    return this.audioService.state()!;
   }
 }

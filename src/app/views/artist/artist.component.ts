@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ArtistHeaderComponent } from './artist-header/artist-header.component';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { Artist } from '../../models/spotify.model';
 import { lastValueFrom } from 'rxjs';
-import { SpotifyService } from '../../services/spotify.service';
 import { ResizeObserverDirective } from '../../directives/resize-observer.directive';
 import { PageInProgressComponent } from '../../components/page-in-progress/page-in-progress.component';
+import { Artist } from '../../models';
+import { SpotifyService } from '../../services';
 
 @Component({
   selector: 'app-artist',
@@ -20,13 +20,10 @@ import { PageInProgressComponent } from '../../components/page-in-progress/page-
   styleUrl: './artist.component.scss'
 })
 export class ArtistComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private spotifyService = inject(SpotifyService);
+
   artist!: Artist;
-  
-  constructor(
-    private route: ActivatedRoute,
-    private spotifyService: SpotifyService,
-  ) {
-  }
 
   ngOnInit(): void {
     this.route.params.subscribe(async (params) => {
@@ -35,7 +32,7 @@ export class ArtistComponent implements OnInit {
       const artistResults = await lastValueFrom(
         this.spotifyService.getArtist(artistIds)
       );
-      this.artist = artistResults.artists[0];
+      this.artist = artistResults[0];
       const albums = await lastValueFrom(
         this.spotifyService.getArtistAlbums(artistId)
       );

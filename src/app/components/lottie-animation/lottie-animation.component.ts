@@ -11,7 +11,7 @@ import { LottieAnimationConfig } from '../../models/animation.model';
   styleUrl: './lottie-animation.component.scss'
 })
 export class LottieAnimationComponent implements OnChanges {
-  @Input() likedStatus!: boolean;
+  @Input() likedStatus!: boolean | undefined;
   @Input() config!: LottieAnimationConfig;
   private animationItem!: AnimationItem;
 

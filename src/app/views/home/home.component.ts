@@ -1,12 +1,10 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ShelfComponent } from '../../components/shelf/shelf.component';
-import { UserProfile } from '../../models/spotify.model';
 import { HeaderComponent } from '../../components/header/header.component';
 import { Subscription } from 'rxjs';
-import { ScrollService } from '../../services/scroll.service';
-import { PlaylistQueryService } from '../../services/playlist-query.service';
-import { UserService } from '../../services/user.service';
+import { User } from '../../models';
+import { PlaylistQueryService, ScrollService, UserService } from '../../services';
 
 @Component({
   selector: 'app-home',
@@ -15,25 +13,22 @@ import { UserService } from '../../services/user.service';
   styleUrl: './home.component.scss',
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  userProfile!: UserProfile;
-  displayedEndpoints: string[] = [];
-  private endpoints: string[] = [];
+
+  private scrollService = inject(ScrollService);
+  private playlistQueryService = inject(PlaylistQueryService);
+  private userService = inject(UserService);  
+
+  displayedQueries: string[] = [];
+  private queries: string[] = [];
   private currentIndex: number = 0;
   private windowHeight!: number;
   private shelfHeight = 379;
   private scrollSubscription!: Subscription;
 
-  constructor(
-    private scrollService: ScrollService,
-    private playlistQueryService: PlaylistQueryService,
-    private userService: UserService,
-  ) {}
-
   ngOnInit() {
-    this.setUserProfile();
     this.setScrollSubscription();
     this.windowHeight = window.innerHeight;
-    this.getEndpoints();
+    this.getQueries();
   }
 
   ngOnDestroy(): void {
@@ -43,7 +38,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   @HostListener('window:resize')
   onResize(): void {
     this.windowHeight = window.innerHeight;
-    this.loadMoreEndpoints();
+    this.loadMoreQueries();
   }
 
   private setScrollSubscription(): void {
@@ -54,28 +49,19 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
   }
 
-  setUserProfile(): void {
-    this.userService.getProfile().then((profile) => {
-      this.userProfile = profile;
-    });
-  }
-
-  private async getEndpoints(): Promise<void> {
+  private async getQueries(): Promise<void> {
     const playlistSearchQueries = this.playlistQueryService.getQueries();
-    const playlistSearchEndpoints: string[] = playlistSearchQueries.map((query) => {
-      return `search?q=${query}&type=playlist`;
-    });
-    this.endpoints = [...playlistSearchEndpoints];
-    this.loadMoreEndpoints();
+    this.queries = [...playlistSearchQueries];
+    this.loadMoreQueries();
   }
 
-  private loadMoreEndpoints(): void {
+  private loadMoreQueries(): void {
     const visibleShelves = Math.ceil(this.windowHeight / this.shelfHeight);
-    const newEndpoints = this.endpoints.slice(
+    const newQueries = this.queries.slice(
       this.currentIndex,
       this.currentIndex + visibleShelves
     );
-    this.displayedEndpoints = [...this.displayedEndpoints, ...newEndpoints];
+    this.displayedQueries = [...this.displayedQueries, ...newQueries];
     this.currentIndex += visibleShelves;
   }
 
@@ -83,7 +69,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     const target = event.target as HTMLElement;
 
     if (this.isRouterOutletArea(target) && this.isScrollAtBottom(target)) {
-      this.loadMoreEndpoints();
+      this.loadMoreQueries();
     }
   }
 
@@ -101,5 +87,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     const clientHeight = target.clientHeight;
 
     return scrollHeight - clientHeight - scrollPosition;
+  }
+
+  public get user(): User {
+    return this.userService.user()!;
   }
 }

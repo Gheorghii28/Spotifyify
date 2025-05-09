@@ -1,12 +1,12 @@
-<ng-container *ngIf="user && cloudService.myPlaylists().items">
-    <app-profile-header class="info-actions" [data]="user" [playlistCount]="cloudService.myPlaylists().items.length"></app-profile-header>
+<ng-container *ngIf="user && myPlaylists">
+    <app-profile-header class="info-actions" [user]="user" [playlistCount]="myPlaylists.length"></app-profile-header>
 </ng-container>
 <div class="tracks">
   <section resizeObserver>
     <h2>Public Playlists</h2>
-    <div *ngIf="cloudService.myPlaylists()" class="section-container">
-      <ng-container *ngFor="let item of cloudService.myPlaylists().items">
-        <app-card [data]="item"></app-card>
+    <div *ngIf="myPlaylists" class="section-container">
+      <ng-container *ngFor="let playlist of myPlaylists">
+        <app-card [playlist]="playlist"></app-card>
       </ng-container>
     </div>
   </section>

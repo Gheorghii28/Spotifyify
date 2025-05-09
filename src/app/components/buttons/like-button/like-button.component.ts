@@ -1,8 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AudioService } from '../../../services/audio.service';
-import { LikedStatusService } from '../../../services/liked-status.service';
 import { LottieAnimationComponent } from '../../lottie-animation/lottie-animation.component';
+import { lastValueFrom } from 'rxjs';
+import { LikedTracksService, SpotifyService } from '../../../services';
 
 @Component({
   selector: 'app-like-button',
@@ -11,7 +11,11 @@ import { LottieAnimationComponent } from '../../lottie-animation/lottie-animatio
   styleUrl: './like-button.component.scss',
 })
 export class LikeButtonComponent {
-  @Input() trackId!: string;
+
+  private likedTracksService = inject(LikedTracksService);
+  private spotifyService = inject(SpotifyService);
+
+  @Input() trackId!: string | undefined;
   @Input() likedStatus!: boolean;
 
   public heartAnimationConfig = {
@@ -28,21 +32,17 @@ export class LikeButtonComponent {
     autoplay: false,
     statusType: 'likedStatus'
   };
-  
-  constructor(
-    public audioService: AudioService,
-    private likedStatusService: LikedStatusService
-  ) {}
 
   public async toggleLiked(): Promise<void> {
-    try {
-      this.likedStatus
-        ? await this.likedStatusService.removeTrack(this.trackId)
-        : await this.likedStatusService.saveTrack(this.trackId);
-      await this.likedStatusService.checkAndUpdateLikedStatus(this.trackId, this.audioService.currentPlayingTrack());
-      await this.likedStatusService.updateUserSavedTracks();
-    } catch (error) {
-      console.error('Error toggling likedStatus status:', error);
+    this.likedTracksService.toggleLike(this.trackId as string);
+    if (this.likedStatus) {
+      await lastValueFrom(
+        this.spotifyService.removeUsersSavedTracks(this.trackId as string)
+      );
+    } else {
+      await lastValueFrom(
+        this.spotifyService.saveTracksForCurrentUser(this.trackId as string)
+      );
     }
   }
 }

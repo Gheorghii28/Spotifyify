@@ -1,7 +1,6 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogAddTrackData } from '../../../models/dialog.model';
-import { SpotifyService } from '../../../services/spotify.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import {
@@ -13,9 +12,10 @@ import {
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { Playlist } from '../../../models/spotify.model';
 import { lastValueFrom } from 'rxjs';
-import { CloudService } from '../../../services/cloud.service';
+import { Playlist } from '../../../models';
+import { SpotifyService } from '../../../services';
+import { PlaylistManagerService } from '../../../layout/services/playlist-manager.service';
 
 @Component({
   selector: 'app-dialog-add-track',
@@ -32,15 +32,16 @@ import { CloudService } from '../../../services/cloud.service';
   styleUrl: './dialog-add-track.component.scss',
 })
 export class DialogAddTrackComponent {
+  private spotifyService = inject(SpotifyService);
+  private playlistManager = inject(PlaylistManagerService);
+
   playlistControl = new FormControl<Playlist | null>(null, Validators.required);
   selectFormControl = new FormControl('', Validators.required);
 
   constructor(
     public dialogRef: MatDialogRef<DialogAddTrackComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogAddTrackData,
-    private spotifyService: SpotifyService,
-    public cloudService: CloudService
-  ) {}
+  ) { }
 
   public onNoClick(): void {
     this.dialogRef.close();
@@ -49,11 +50,19 @@ export class DialogAddTrackComponent {
   public async addTrack(playlistId: string): Promise<void> {
     try {
       await lastValueFrom(
-        this.spotifyService.addItemsToPlaylist(playlistId, this.data)
+        this.spotifyService.addItemsToPlaylist(
+          playlistId, 
+          {uri: this.data.uri, position: this.data.position}
+        )
       );
-      this.dialogRef.close(true);
+      this.playlistManager.addTrackToPlaylist(playlistId, this.data.track);
+      this.dialogRef.close();
     } catch (error) {
       console.error('Error adding item to playlist:', error);
     }
+  }
+
+  public get myPlaylists(): Playlist[] {
+    return this.playlistManager.myPlaylists()!;
   }
 }

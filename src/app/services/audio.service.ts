@@ -1,15 +1,17 @@
-import { Injectable, signal, WritableSignal } from '@angular/core';
-import { Observable, Subject, of } from 'rxjs';
+import { inject, Injectable, signal, WritableSignal } from '@angular/core';
+import { Observable, Subject, firstValueFrom } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { format } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import { StreamState } from '../models/stream-state.model';
-import { CloudFiles, TrackFile } from '../models/cloud.model';
+import { Playlist, Track } from '../models';
+import { SpotifyService } from './spotify.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AudioService {
+  private spotifyService = inject(SpotifyService);
   private stop$ = new Subject();
   private audioObj = new Audio();
   private initialState: StreamState = {
@@ -21,22 +23,7 @@ export class AudioService {
     canplay: false,
     error: false,
   };
-  private initialTrackFile: TrackFile = {
-    name: "",
-    albumName: "",
-    artists: [],
-    durationMs: 0,
-    id: "",
-    previewUrl: "",
-    index: 0,
-    img: "",
-    likedStatus: false,
-    uri: "",
-    playlistId: undefined,
-    albumId: undefined,
-  };
   state: WritableSignal<StreamState> = signal(this.initialState);
-  currentPlayingTrack: WritableSignal<TrackFile> = signal(this.initialTrackFile);
   private audioEvents = [
     'ended',
     'error',
@@ -48,29 +35,35 @@ export class AudioService {
     'loadedmetadata',
     'loadstart',
   ];
-  repeatMode: WritableSignal<number> = signal(0);
-  isShuffled: WritableSignal<boolean> = signal(false);
+  playingTrack: WritableSignal<Track | null> = signal(null);
+  playingPlaylist: WritableSignal<Track[]> = signal([]);
+  repeatMode: WritableSignal<'off' | 'track' | 'playlist'> = signal('off');
+  currentIndex: WritableSignal<number> = signal(-1);
+  isShuffle: WritableSignal<boolean> = signal(false);
 
-  public async getNextTrack(
-    index: number,
-    files: CloudFiles
-  ): Promise<TrackFile> {
-    const nextIndex = index + 1 >= files.tracks.length ? 0 : index + 1;
-    return await this.getPlayingTrack(files, nextIndex);
+  public playStream(url: string): Observable<any> {
+    return this.streamObservable(url).pipe(takeUntil(this.stop$));
   }
 
-  public async changeTrackIndex(
-    direction: 'next' | 'previous',
-    index?: number,
-    files?: CloudFiles
-  ): Promise<void> {
-    let trackIndex: number = index || 0;
-    trackIndex += direction === 'next' ? 1 : -1;
-    const track: TrackFile = await this.getPlayingTrack(
-      files as CloudFiles,
-      trackIndex
-    );
-    this.currentPlayingTrack.set(track);
+  private streamObservable(url: any): Observable<Event> {
+    return new Observable((observer) => {
+      this.audioObj.src = url;
+      this.audioObj.load();
+      this.audioObj.play();
+
+      const handler = (event: Event) => {
+        this.updateStateEvents(event);
+        observer.next(event);
+      };
+
+      this.addEvents(this.audioObj, this.audioEvents, handler);
+      return () => {
+        this.audioObj.pause();
+        this.audioObj.currentTime = 0;
+        this.removeEvents(this.audioObj, this.audioEvents, handler);
+        this.resetState();
+      };
+    });
   }
 
   private updateStateEvents(event: Event): void {
@@ -100,45 +93,20 @@ export class AudioService {
     this.state.set(this.state());
   }
 
-  private resetState(): void {
-    this.state.set(this.initialState);
-  }
-
-  private streamObservable(url: any): Observable<Event> {
-    return new Observable((observer) => {
-      this.audioObj.src = url;
-      this.audioObj.load();
-      this.audioObj.play();
-
-      const handler = (event: Event) => {
-        this.updateStateEvents(event);
-        observer.next(event);
-      };
-
-      this.addEvents(this.audioObj, this.audioEvents, handler);
-      return () => {
-        this.audioObj.pause();
-        this.audioObj.currentTime = 0;
-        this.removeEvents(this.audioObj, this.audioEvents, handler);
-        this.resetState();
-      };
-    });
-  }
-
   private addEvents(obj: any, events: any, handler: any): void {
     events.forEach((event: any) => {
       obj.addEventListener(event, handler);
     });
   }
 
+  private resetState(): void {
+    this.state.set(this.initialState);
+  }
+
   private removeEvents(obj: any, events: any, handler: any): void {
     events.forEach((event: any) => {
       obj.removeEventListener(event, handler);
     });
-  }
-
-  public playStream(url: string): Observable<any> {
-    return this.streamObservable(url).pipe(takeUntil(this.stop$));
   }
 
   public togglePlayPause(): void {
@@ -149,25 +117,11 @@ export class AudioService {
     }
   }
 
-  public getFileUrl(files: CloudFiles, trackIndex: number): string {
-    if (trackIndex === undefined) {
-      trackIndex = 0;
-    }
-    return files.tracks[trackIndex].previewUrl;
-  }
-
-  getTrackId(files: CloudFiles, trackIndex: number): string {
-    if (trackIndex === undefined) {
-      trackIndex = 0;
-    }
-    return files.tracks[trackIndex].id;
-  }
-
-  public play(): void {
+  private play(): void {
     this.audioObj.play();
   }
 
-  public pause(): void {
+  private pause(): void {
     this.audioObj.pause();
   }
 
@@ -179,78 +133,141 @@ export class AudioService {
     this.audioObj.currentTime = seconds;
   }
 
+  public setVolume(volume: number): void {
+    if (volume >= 0 && volume <= 1) {
+      this.audioObj.volume = volume;
+    }
+  }
+
   private formatTime(time: number, formatString: string = 'mm:ss'): string {
     const date = new Date(time * 1000);
     const zonedDate = toZonedTime(date, 'UTC');
     return format(zonedDate, formatString);
   }
 
-  public setRepeatMode(mode: number): void {
-    this.repeatMode.set(mode);
+  // Prepare the track (e.g., set previewUrl, attach playlistId) and play it
+  public async prepareAndPlayTrack(
+    playlist: Playlist,
+    track: Track
+  ): Promise<void> {
+    this.setPlaylistIdForTracksIfMissing(track, playlist);
+    await this.setPreviewUrlToTrack(track);
+    this.currentIndex.set(track.index);
+    this.handlePlayAudio(playlist, track);
   }
 
-  public setIsShuffled(isShuffled: boolean): void {
-    this.isShuffled.set(isShuffled);
-  }
-
-  public async setPlayingTrack(track: TrackFile): Promise<void> {
-    this.currentPlayingTrack.set(track);
-  }
-
-  public async getPlayingTrack(
-    files: CloudFiles,
-    index: number
-  ): Promise<TrackFile> {
-    const track: TrackFile = files.tracks[index];
-    return track;
-  }
-
-  public getVolume(): number {
-    return this.audioObj.volume;
-  }
-
-  public setVolume(volume: number): void {
-    if (volume >= 0 && volume <= 1) {
-      this.audioObj.volume = volume;
+  private setPlaylistIdForTracksIfMissing(track: Track, playlist: Playlist): void {
+    if (!track.playlistId || playlist.id !== this.playingTrack()?.playlistId) {
+      playlist.tracks.forEach(t => {
+        t.playlistId = playlist.id;
+      });
     }
   }
-}
 
-@Injectable({
-  providedIn: 'root',
-})
-export class NullAudioService {
-  observeStreamState(): Observable<StreamState> {
-    return of({
-      playing: false,
-      readableCurrentTime: '',
-      readableDuration: '',
-      duration: 0,
-      currentTime: 0,
-      canplay: false,
-      error: false,
+  private async setPreviewUrlToTrack(track: Track): Promise<void> {
+    if (!track.previewUrl) {
+      track.previewUrl = await firstValueFrom(
+        this.spotifyService.getTrackPreviewUrl(track.id)
+      );
+    }
+  }
+
+  private async handlePlayAudio(playlist: Playlist, track: Track): Promise<void> {
+    if (
+      this.playingTrack() &&
+      this.playingTrack()?.id === track.id &&
+      this.playingTrack()?.playlistId === playlist.id
+    ) {
+      this.togglePlayPause();
+      return;
+    }
+    this.playingPlaylist.set(playlist.tracks);
+    this.playingTrack.set(track);
+  }
+
+  public toggleRepeatMode(): void {
+    this.repeatMode.update(mode => {
+      if (mode === 'off') return 'track';
+      if (mode === 'track') return 'playlist';
+      return 'off';
     });
   }
 
-  observePlayingTrack(): Observable<TrackFile> {
-    return of(null as unknown as TrackFile);
+  public toggleShuffle(): void {
+    this.isShuffle.update(value => !value);
   }
 
-  playStream(url: string): Observable<any> {
-    return of(null);
+  public nextTrack(): void {
+    const tracks = this.playingPlaylist();
+    if (tracks.length === 0) return;
+
+    const shuffle = this.isShuffle();
+    const repeat = this.repeatMode();
+
+    if (shuffle) {
+      this.playRandomTrack();
+      return;
+    }
+
+    let nextIndex = this.currentIndex() + 1;
+
+    if (nextIndex >= tracks.length) {
+      if (repeat === 'playlist') {
+        nextIndex = 0; // Start again from the beginning
+      } else {
+        this.stop(); // Stop if repeat is disabled
+        return;
+      }
+    }
+
+    this.setplayingTrackByIndex(nextIndex);
   }
 
-  togglePlayPause(): void {}
-  play(): void {}
-  pause(): void {}
-  stop(): void {}
-  seekTo(seconds: number): void {}
-  setPlayingTrack(track: TrackFile): void {}
-  getPlayingTrack(files: CloudFiles, index: number): TrackFile {
-    return null as unknown as TrackFile;
+  public previousTrack(): void {
+    const tracks = this.playingPlaylist();
+    if (tracks.length === 0) return;
+
+    let previousIndex = this.currentIndex() - 1;
+
+    if (previousIndex < 0) {
+      previousIndex = this.isShuffle() ? Math.floor(Math.random() * tracks.length) : tracks.length - 1;
+    }
+
+    this.setplayingTrackByIndex(previousIndex);
   }
-  getVolume(): number {
-    return 0;
+
+  private playRandomTrack() {
+    const tracks = this.playingPlaylist();
+    if (tracks.length === 0) return;
+
+    let randomIndex = Math.floor(Math.random() * tracks.length);
+
+    // Avoid replaying the same track
+    if (tracks.length > 1 && randomIndex === this.currentIndex()) {
+      randomIndex = (randomIndex + 1) % tracks.length;
+    }
+
+    this.setplayingTrackByIndex(randomIndex);
   }
-  setVolume(volume: number): void {}
+
+  private async setplayingTrackByIndex(index: number): Promise<void> {
+    const tracks = this.playingPlaylist();
+    if (tracks.length === 0) return;
+
+    const safeIndex = Math.max(0, Math.min(index, tracks.length - 1));
+    this.currentIndex.set(safeIndex);
+    this.stop();
+    await this.setPreviewUrlToTrack(tracks[safeIndex]);
+    this.playingTrack.set(tracks[safeIndex]);
+  }
+
+  // IMPORTANT: Call this function when the track has finished playing
+  public onTrackEnded(): void {
+    const repeat = this.repeatMode();
+    if (repeat === 'track') {
+      this.play();
+    } else {
+      this.nextTrack();
+    }
+  }
 }

@@ -1,8 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Firestore } from '@angular/fire/firestore';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { UserFirebaseData, UserDataClass } from '../models/firebase.model';
-import { UserProfile } from '../models/spotify.model';
+import { User } from '../models';
 
 @Injectable({
   providedIn: 'root',
@@ -10,27 +9,10 @@ import { UserProfile } from '../models/spotify.model';
 export class FirebaseService {
   private firestore: Firestore = inject(Firestore);
 
-  async checkUserInFirestore(userProfile: UserProfile): Promise<void> {
-    if (!userProfile?.id) {
-      return;
-    }
-    try {
-      const docRef = doc(this.firestore, 'users', userProfile.id);
-      const docSnap = await getDoc(docRef);
-
-      if (!docSnap.exists()) {
-        const userData = new UserDataClass(userProfile.id);
-        await this.setDocument('users', userProfile.id, userData.toJSON());
-      }
-    } catch (error) {
-      console.error('Error checking user in Firestore:', error);
-    }
-  }
-
   public async setDocument(
     collectionName: string,
     documentId: string,
-    documentData: UserFirebaseData
+    documentData: User
   ): Promise<void> {
     try {
       const docRef = doc(this.firestore, collectionName, documentId);
@@ -40,7 +22,7 @@ export class FirebaseService {
     }
   }
 
-  public async updateDocument<T extends Partial<UserFirebaseData>>(
+  public async updateDocument<T extends Partial<User>>(
     collectionName: string,
     documentId: string,
     data: T
@@ -54,5 +36,23 @@ export class FirebaseService {
         error
       );
     }
+  }
+
+  public async getDocument<T>(
+    collectionName: string,
+    documentId: string
+  ): Promise<T | undefined> {
+    const docRef = doc(this.firestore, collectionName, documentId);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists() ? (docSnap.data() as T) : undefined;
+  }
+
+  public async checkDocumentExists(
+    collectionName: string,
+    documentId: string
+  ): Promise<boolean> {
+    const docRef = doc(this.firestore, collectionName, documentId);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists();
   }
 }

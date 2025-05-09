@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { SpotifyService } from '../../../services/spotify.service';
+import { Component, inject, Input } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
+import { SpotifyService } from '../../../services';
 
 @Component({
   selector: 'app-btn-follow',
@@ -10,11 +10,11 @@ import { lastValueFrom } from 'rxjs';
   styleUrl: './btn-follow.component.scss',
 })
 export class BtnFollowComponent {
+  private spotifyService = inject(SpotifyService);
+
   @Input() isFollowing!: boolean;
   @Input() playlistId!: string;
   isDisabled: boolean = false;
-
-  constructor(private spotifyService: SpotifyService) {}
 
   public async toggleFollowing(): Promise<void> {
     if (!this.playlistId) return;
@@ -49,10 +49,10 @@ export class BtnFollowComponent {
 
   private async getPlaylistFollowStatus(id: string): Promise<boolean> {
     if (id.length > 0) {
-      const response: boolean[] = await lastValueFrom(
+      const response: boolean = await lastValueFrom(
         this.spotifyService.checkIfCurrentUserFollowsPlaylist(id)
       );
-      const isFollowing = response[0];
+      const isFollowing = response;
       return isFollowing;
     }
     return false;

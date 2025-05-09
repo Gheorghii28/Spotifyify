@@ -1,15 +1,16 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
-import { DomManipulationService } from '../services/dom-manipulation.service';
+import { Directive, ElementRef, HostListener, inject } from '@angular/core';
+import { DomManipulationService } from '../services';
 
 @Directive({
   selector: '[scrollable]',
 })
 export class CustomScrollbarDirective {
+  private domService = inject(DomManipulationService);
+  private element = inject(ElementRef);
+
   hostElement!: HTMLElement;
-  constructor(
-    private element: ElementRef,
-    private domService: DomManipulationService
-  ) {
+  
+  constructor() {
     this.hostElement = this.element.nativeElement;
   }
 

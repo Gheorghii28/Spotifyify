@@ -18,7 +18,7 @@
         (clickEvent)="openAddDialog()"
       ></app-custom-button>
       <app-custom-button
-        *ngIf="isOwnedByUser"
+        *ngIf="isOwnedByUser()"
         [icon]="'delete'"
         [text]="'Remove from this playlist'"
         [customClass]="'secondary'"
@@ -27,6 +27,7 @@
         (clickEvent)="openRemoveDialog()"
       ></app-custom-button>
       <app-custom-button
+        *ngIf="!trackIsLiked()"
         [icon]="'add_circle'"
         [text]="'Save to your Liked Songs'"
         [customClass]="'secondary'"

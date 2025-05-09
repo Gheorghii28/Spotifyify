@@ -1,9 +1,9 @@
 import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
-import { UserProfile } from '../../models/spotify.model';
 import { CommonModule } from '@angular/common';
 import { UserMenuComponent } from '../../components/user-menu/user-menu.component';
+import { User } from '../../models';
 
 @Component({
   selector: 'app-header',
@@ -12,12 +12,11 @@ import { UserMenuComponent } from '../../components/user-menu/user-menu.componen
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
-  @Input() user!: UserProfile;
+  @Input() user!: User;
   @ViewChild('userNotifications', { read: ElementRef })
   userNotifications!: ElementRef;
   @ViewChild('userInbox', { read: ElementRef }) userInbox!: ElementRef;
   @ViewChild('userInfo', { read: ElementRef }) userInfo!: ElementRef;
   @ViewChild('userName', { read: ElementRef }) userName!: ElementRef;
-  public userProfile!: UserProfile;
   constructor() { }
 }

@@ -1,12 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProfileHeaderComponent } from './profile-header/profile-header.component';
-import { UserProfile } from '../../models/spotify.model';
-import { lastValueFrom } from 'rxjs';
-import { SpotifyService } from '../../services/spotify.service';
 import { CardComponent } from '../../components/card/card.component';
 import { ResizeObserverDirective } from '../../directives/resize-observer.directive';
-import { CloudService } from '../../services/cloud.service';
+import { Playlist, User } from '../../models';
+import { UserService } from '../../services';
+import { PlaylistManagerService } from '../../layout/services/playlist-manager.service';
 
 @Component({
   selector: 'app-profile',
@@ -19,27 +18,15 @@ import { CloudService } from '../../services/cloud.service';
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
-export class ProfileComponent implements OnInit {
-  user!: UserProfile;
+export class ProfileComponent {
+  private userService = inject(UserService);
+  private playlistManager = inject(PlaylistManagerService);
 
-  constructor(
-    private spotifyService: SpotifyService,
-    public cloudService: CloudService,
-  ) { }
-
-  ngOnInit(): void {
-    this.fetchUserProfile();
+  public get user(): User {
+    return this.userService.user()!;
   }
 
-  public async fetchUserProfile(): Promise<void> {
-    try {
-      const user: UserProfile = await lastValueFrom(
-        this.spotifyService.getCurrentUsersProfile()
-      );
-      this.user = user;
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-    }
+  public get myPlaylists(): Playlist[] {
+    return this.playlistManager.myPlaylists()!;
   }
-  
 }

@@ -1,19 +1,16 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, inject, Input, Signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StreamState } from '../../models/stream-state.model';
-import { AudioService } from '../../services/audio.service';
-import { CloudFiles, TrackFile } from '../../models/cloud.model';
 import { LikeButtonComponent } from '../buttons/like-button/like-button.component';
-import { DomManipulationService } from '../../services/dom-manipulation.service';
 import { ResizeObserverDirective } from '../../directives/resize-observer.directive';
 import { TrackNumberComponent } from './track-number/track-number.component';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogRemoveTrackComponent } from '../dialog/dialog-remove-track/dialog-remove-track.component';
 import { CustomButtonComponent } from '../buttons/custom-button/custom-button.component';
-import { CloudService } from '../../services/cloud.service';
 import { DialogAddTrackComponent } from '../dialog/dialog-add-track/dialog-add-track.component';
-import { SpotifyService } from '../../services/spotify.service';
+import { Playlist, Track } from '../../models';
+import { DomManipulationService, LikedTracksService } from '../../services';
 
 @Component({
   selector: 'app-track-list',
@@ -29,13 +26,19 @@ import { SpotifyService } from '../../services/spotify.service';
   styleUrl: './track-list.component.scss',
 })
 export class TrackListComponent {
-  @Input() track!: TrackFile;
+  private likedTracksService = inject(LikedTracksService);
+  private domService = inject(DomManipulationService);
+  private dialog = inject(MatDialog);
+
+  @Input() track!: Track;
   @Input() trackIndex!: number;
-  @Input() files!: CloudFiles;
+  @Input() playlist!: Playlist;
+  @Input() isPlaying!: boolean;
   @Input() state!: StreamState;
-  @Input() playingTrack!: TrackFile;
+  @Input() playingTrack!: Track | null;
   @Input() showDeleteBtn!: boolean;
   @ViewChild(MatMenuTrigger) contextMenu!: MatMenuTrigger;
+
   public contextMenuPosition = { x: '0px', y: '0px' };
   public isHovered = false;
   private readonly widthTrackNumber = 22;
@@ -43,14 +46,6 @@ export class TrackListComponent {
   private readonly widthBtn = 65;
   private readonly widthLength = 40;
   private readonly margin = 15;
-
-  constructor(
-    public audioService: AudioService,
-    private domService: DomManipulationService,
-    private dialog: MatDialog,
-    private cloudService: CloudService,
-    private spotifyService: SpotifyService
-  ) {}
 
   public onResize(event: ResizeObserverEntry): void {
     const width = event.contentRect.width;
@@ -98,16 +93,14 @@ export class TrackListComponent {
   public openRemoveDialog(): void {
     const dialogRef = this.dialog.open(DialogRemoveTrackComponent, {
       data: {
-        playlistId: this.files.id,
-        snapshot_id: this.files.snapshot_id,
+        playlistId: this.playlist!.id,
+        snapshot_id: this.playlist!.snapshotId,
         uri: this.track.uri,
+        trackId: this.track.id,
       },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.cloudService.deleteTrackFromPlaylist(this.files, this.track);
-      }
     });
   }
 
@@ -119,10 +112,10 @@ export class TrackListComponent {
       },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.cloudService.addTrackToPlaylist();
-      }
-    });
+    dialogRef.afterClosed().subscribe((result) => { });
+  }
+
+  public isTrackLiked(trackId: string): Signal<boolean> {
+    return this.likedTracksService.isLiked(trackId);
   }
 }

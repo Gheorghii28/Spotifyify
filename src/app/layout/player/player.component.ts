@@ -1,15 +1,14 @@
 import {
   Component,
+  computed,
   ElementRef,
+  inject,
   Input,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { LayoutService } from '../../services/layout.service';
-import { CloudFiles, TrackFile } from '../../models/cloud.model';
-import { AudioService } from '../../services/audio.service';
 import { CommonModule } from '@angular/common';
 import { StreamState } from '../../models/stream-state.model';
 import { MatSliderModule } from '@angular/material/slider';
@@ -17,7 +16,8 @@ import { FormsModule } from '@angular/forms';
 import { VolumeComponent } from './volume/volume.component';
 import { BtnFullScreenComponent } from '../../components/buttons/btn-full-screen/btn-full-screen.component';
 import { LikeButtonComponent } from '../../components/buttons/like-button/like-button.component';
-import { DrawerService } from '../../services/drawer.service';
+import { Track } from '../../models';
+import { AudioService, DrawerService, LayoutService, LikedTracksService } from '../../services';
 
 @Component({
   selector: 'app-player',
@@ -35,79 +35,67 @@ import { DrawerService } from '../../services/drawer.service';
   styleUrl: './player.component.scss',
 })
 export class PlayerComponent implements OnInit {
+  private likedTracksService = inject(LikedTracksService);
+  private audioService = inject(AudioService);
+  private layoutService = inject(LayoutService);
+  private drawerService = inject(DrawerService);
+  private elementRef = inject(ElementRef);
+
   @ViewChild('slider') slider!: ElementRef;
-  @Input() files!: CloudFiles;
   @Input() playlistId!: string;
   @Input() drawerEndStatus!: boolean;
-  @Input() isShuffled!: boolean;
-  @Input() repeatMode!: number;
-  @Input() playingTrack!: TrackFile;
   @Input() state!: StreamState;
   @Input() isFullScreen!: boolean;
-  public elem: any;
+  elem: any;
+  trackIsLiked = computed(() => {
+    const id = this.audioService.playingTrack()?.id;
+    if (!id) return false;
+    return this.likedTracksService.isLiked(id)();
+  });
 
-  constructor(
-    private layoutService: LayoutService,
-    public audioService: AudioService,
-    private elementRef: ElementRef,
-    private drawerService: DrawerService,
-  ) {}
 
   ngOnInit(): void {
     this.layoutService.adjustElementHeights();
     this.elem = this.elementRef.nativeElement;
   }
 
-  private get currentTrack(): TrackFile {
-    if (this.playingTrack.playlistId) {
-      return this.files.tracks[this.playingTrack.index] ?? this.playingTrack;
-    }
-    return this.playingTrack;
+  public get playingTrack(): Track | null {
+    return this.audioService.playingTrack();
   }
 
-  public get getLikedStatus(): boolean {
-    return this.currentTrack.likedStatus;
+  public get isShuffle(): boolean {
+    return this.audioService.isShuffle();
   }
-  
-  public get getImageUrl(): string {
-    return this.currentTrack.img;
-  }
-  
-  public get getName(): string {
-    return this.currentTrack.name;
-  }
-  
-  public get getArtists(): { name: string; id: string }[] {
-    return this.currentTrack.artists;
+
+  public get repeatMode(): 'off' | 'track' | 'playlist' {
+    return this.audioService.repeatMode();
   }
 
   public get isFirstPlaying(): boolean {
-    return this.currentTrack.index === 0;
+    return this.audioService.currentIndex() === 0;
   }
 
   public get isLastPlaying(): boolean {
-    return this.currentTrack.index === this.files.tracks.length - 1;
+    return this.audioService.currentIndex() === this.audioService.playingPlaylist().length - 1;
   }
 
   public get isPlaylistEmpty(): boolean {
-    return this.files.tracks.length === 0;
-  }
-  
-  public toggleRepeat(): void {
-    const newRepeatMode = (this.repeatMode + 1) % 3;
-    this.audioService.setRepeatMode(newRepeatMode);
+    return this.audioService.playingPlaylist().length === 0;
   }
 
-  public next(): void {
-    this.audioService.changeTrackIndex('next', this.playingTrack.index, this.files);
+  public onRepeatClicked(): void {
+    this.audioService.toggleRepeatMode();
   }
 
-  public previous(): void {
-    this.audioService.changeTrackIndex('previous', this.playingTrack.index, this.files);
+  public onNextClicked(): void {
+    this.audioService.nextTrack();
   }
 
-  public togglePlayPause(event: Event): void {
-    event.stopPropagation();
+  public onPreviousClicked(): void {
+    this.audioService.previousTrack();
+  }
+
+  public onPlayPauseClicked(): void {
     this.audioService.togglePlayPause();
   }
 
@@ -116,9 +104,8 @@ export class PlayerComponent implements OnInit {
     this.audioService.seekTo(seconds);
   }
 
-  public toggleShuffle(): void {
-    const isShuffled = !this.isShuffled;
-    this.audioService.setIsShuffled(isShuffled);
+  public onShuffleClicked(): void {
+    this.audioService.toggleShuffle();
   }
 
   public toggleDrawerEnd(): void {

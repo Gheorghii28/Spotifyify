@@ -2,22 +2,22 @@
   class="current-track"
   [ngClass]="{ fullscreen: isFullScreen }"
   [style.background-color]="!isFullScreen ? '#000' : ''"
-  *ngIf="playingTrack.id.length > 0"
+  *ngIf="playingTrack"
 >
   <div class="song-bar">
     <div class="song-infos">
       <div class="image-container">
-        <img src="{{ getImageUrl }}" alt="" />
+        <img src="{{ playingTrack.albumImageUrl }}" alt="" />
       </div>
       <div class="song-description">
         <span
           class="title m-3 overflow-ellipsis hover-effect-underline c-pointer"
-          >{{ getName }}</span
+          >{{ playingTrack.name }}</span
         >
         <span
           class="artist m-3 overflow-ellipsis hover-effect-underline c-pointer"
         >
-          <ng-container *ngFor="let artist of getArtists; let last = last">
+          <ng-container *ngFor="let artist of playingTrack.artists; let last = last">
             {{ artist.name }}
             <ng-container *ngIf="!last">,</ng-container>
           </ng-container>
@@ -26,7 +26,7 @@
     </div>
     <app-like-button
       [trackId]="playingTrack.id"
-      [likedStatus]="getLikedStatus"
+      [likedStatus]="trackIsLiked()"
     ></app-like-button>
   </div>
   <div class="progress-controller">
@@ -34,17 +34,17 @@
       <button
         mat-icon-button
         class="hover-effect-on-icons"
-        (click)="toggleShuffle()"
+        (click)="onShuffleClicked()"
       >
         <span 
-         [ngStyle]="isShuffled ? { color: '#1db954' } : null"
+         [ngStyle]="isShuffle ? { color: '#1db954' } : null"
          class="material-symbols-outlined"> shuffle </span>
       </button>
       <button
         mat-icon-button
         class="hover-effect-on-icons"
         [disabled]="isFirstPlaying"
-        (click)="previous()"
+        (click)="onPreviousClicked()"
       >
         <span class="material-symbols-outlined"> skip_previous </span>
       </button>
@@ -52,7 +52,7 @@
         class="btn-non-style"
         *ngIf="state"
         [disabled]="state.error"
-        (click)="togglePlayPause($event)"
+        (click)="onPlayPauseClicked()"
       >
         <ng-container *ngIf="state.playing; else playIcon">
           <span
@@ -75,16 +75,16 @@
         mat-icon-button
         class="hover-effect-on-icons"
         [disabled]="isLastPlaying || isPlaylistEmpty"
-        (click)="next()"
+        (click)="onNextClicked()"
       >
         <span class="material-symbols-outlined"> skip_next </span>
       </button>
-      <button mat-icon-button class="hover-effect-on-icons" (click)="toggleRepeat()">
+      <button mat-icon-button class="hover-effect-on-icons" (click)="onRepeatClicked()">
         <span 
         class="material-symbols-outlined"
-        [ngStyle]="{ color: repeatMode !== 0 ? '#1db954' : '' }"
+        [ngStyle]="{ color: repeatMode !== 'off' ? '#1db954' : '' }"
         >
-        {{ repeatMode === 2 ? 'repeat_one_on' : (repeatMode === 1 ? 'repeat_on' : 'repeat') }}
+        {{ repeatMode === 'track' ? 'repeat_one_on' : (repeatMode === 'playlist' ? 'repeat_on' : 'repeat') }}
         </span>
       </button>
     </div>
@@ -132,6 +132,6 @@
 <div
   class="overlay"
   *ngIf="isFullScreen"
-  [style.background-image]="isFullScreen ? 'url(' + getImageUrl + ')' : ''"
+  [style.background-image]="isFullScreen ? 'url(' + playingTrack?.albumImageUrl + ')' : ''"
 ></div>
 <div class="shadow" *ngIf="isFullScreen"></div>

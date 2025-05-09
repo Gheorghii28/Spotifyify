@@ -5,9 +5,9 @@
   [ngStyle]="sidenavExpanded ? btnExpandedStyles : btnCollapsedStyles"
 >
   <ng-container
-    *ngIf="playlist.images && playlist.images.length > 0; else noImage"
+    *ngIf="playlist.imageUrl && playlist.imageUrl.length > 0; else noImage"
   >
-    <img [src]="playlist.images[0].url" />
+    <img [src]="playlist.imageUrl" />
   </ng-container>
   <ng-template #noImage>
     <div class="div-no-img">
@@ -19,12 +19,12 @@
       {{
         sidenavWidth === 631
           ? playlist.name
-          : utilsService.truncateText(playlist.name, 22)
+          : truncateText(playlist.name)
       }}</span
     >
     <span
       >Playlist <span class="material-symbols-outlined"> adjust </span>
-      {{ playlist.tracks.total }} songs</span
+      {{ playlist.totalTracks }} songs</span
     >
   </div>
 </button>

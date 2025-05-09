@@ -1,21 +1,23 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { BrowserStorageService } from '../../services/browser-storage.service';
 import { CookieService } from 'ngx-cookie-service';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { NavigationService } from '../../services/navigation.service';
+import { BrowserStorageService, NavigationService } from '../../services';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(
-    private browserStorageService: BrowserStorageService,
-    private cookieService: CookieService,
-    public navigationService: NavigationService,
-    private http: HttpClient
-  ) {}
+  private browserStorageService = inject(BrowserStorageService);
+  private cookieService = inject(CookieService);
+  private navigationService = inject(NavigationService);
+  private http = inject(HttpClient);
+  private unsubUserSnapshot: () => void = () => { };
+
+  public setUserUnsubscribe(unsubFn: () => void) {
+    this.unsubUserSnapshot = unsubFn;
+  }
 
   public init(): void {
     this.storeToken();
@@ -26,6 +28,10 @@ export class AuthService {
   }
 
   public logout(): void {
+    if (this.unsubUserSnapshot) {
+      this.unsubUserSnapshot();
+      this.unsubUserSnapshot = () => { };
+    }
     this.clearTokens();
     this.navigationService.login();
   }

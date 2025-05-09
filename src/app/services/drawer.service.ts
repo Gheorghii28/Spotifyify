@@ -7,9 +7,15 @@ import { MatDrawer } from '@angular/material/sidenav';
 export class DrawerService {
   sidenavExpanded: WritableSignal<boolean> = signal(true);
   sidenavWidth: WritableSignal<number> = signal(289);
-  isDrawerInfoOpened: WritableSignal<boolean> = signal(true);
+  isDrawerInfoOpened: WritableSignal<boolean> = signal(false);
+  private hasPlayButtonAlreadyClicked = false;
 
-  constructor() {}
+  handlePlayButtonClick() {
+    if (!this.hasPlayButtonAlreadyClicked) {
+      this.isDrawerInfoOpened.set(true);
+      this.hasPlayButtonAlreadyClicked = true;
+    }
+  }
 
   public toggleDrawer(drawerInstance: MatDrawer): void {
     if (drawerInstance) {
@@ -20,8 +26,6 @@ export class DrawerService {
   public updateDrawerEndStatusBasedOnSidenavWidth(newWidth: number): void {
     if (newWidth === 631) {
       this.isDrawerInfoOpened.set(false);
-    } else {
-      this.isDrawerInfoOpened.set(true);
     }
   }
 

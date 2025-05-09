@@ -10,12 +10,12 @@
   <app-track-number
     [state]="state"
     [trackIndex]="trackIndex"
-    [files]="files"
+    [playlist]="playlist"
     [track]="track"
     [playingTrack]="playingTrack"
     [isHovered]="isHovered"
   ></app-track-number>
-  <img [src]="track.img" />
+  <img [src]="track.albumImageUrl" />
   <div class="track-title featured">
     <span class="title">{{ track.name }}</span>
     <ng-container *ngFor="let artist of track.artists">
@@ -24,7 +24,7 @@
   </div>
   <app-like-button
     [trackId]="track.id"
-    [likedStatus]="track.likedStatus"
+    [likedStatus]="isTrackLiked(track.id)()"
   ></app-like-button>
   <div class="track-length">{{ track.durationMs | date : "mm:ss" }}</div>
 </div>
