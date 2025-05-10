@@ -1,5 +1,6 @@
 import { SpotifyPlaylistDto } from "../dto";
 import { Playlist, Track } from "../models";
+import { TrackMapper } from "./track.mapper";
 
 export class PlaylistMapper {
   public static toModel(dto: SpotifyPlaylistDto): Playlist {
@@ -14,7 +15,11 @@ export class PlaylistMapper {
       ownerId: dto.owner?.id || null,
       spotifyUrl: dto.external_urls?.spotify || null,
       totalTracks: dto.tracks.total,
-      tracks: [],
+      tracks: Array.isArray(dto.tracks.items)
+        ? dto.tracks.items.map((item, index) =>
+          TrackMapper.toModel(item.track, index)
+        )
+        : [],
       snapshotId: dto.snapshot_id,
       isUserCreated: dto.owner?.id === 'spotify' ? false : true, // Assuming 'spotify' is the ID for Spotify's own playlists
     };

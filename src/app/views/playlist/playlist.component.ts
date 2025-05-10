@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ViewHeaderComponent } from '../../components/view-header/view-header.component';
 import { TrackListComponent } from '../../components/track-list/track-list.component';
@@ -43,37 +43,18 @@ export class PlaylistComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
   isFollowing!: boolean;
-  playlistId: WritableSignal<string | null> = signal(null);
-  currentPlaylist: WritableSignal<Playlist | undefined> = signal(undefined);
-
-  constructor() {
-    this.setupPlaylistEffect();
-  }
+  playlist!: Playlist;
 
   ngOnInit(): void {
     this.route.params.subscribe(async (params) => {
       const id = params['id'];
-      this.playlistId.set(id);
-    });
-  }
-
-  private setupPlaylistEffect(): void {
-    effect(async () => {
-      const id = this.playlistId();
-      const playlists = this.playlistManager.myPlaylists();
       if (!id) return;
 
-      const playlist = await this.getPlaylistById(id, playlists);
-      this.currentPlaylist.set(playlist);
-
+      this.playlist= await lastValueFrom(this.spotifyService.getPlaylist(id));
       this.isFollowing = await lastValueFrom(
         this.spotifyService.checkIfCurrentUserFollowsPlaylist(id)
       );
     });
-  }
-
-  public get playlist(): Playlist {
-    return this.currentPlaylist()!;
   }
 
   public openDeleteDialog(): void {
@@ -98,15 +79,6 @@ export class PlaylistComponent implements OnInit {
         await this.playlistManager.changePlaylistDetails(result);
       }
     });
-  }
-
-  private async getPlaylistById(id: string, playlists: Playlist[]): Promise<Playlist> {
-    let playlist = playlists.find(p => p.id === id);
-    if (!playlist) {
-      playlist = await lastValueFrom(this.spotifyService.getPlaylist(id));
-    }
-    playlist.tracks = await lastValueFrom(this.spotifyService.getPlaylistTracks(id));
-    return playlist;
   }
 
   public get playingTrack(): Track {
