@@ -1,14 +1,16 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Injectable, signal, WritableSignal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ScrollService {
-  private scrollSubject = new Subject<Event>();
-  scroll$ = this.scrollSubject.asObservable();
+  private scrollSignal: WritableSignal<Event | null> = signal(null);
+
+  get scroll() {
+    return this.scrollSignal;
+  }
 
   emitScrollEvent(event: Event) {
-    this.scrollSubject.next(event);
+    this.scrollSignal.set(event);
   }
 }

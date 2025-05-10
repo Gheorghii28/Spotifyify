@@ -36,4 +36,33 @@ export class UtilsService {
     const urlParams = new URLSearchParams(endpoint.split('?')[1]);
     return urlParams.get('q');
   }
+
+  public handleScroll(event: Event, callback: () => void): void {
+    const target = event.target as HTMLElement;
+
+    if (!(target instanceof HTMLElement)) return;
+
+    if (
+      this.isRouterOutletArea(target) &&
+      this.isScrollAtBottom(target)
+    ) {
+      callback();
+    }
+  }
+
+  private isRouterOutletArea(target: HTMLElement): boolean {
+    return target?.classList.contains('router-outlet-area') || false;
+  }
+
+  private isScrollAtBottom(target: HTMLElement): boolean {
+    return this.calculateScrollRemaining(target) < 1;
+  }
+
+  private calculateScrollRemaining(target: HTMLElement): number {
+    const scrollPosition = target.scrollTop;
+    const scrollHeight = target.scrollHeight;
+    const clientHeight = target.clientHeight;
+
+    return scrollHeight - clientHeight - scrollPosition;
+  }
 }

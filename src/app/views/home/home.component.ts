@@ -1,10 +1,9 @@
-import { Component, HostListener, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, effect, EffectRef, HostListener, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ShelfComponent } from '../../components/shelf/shelf.component';
 import { HeaderComponent } from '../../components/header/header.component';
-import { Subscription } from 'rxjs';
 import { User } from '../../models';
-import { PlaylistQueryService, ScrollService, UserService } from '../../services';
+import { PlaylistQueryService, ScrollService, UserService, UtilsService } from '../../services';
 
 @Component({
   selector: 'app-home',
@@ -16,37 +15,41 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private scrollService = inject(ScrollService);
   private playlistQueryService = inject(PlaylistQueryService);
-  private userService = inject(UserService);  
+  private userService = inject(UserService);
+  private utilsService = inject(UtilsService);
 
   displayedQueries: string[] = [];
   private queries: string[] = [];
   private currentIndex: number = 0;
   private windowHeight!: number;
   private shelfHeight = 379;
-  private scrollSubscription!: Subscription;
+  private destroyEffect!: EffectRef;
+
+  constructor() {
+    this.destroyEffect = effect(() => {
+      const scrollEvent = this.scrollService.scroll();
+      if (scrollEvent) {
+        this.utilsService.handleScroll(
+          scrollEvent,
+          () => this.loadMoreQueries()
+        );
+      }
+    });
+  }
 
   ngOnInit() {
-    this.setScrollSubscription();
     this.windowHeight = window.innerHeight;
     this.getQueries();
   }
 
   ngOnDestroy(): void {
-    this.scrollSubscription.unsubscribe();
+    this.destroyEffect.destroy();
   }
 
   @HostListener('window:resize')
   onResize(): void {
     this.windowHeight = window.innerHeight;
     this.loadMoreQueries();
-  }
-
-  private setScrollSubscription(): void {
-    this.scrollSubscription = this.scrollService.scroll$.subscribe(
-      (event: Event) => {
-        this.handleScroll(event);
-      }
-    );
   }
 
   private async getQueries(): Promise<void> {
@@ -63,30 +66,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     );
     this.displayedQueries = [...this.displayedQueries, ...newQueries];
     this.currentIndex += visibleShelves;
-  }
-
-  private handleScroll(event: Event): void {
-    const target = event.target as HTMLElement;
-
-    if (this.isRouterOutletArea(target) && this.isScrollAtBottom(target)) {
-      this.loadMoreQueries();
-    }
-  }
-
-  private isRouterOutletArea(target: HTMLElement): boolean {
-    return target?.classList.contains('router-outlet-area') || false;
-  }
-
-  private isScrollAtBottom(target: HTMLElement): boolean {
-    return this.calculateScrollRemaining(target) < 1;
-  }
-
-  private calculateScrollRemaining(target: HTMLElement): number {
-    const scrollPosition = target.scrollTop;
-    const scrollHeight = target.scrollHeight;
-    const clientHeight = target.clientHeight;
-
-    return scrollHeight - clientHeight - scrollPosition;
   }
 
   public get user(): User {
