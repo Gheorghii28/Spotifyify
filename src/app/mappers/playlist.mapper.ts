@@ -21,8 +21,7 @@ export class PlaylistMapper {
         )
         : [],
       snapshotId: dto.snapshot_id,
-      isUserCreated: dto.owner?.id === 'spotify' ? false : true, // Assuming 'spotify' is the ID for Spotify's own playlists
-    };
+};
   }
 
   public static createDefault(name: string = 'Neue Playlist', tracks: Track[] = [], type: string = 'Custom'): Playlist {
@@ -39,7 +38,6 @@ export class PlaylistMapper {
       totalTracks: 0,
       tracks: tracks,
       snapshotId: crypto.randomUUID(),
-      isUserCreated: true,
     };
   }
 }

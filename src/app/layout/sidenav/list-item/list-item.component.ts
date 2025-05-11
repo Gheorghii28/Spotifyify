@@ -9,6 +9,7 @@ import { DialogChangePlaylistDetailsData } from '../../../models/dialog.model';
 import { Playlist } from '../../../models';
 import { PlaylistManagerService } from '../../services/playlist-manager.service';
 import { NavigationService, UtilsService } from '../../../services';
+import { PlaylistStore } from '../../../store/playlist.store';
 
 @Component({
   selector: 'app-list-item',
@@ -21,6 +22,7 @@ export class ListItemComponent {
   private playlistManager = inject(PlaylistManagerService);
   private utilsService = inject(UtilsService);
   private navigationService = inject(NavigationService);
+  private store = inject(PlaylistStore);
 
   @Input() playlist!: Playlist;
   @Input() sidenavExpanded!: boolean;
@@ -64,6 +66,10 @@ export class ListItemComponent {
     dialogRef.afterClosed().subscribe(async (result: DialogChangePlaylistDetailsData) => {
       if (result) {
         await this.playlistManager.changePlaylistDetails(result);
+        this.store.updateCachedPlaylist(result.id, {
+          name: result.name,
+          description: result.description,
+        });
       }
     });
   }
