@@ -4,26 +4,34 @@ import { CommonModule } from '@angular/common';
 import { ResizeObserverDirective } from '../../directives/resize-observer.directive';
 import { lastValueFrom } from 'rxjs';
 import { Playlist } from '../../models';
-import { SpotifyService } from '../../services';
+import { LayoutService, SpotifyService } from '../../services';
+import { SkeletonComponent } from '../skeleton/skeleton.component';
 
 @Component({
   selector: 'app-shelf',
-  imports: [CardComponent, CommonModule, ResizeObserverDirective],
+  imports: [
+    CardComponent,
+    SkeletonComponent,
+    CommonModule,
+    ResizeObserverDirective,
+  ],
   templateUrl: './shelf.component.html',
   styleUrl: './shelf.component.scss',
 })
 export class ShelfComponent implements OnInit {
   private spotifyService = inject(SpotifyService);
+  private layoutService = inject(LayoutService);
 
   @Input() query!: string;
   private playlists!: Playlist[];
   displayedPlaylists: Playlist[] = [];
   private currentIndex: number = 0;
-  private firstChildWidth!: number;
-  private cardWidth: number = 200;
+  private shelfWidth!: number;
+  isLoading: boolean = true;
 
-  ngOnInit(): void {
-    this.getInitialPlaylists();
+  async ngOnInit(): Promise<void> {
+    await this.getInitialPlaylists();
+    this.isLoading = false;
   }
 
   @HostListener('scroll', ['$event'])
@@ -36,7 +44,7 @@ export class ShelfComponent implements OnInit {
 
   public onResize(event: ResizeObserverEntry): void {
     const width = event.contentRect.width;
-    this.firstChildWidth = width;
+    this.shelfWidth = width;
     this.loadMoreItems();
   }
 
@@ -59,13 +67,24 @@ export class ShelfComponent implements OnInit {
 
   private loadMoreItems(): void {
     if (this.playlists) {
-      const visibleCards = Math.ceil(this.firstChildWidth / this.cardWidth);
       const newItems = this.playlists.slice(
         this.currentIndex,
-        this.currentIndex + visibleCards
+        this.currentIndex + this.getVisibleCards(Math.ceil)
       ).filter((playlist) => playlist !== null);
       this.displayedPlaylists = [...this.displayedPlaylists, ...newItems];
-      this.currentIndex += visibleCards;
+      this.currentIndex += this.getVisibleCards();
     }
   }
+
+  public get cardHeight(): number {
+    return this.layoutService.cardHeight;
+  }
+
+  public get cardWidth(): number {
+    return this.layoutService.cardWidth;
+  }
+
+  public getVisibleCards(roundFn: (value: number) => number = Math.floor): number {
+    return roundFn(this.shelfWidth / this.cardWidth);
+  }  
 }

@@ -14,9 +14,10 @@ import { DraggableDirective } from '../../directives/draggable.directive';
 import { DropTargetDirective } from '../../directives/drop-target.directive';
 import { Subject } from 'rxjs';
 import { Playlist } from '../../models';
-import { DrawerService, LikedTracksService, NavigationService, UserService, UtilsService } from '../../services';
+import { DrawerService, LayoutService, LikedTracksService, NavigationService, UserService, UtilsService } from '../../services';
 import { PlaylistManagerService } from '../services/playlist-manager.service';
 import { UserFolder } from '../../models/user.model';
+import { SkeletonComponent } from '../../components/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-sidenav',
@@ -31,6 +32,7 @@ import { UserFolder } from '../../models/user.model';
     ListLikedSongsComponent,
     CustomScrollbarDirective,
     ListFolderComponent,
+    SkeletonComponent,
     DraggableDirective,
     DropTargetDirective,
   ],
@@ -44,6 +46,7 @@ export class SidenavComponent implements OnDestroy {
   private playlistManager = inject(PlaylistManagerService);
   private navigationService = inject(NavigationService);
   private drawerService = inject(DrawerService);
+  private layoutService = inject(LayoutService);
 
   @Input() drawerSidenav!: MatDrawer;
   @Input() sidenavExpanded!: boolean;
@@ -116,5 +119,13 @@ export class SidenavComponent implements OnDestroy {
 
   public get folders(): UserFolder[] {
     return this.playlistManager.folders()!;
+  }
+
+  public get isFolderLoading(): boolean {
+    return this.playlistManager.isFolderLoading()!;
+  }
+
+  public get trackListHeight(): number {
+    return this.layoutService.trackListHeight;
   }
 }

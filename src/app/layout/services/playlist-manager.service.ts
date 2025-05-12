@@ -12,6 +12,7 @@ export class PlaylistManagerService {
   private firebaseService = inject(FirebaseService);
   private spotifyService = inject(SpotifyService);
   private utilsService = inject(UtilsService);
+  isFolderLoading: WritableSignal<boolean> = signal(true);
   myPlaylists: WritableSignal<Playlist[]> = signal([]);
   folders: WritableSignal<UserFolder[]> = signal([]);
   assignedPlaylists: Signal<Playlist[]> = computed(() => {
@@ -27,6 +28,11 @@ export class PlaylistManagerService {
     );
     return this.myPlaylists().filter(p => !assignedIds.has(p.id));
   });
+
+  public setFolders(folders: UserFolder[]): void {
+    this.folders.set(folders);
+    this.isFolderLoading.set(false);
+  }  
 
   async setMyPlaylists(): Promise<void> {
     const playlists: Playlist[] = await lastValueFrom(

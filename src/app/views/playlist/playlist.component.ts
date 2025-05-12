@@ -14,10 +14,11 @@ import { DialogRemovePlaylistComponent } from '../../components/dialog/dialog-re
 import { DialogChangePlaylistDetailsComponent } from '../../components/dialog/dialog-change-playlist-details/dialog-change-playlist-details.component';
 import { DialogChangePlaylistDetailsData } from '../../models/dialog.model';
 import { Playlist, Track } from '../../models';
-import { AudioService, ScrollService, UserService, UtilsService } from '../../services';
+import { AudioService, LayoutService, ScrollService, UserService, UtilsService } from '../../services';
 import { PlaylistManagerService } from '../../layout/services/playlist-manager.service';
 import { StreamState } from '../../models/stream-state.model';
 import { PlaylistStore } from '../../store/playlist.store';
+import { SkeletonComponent } from '../../components/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-playlist',
@@ -31,6 +32,7 @@ import { PlaylistStore } from '../../store/playlist.store';
     MatButtonModule,
     MatMenuModule,
     CustomButtonComponent,
+    SkeletonComponent,
   ],
   templateUrl: './playlist.component.html',
   styleUrl: './playlist.component.scss',
@@ -42,15 +44,13 @@ export class PlaylistComponent implements OnInit {
   private userService = inject(UserService);
   private utilsService = inject(UtilsService);
   private scrollService = inject(ScrollService);
+  private layoutService = inject(LayoutService);
   private route = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
   private store = inject(PlaylistStore);
 
   private destroyEffect!: EffectRef;
-  private windowHeight!: number;
-  private headerHeight: number = 320;
   private currentIndex: number = 0;
-  private trackListHeight = 43;
   displayedTracks: Track[] = [];
 
   constructor() {
@@ -66,7 +66,6 @@ export class PlaylistComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.windowHeight = window.innerHeight;
     this.route.params.subscribe(async (params) => {
       const id = params['id'];
       if (id) {
@@ -83,25 +82,23 @@ export class PlaylistComponent implements OnInit {
 
   @HostListener('window:resize')
   onResize(): void {
-    this.windowHeight = window.innerHeight;
     this.loadMoreTracks();
   }
 
   private loadMoreTracks(): void {
-    const visibleTracks = Math.ceil((this.windowHeight - this.headerHeight) / this.trackListHeight);
     const newTracks = this.playlist.tracks.slice(
       this.currentIndex,
-      this.currentIndex + visibleTracks
+      this.currentIndex + this.visibleTracks
     );
     this.displayedTracks = [...this.displayedTracks, ...newTracks];
-    this.currentIndex += visibleTracks;
+    this.currentIndex += this.visibleTracks;
   }
-  
+
   private resetTrackView(): void {
     this.currentIndex = 0;
     this.displayedTracks = [];
   }
-  
+
   public openDeleteDialog(): void {
     const dialogRef = this.dialog.open(DialogRemovePlaylistComponent, {
       data: { name: this.playlist.name, id: this.playlist.id },
@@ -152,5 +149,17 @@ export class PlaylistComponent implements OnInit {
 
   public get isLoading(): boolean {
     return this.store.isLoading();
+  }
+
+  public get visibleTracks(): number {
+    return this.layoutService.getVisibleTracks();
+  }
+
+  public get trackListHeight(): number {
+    return this.layoutService.trackListHeight;
+  }
+
+  public get viewHeaderHeight(): number {
+    return this.layoutService.viewHeaderHeight;
   }
 }

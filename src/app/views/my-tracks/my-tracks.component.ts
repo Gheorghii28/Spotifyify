@@ -7,7 +7,8 @@ import { Playlist, Track } from '../../models';
 import { PlaylistMapper } from '../../mappers';
 import { StreamState } from '../../models/stream-state.model';
 import { firstValueFrom } from 'rxjs';
-import { AudioService, SpotifyService } from '../../services';
+import { AudioService, LayoutService, SpotifyService } from '../../services';
+import { SkeletonComponent } from '../../components/skeleton/skeleton.component';
 
 @Component({
   selector: 'app-my-tracks',
@@ -15,6 +16,7 @@ import { AudioService, SpotifyService } from '../../services';
     ViewHeaderComponent,
     TrackListHeaderComponent,
     TrackListComponent,
+    SkeletonComponent,
     CommonModule,
   ],
   templateUrl: './my-tracks.component.html',
@@ -23,10 +25,13 @@ import { AudioService, SpotifyService } from '../../services';
 export class MyTracksComponent implements OnInit {
   private spotifyService = inject(SpotifyService);
   private audioService = inject(AudioService);
+  private layoutService = inject(LayoutService);
+  isLoading: boolean = true;
   playlist!: Playlist;
 
   async ngOnInit() {
     this.playlist = await this.getPlaylist();
+    this.isLoading = false;
   }
 
   private async getPlaylist(): Promise<Playlist> {
@@ -40,5 +45,17 @@ export class MyTracksComponent implements OnInit {
 
   public get state(): StreamState {
     return this.audioService.state();
+  }
+
+  public get visibleTracks(): number {
+    return this.layoutService.getVisibleTracks();
+  }
+
+  public get trackListHeight(): number {
+    return this.layoutService.trackListHeight;
+  }
+
+  public get viewHeaderHeight(): number {
+    return this.layoutService.viewHeaderHeight;
   }
 }

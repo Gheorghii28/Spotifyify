@@ -44,31 +44,37 @@
             [sidenavWidth]="sidenavWidth"
           ></app-list-liked-songs>
         </li>
-        <li
-          *ngFor="let folder of folders"
-          class="li-folder"
-          [ngStyle]="
-            sidenavExpanded ? liFolderExpandedStyles : liFolderCollapsedStyles
-          "
-        >
-          <app-list-folder
-            class="folder"
-            [folder]="folder"
-            [playlists]="folder.playlists"
-            [user]="userService.user()!"
-            [sidenavExpanded]="sidenavExpanded"
-            [movedToFolderStatus]="movedToFolderStatus"
-          ></app-list-folder>
-        </li>
-        <li *ngFor="let playlist of folderUnassignedPlaylists">
-          <app-list-item
-            appDraggable
-            [playlist]="playlist"
-            [sidenavExpanded]="sidenavExpanded"
-            [sidenavWidth]="sidenavWidth"
-            [appDraggable]="toJson(playlist)"
-          ></app-list-item>
-        </li>
+        <ng-container *ngIf="isFolderLoading; else itemContent">
+          <app-skeleton [count]="5" [height]="trackListHeight"></app-skeleton>
+        </ng-container>
+        <ng-template #itemContent>
+          <li
+            *ngFor="let folder of folders"
+            class="li-folder"
+            [ngStyle]="
+              sidenavExpanded ? liFolderExpandedStyles : liFolderCollapsedStyles
+            "
+          >
+            <app-list-folder
+              class="folder"
+              [folder]="folder"
+              [playlists]="folder.playlists"
+              [user]="userService.user()!"
+              [sidenavExpanded]="sidenavExpanded"
+              [movedToFolderStatus]="movedToFolderStatus"
+            ></app-list-folder>
+          </li>
+          <li *ngFor="let playlist of folderUnassignedPlaylists">
+            <app-list-item
+              appDraggable
+              [playlist]="playlist"
+              [sidenavExpanded]="sidenavExpanded"
+              [sidenavWidth]="sidenavWidth"
+              [appDraggable]="toJson(playlist)"
+            ></app-list-item>
+          </li>
+        </ng-template>
+        
       </ul>
     </div>
   </nav>

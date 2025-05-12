@@ -3,6 +3,7 @@ import {
   Component,
   effect,
   ElementRef,
+  HostListener,
   inject,
   OnDestroy,
   OnInit,
@@ -66,6 +67,11 @@ export class LayoutComponent implements OnInit, OnDestroy, AfterViewInit {
     const tracks = await firstValueFrom(this.spotifyService.getUsersSavedTracks());
     const trackIds = tracks.map(track => track.id);
     this.likedTracksService.setLikedTracks(trackIds);
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.layoutService.windowHeight.set(window.innerHeight);
   }
 
   ngAfterViewInit(): void {

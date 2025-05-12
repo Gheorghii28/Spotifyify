@@ -1,4 +1,8 @@
-<ng-container *ngIf="!isLoading">
+<ng-container *ngIf="isLoading; else playlistContent">
+  <app-skeleton [count]="1" [height]="viewHeaderHeight"></app-skeleton>
+  <app-skeleton [count]="visibleTracks" [height]="trackListHeight"></app-skeleton>
+</ng-container>
+<ng-template #playlistContent>
   <app-view-header class="info-actions" [playlist]="playlist">
     <app-btn-play
       small-play-btn
@@ -47,4 +51,4 @@
       ></app-track-list>
     </ng-container>
   </div>
-</ng-container>
+</ng-template>

@@ -1,8 +1,18 @@
 <section resizeObserver (resize)="onResize($event)">
   <h2>{{ query ? (query | titlecase) : '' }}</h2>
   <div class="section-container" (scroll)="onScroll($event)">
-    <ng-container *ngFor="let playlist of displayedPlaylists">
-      <app-card [playlist]="playlist"></app-card>
+    <ng-container *ngIf="isLoading; else playlistCardContent">
+      <app-skeleton
+        [count]="getVisibleCards()" 
+        [height]="cardHeight" 
+        [width]="cardWidth" 
+        [appearance]="'circle'"
+      ></app-skeleton>
     </ng-container>
+    <ng-template #playlistCardContent>
+      <ng-container *ngFor="let playlist of displayedPlaylists">
+        <app-card [playlist]="playlist"></app-card>
+      </ng-container>
+    </ng-template>
   </div>
 </section>

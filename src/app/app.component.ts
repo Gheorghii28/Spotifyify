@@ -31,7 +31,7 @@ export class AppComponent {
         const userDocRef = doc(this.firestore, 'users', user.id);
         const unsub = onSnapshot(userDocRef, (doc) => {
           const user = doc.data() as User;
-          this.playlistManager.folders.set(user.folders);
+          this.playlistManager.setFolders(user.folders);
         });
 
         this.authService.setUserUnsubscribe(unsub);

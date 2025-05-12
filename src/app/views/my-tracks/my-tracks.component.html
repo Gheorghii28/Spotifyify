@@ -1,4 +1,8 @@
-<ng-container *ngIf="playlist">
+<ng-container *ngIf="isLoading; else playlistContent">
+  <app-skeleton [count]="1" [height]="viewHeaderHeight"></app-skeleton>
+  <app-skeleton [count]="visibleTracks" [height]="trackListHeight"></app-skeleton>
+</ng-container>
+<ng-template #playlistContent>
   <app-view-header [playlist]="playlist"></app-view-header>
   <div *ngIf="playlist.tracks.length > 0" class="tracks">
     <app-track-list-header></app-track-list-header>
@@ -8,4 +12,4 @@
         [showDeleteBtn]="false"></app-track-list>
     </ng-container>
   </div>
-</ng-container>
+</ng-template>

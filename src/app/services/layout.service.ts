@@ -11,7 +11,12 @@ export class LayoutService {
   private drawerService = inject(DrawerService);
 
   isFullScreen: WritableSignal<boolean> = signal(false);
-  
+  windowHeight: WritableSignal<number> = signal(window.innerHeight);
+  viewHeaderHeight = 320;
+  trackListHeight = 43;
+  cardHeight = 287;
+  cardWidth = 200;
+
   constructor(
     @Inject(DOCUMENT) private document: any,
   ) { }
@@ -103,5 +108,9 @@ export class LayoutService {
   public isWindowWidthLessThan(width: number): boolean {
     const window = getWindow();
     return window.innerWidth < width;
+  }
+
+  public getVisibleTracks(): number {
+    return Math.ceil((this.windowHeight() - this.viewHeaderHeight) / this.trackListHeight);
   }
 }
