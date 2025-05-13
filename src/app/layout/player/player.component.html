@@ -10,18 +10,17 @@
         <img src="{{ playingTrack.albumImageUrl }}" alt="" />
       </div>
       <div class="song-description">
-        <span
-          class="title m-3 overflow-ellipsis hover-effect-underline c-pointer"
-          >{{ playingTrack.name }}</span
-        >
-        <span
-          class="artist m-3 overflow-ellipsis hover-effect-underline c-pointer"
-        >
-          <ng-container *ngFor="let artist of playingTrack.artists; let last = last">
-            {{ artist.name }}
-            <ng-container *ngIf="!last">,</ng-container>
-          </ng-container>
+        <span class="title m-3 overflow-ellipsis">
+          {{ playingTrack.name }}
         </span>
+        <div class="artists-list">
+          <ng-container *ngFor="let artist of playingTrack.artists; let last = last">
+            <span (click)="navigateToArtist(artist.id)" class="artist m-3 overflow-ellipsis hover-effect-underline c-pointer">
+              {{ artist.name }}
+              <ng-container *ngIf="!last">,</ng-container>
+            </span>
+          </ng-container>
+        </div>
       </div>
     </div>
     <app-like-button

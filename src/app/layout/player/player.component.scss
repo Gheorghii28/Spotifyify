@@ -29,6 +29,9 @@
         }
       }
       .song-description {
+        .artists-list {
+          display: flex;
+        }
         .title {
           color: var(--white-color);
         }

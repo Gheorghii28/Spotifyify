@@ -17,7 +17,7 @@ import { VolumeComponent } from './volume/volume.component';
 import { BtnFullScreenComponent } from '../../components/buttons/btn-full-screen/btn-full-screen.component';
 import { LikeButtonComponent } from '../../components/buttons/like-button/like-button.component';
 import { Track } from '../../models';
-import { AudioService, DrawerService, LayoutService, LikedTracksService } from '../../services';
+import { AudioService, DrawerService, LayoutService, LikedTracksService, NavigationService } from '../../services';
 
 @Component({
   selector: 'app-player',
@@ -39,6 +39,7 @@ export class PlayerComponent implements OnInit {
   private audioService = inject(AudioService);
   private layoutService = inject(LayoutService);
   private drawerService = inject(DrawerService);
+  private navigationService = inject(NavigationService);
   private elementRef = inject(ElementRef);
 
   @ViewChild('slider') slider!: ElementRef;
@@ -115,5 +116,9 @@ export class PlayerComponent implements OnInit {
       this.layoutService.isWindowWidthLessThan(1300),
       this.layoutService.isWindowWidthLessThan(1020)
     );
+  }
+
+  public navigateToArtist(id: string): void {
+    this.navigationService.artist(id);
   }
 }

@@ -10,7 +10,7 @@ import { DialogRemoveTrackComponent } from '../dialog/dialog-remove-track/dialog
 import { CustomButtonComponent } from '../buttons/custom-button/custom-button.component';
 import { DialogAddTrackComponent } from '../dialog/dialog-add-track/dialog-add-track.component';
 import { Playlist, Track } from '../../models';
-import { DomManipulationService, LikedTracksService } from '../../services';
+import { DomManipulationService, LikedTracksService, NavigationService } from '../../services';
 
 @Component({
   selector: 'app-track-list',
@@ -28,6 +28,7 @@ import { DomManipulationService, LikedTracksService } from '../../services';
 export class TrackListComponent {
   private likedTracksService = inject(LikedTracksService);
   private domService = inject(DomManipulationService);
+  private navigationService = inject(NavigationService);
   private dialog = inject(MatDialog);
 
   @Input() track!: Track;
@@ -117,5 +118,9 @@ export class TrackListComponent {
 
   public isTrackLiked(trackId: string): Signal<boolean> {
     return this.likedTracksService.isLiked(trackId);
+  }
+
+  public navigateToArtist(id: string): void {
+    this.navigationService.artist(id);
   }
 }

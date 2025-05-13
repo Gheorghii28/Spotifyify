@@ -19,7 +19,7 @@
   <div class="track-title featured">
     <span class="title">{{ track.name }}</span>
     <ng-container *ngFor="let artist of track.artists">
-      <span class="feature">{{ artist.name }}</span>
+      <span (click)="navigateToArtist(artist.id)" class="feature">{{ artist.name }}</span>
     </ng-container>
   </div>
   <app-like-button
