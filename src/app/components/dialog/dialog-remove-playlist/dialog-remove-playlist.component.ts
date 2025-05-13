@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogRemovePlaylistData } from '../../../models/dialog.model';
 import { PlaylistManagerService } from '../../../layout/services/playlist-manager.service';
 import { NavigationService, UserService } from '../../../services';
+import { SnackbarService } from '../../../services/snackbar.service';
 
 @Component({
   selector: 'app-dialog-remove-playlist',
@@ -16,6 +17,7 @@ export class DialogRemovePlaylistComponent {
   private playlistManager = inject(PlaylistManagerService);
   private userService = inject(UserService);
   private navigationService = inject(NavigationService);
+  private snackbar = inject(SnackbarService);
 
   constructor(
     public dialogRef: MatDialogRef<DialogRemovePlaylistComponent>,
@@ -29,7 +31,10 @@ export class DialogRemovePlaylistComponent {
   public async removePlaylist(): Promise<void> {
     try {
       const user = this.userService.user()!;
-      await this.playlistManager.removePlaylist(user.id, this.data.id)
+      await this.snackbar.runWithSnackbar(
+        this.playlistManager.removePlaylist(user.id, this.data.id),
+        'Playlist deleted successfully!'
+      );
       if (this.isCurrentPlaylist()) {
         this.navigationService.home();
       }

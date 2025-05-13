@@ -18,6 +18,7 @@ import { DrawerService, LayoutService, LikedTracksService, NavigationService, Us
 import { PlaylistManagerService } from '../services/playlist-manager.service';
 import { UserFolder } from '../../models/user.model';
 import { SkeletonComponent } from '../../components/skeleton/skeleton.component';
+import { SnackbarService } from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -47,6 +48,7 @@ export class SidenavComponent implements OnDestroy {
   private navigationService = inject(NavigationService);
   private drawerService = inject(DrawerService);
   private layoutService = inject(LayoutService);
+    private snackbar = inject(SnackbarService);
 
   @Input() drawerSidenav!: MatDrawer;
   @Input() sidenavExpanded!: boolean;
@@ -81,14 +83,17 @@ export class SidenavComponent implements OnDestroy {
     this.navigationService.search();
   }
 
-  public removePlaylistFromFolders(playlistToRemove: Playlist): void {
+  public async removePlaylistFromFolders(playlistToRemove: Playlist): Promise<void> {
     if (!this.movedToFolderStatus) {
-      this.playlistManager.updatePlaylistInFolder(
-        this.playlistManager.folders(),
-        playlistToRemove,
-        null,
-        this.userService.user()!.id,
-        'remove'
+      await this.snackbar.runWithSnackbar(
+        this.playlistManager.updatePlaylistInFolder(
+          this.playlistManager.folders(),
+          playlistToRemove,
+          null,
+          this.userService.user()!.id,
+          'remove'
+        ),
+        'Playlist removed from folder successfully!'
       );
     }
   }

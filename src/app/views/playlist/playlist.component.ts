@@ -19,6 +19,7 @@ import { PlaylistManagerService } from '../../layout/services/playlist-manager.s
 import { StreamState } from '../../models/stream-state.model';
 import { PlaylistStore } from '../../store/playlist.store';
 import { SkeletonComponent } from '../../components/skeleton/skeleton.component';
+import { SnackbarService } from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-playlist',
@@ -45,6 +46,7 @@ export class PlaylistComponent implements OnInit {
   private utilsService = inject(UtilsService);
   private scrollService = inject(ScrollService);
   private layoutService = inject(LayoutService);
+  private snackbar = inject(SnackbarService);
   private route = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
   private store = inject(PlaylistStore);
@@ -118,7 +120,10 @@ export class PlaylistComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(async (result: DialogChangePlaylistDetailsData) => {
       if (result) {
-        await this.playlistManager.changePlaylistDetails(result);
+        await this.snackbar.runWithSnackbar(
+          this.playlistManager.changePlaylistDetails(result),
+          'Playlist updated successfully!'
+        );
         this.store.updateCachedPlaylist(result.id, {
           name: result.name,
           description: result.description,

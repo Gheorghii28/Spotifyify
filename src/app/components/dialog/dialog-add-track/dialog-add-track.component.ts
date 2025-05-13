@@ -16,6 +16,7 @@ import { lastValueFrom } from 'rxjs';
 import { Playlist } from '../../../models';
 import { SpotifyService } from '../../../services';
 import { PlaylistManagerService } from '../../../layout/services/playlist-manager.service';
+import { SnackbarService } from '../../../services/snackbar.service';
 
 @Component({
   selector: 'app-dialog-add-track',
@@ -34,6 +35,7 @@ import { PlaylistManagerService } from '../../../layout/services/playlist-manage
 export class DialogAddTrackComponent {
   private spotifyService = inject(SpotifyService);
   private playlistManager = inject(PlaylistManagerService);
+  private snackbar = inject(SnackbarService);
 
   playlistControl = new FormControl<Playlist | null>(null, Validators.required);
   selectFormControl = new FormControl('', Validators.required);
@@ -55,7 +57,10 @@ export class DialogAddTrackComponent {
           {uri: this.data.uri, position: this.data.position}
         )
       );
-      this.playlistManager.addTrackToPlaylist(playlistId, this.data.track);
+      await this.snackbar.runWithSnackbar(
+        this.playlistManager.addTrackToPlaylist(playlistId, this.data.track),
+        `Track added to playlist successfully!`
+      );
       this.dialogRef.close();
     } catch (error) {
       console.error('Error adding item to playlist:', error);

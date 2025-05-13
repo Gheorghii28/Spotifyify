@@ -6,6 +6,7 @@ import { DialogRemoveTrackData } from '../../../models/dialog.model';
 import { lastValueFrom } from 'rxjs';
 import { SpotifyService } from '../../../services';
 import { PlaylistManagerService } from '../../../layout/services/playlist-manager.service';
+import { SnackbarService } from '../../../services/snackbar.service';
 
 @Component({
   selector: 'app-dialog-remove-track',
@@ -16,6 +17,7 @@ import { PlaylistManagerService } from '../../../layout/services/playlist-manage
 export class DialogRemoveTrackComponent {
   private spotifyService = inject(SpotifyService);
   private playlistManager = inject(PlaylistManagerService);
+  private snackbar = inject(SnackbarService);
 
   constructor(
     public dialogRef: MatDialogRef<DialogRemoveTrackComponent>,
@@ -31,7 +33,10 @@ export class DialogRemoveTrackComponent {
       await lastValueFrom(
         this.spotifyService.removePlaylisItems(this.data.playlistId, this.data)
       );
-      this.playlistManager.removeTrackFromPlaylist(this.data.playlistId, this.data.trackId);
+      await this.snackbar.runWithSnackbar(
+        this.playlistManager.removeTrackFromPlaylist(this.data.playlistId, this.data.trackId),
+        'Track removed from playlist successfully!'
+      );
       this.dialogRef.close();
     } catch (error) {
       console.error('Error removing track:', error);

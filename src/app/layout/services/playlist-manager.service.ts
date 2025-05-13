@@ -134,13 +134,13 @@ export class PlaylistManagerService {
     );
   }
 
-  public updatePlaylistInFolder(
+  public async updatePlaylistInFolder(
     folders: UserFolder[],
     playlist: Playlist,
     folderId: string | null,
     userId: string,
     action: 'add' | 'remove'
-  ): void {
+  ): Promise<void> {
     if (action === 'add') {
       if (!folderId) return; // Without a valid folder ID, nothing can be added
 
@@ -175,7 +175,7 @@ export class PlaylistManagerService {
     });
   }
 
-  public addTrackToPlaylist(playlistId: string, newTrack: Track): void {
+  public async addTrackToPlaylist(playlistId: string, newTrack: Track): Promise<void> {
     this.myPlaylists.update(playlists =>
       playlists.map(playlist => {
         if (playlist.id === playlistId) {
@@ -190,7 +190,7 @@ export class PlaylistManagerService {
     );
   }
 
-  public removeTrackFromPlaylist(playlistId: string, trackId: string): void {
+  public async removeTrackFromPlaylist(playlistId: string, trackId: string): Promise<void> {
     this.myPlaylists.update(playlists =>
       playlists.map(playlist => {
         if (playlist.id === playlistId) {

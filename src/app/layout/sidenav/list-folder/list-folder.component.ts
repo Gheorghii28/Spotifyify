@@ -21,6 +21,7 @@ import { Playlist } from '../../../models';
 import { User, UserFolder } from '../../../models/user.model';
 import { PlaylistManagerService } from '../../services/playlist-manager.service';
 import { DrawerService, UserService, UtilsService } from '../../../services';
+import { SnackbarService } from '../../../services/snackbar.service';
 
 @Component({
   selector: 'app-list-folder',
@@ -63,6 +64,7 @@ export class ListFolderComponent {
   private userService = inject(UserService);
   private utilsService = inject(UtilsService);
   private drawerService = inject(DrawerService);
+  private snackbar = inject(SnackbarService);
   private dialog = inject(MatDialog);
 
   @Input() folder!: UserFolder;
@@ -103,27 +105,33 @@ export class ListFolderComponent {
       data: { folderName: this.folder.name },
     });
 
-    dialogRef.afterClosed().subscribe((newName) => {
+    dialogRef.afterClosed().subscribe(async (newName) => {
       if (newName && newName.trim()) {
         const user = this.userService.user()!;
-        this.playlistManager.renamePlaylistFolder(user?.id, this.folder.id, newName);
+        await this.snackbar.runWithSnackbar(
+          this.playlistManager.renamePlaylistFolder(user?.id, this.folder.id, newName),
+          'Folder updated successfully!'
+        );
       } else {
         console.warn('No valid folder name provided.');
       }
     });
   }
 
-  public movePlaylistToFolder(
+  public async movePlaylistToFolder(
     playlistToMove: Playlist,
     destinationFolderId: string
-  ): void {
+  ): Promise<void> {
     const user = this.userService.user()!;
-    this.playlistManager.updatePlaylistInFolder(
-      this.playlistManager.folders(),
-      playlistToMove,
-      destinationFolderId,
-      user.id,
-      'add'
+    await this.snackbar.runWithSnackbar(
+      this.playlistManager.updatePlaylistInFolder(
+        this.playlistManager.folders(),
+        playlistToMove,
+        destinationFolderId,
+        user.id,
+        'add'
+      ),
+      'Playlist added to folder successfully!'
     );
     this.utilsService.setMovedToFolderStatus(true);
     setTimeout(() => {

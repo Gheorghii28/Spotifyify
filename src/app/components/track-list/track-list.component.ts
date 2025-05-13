@@ -110,6 +110,7 @@ export class TrackListComponent {
       data: {
         position: 0,
         uri: this.track.uri,
+        track: this.track,
       },
     });
 

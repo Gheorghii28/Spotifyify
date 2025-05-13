@@ -7,6 +7,7 @@ import { Playlist } from '../../../models';
 import { UserFolder } from '../../../models/user.model';
 import { PlaylistManagerService } from '../../../layout/services/playlist-manager.service';
 import { NavigationService } from '../../../services';
+import { SnackbarService } from '../../../services/snackbar.service';
 
 @Component({
   selector: 'app-dialog-remove-folder',
@@ -17,6 +18,7 @@ import { NavigationService } from '../../../services';
 export class DialogRemoveFolderComponent {
   private playlistManager = inject(PlaylistManagerService);
   private navigationService = inject(NavigationService);
+  private snackbar = inject(SnackbarService);
   
   constructor(
     public dialogRef: MatDialogRef<DialogRemoveFolderComponent>,
@@ -30,7 +32,10 @@ export class DialogRemoveFolderComponent {
   public async removeFolder(): Promise<void> {
     try {
       const folderToRemove: UserFolder = this.data.folder;
-      this.playlistManager.removePlaylistFolder(this.data.user.id, folderToRemove.id);
+      await this.snackbar.runWithSnackbar(
+        this.playlistManager.removePlaylistFolder(this.data.user.id, folderToRemove.id),
+        'Folder deleted successfully!'
+      );
       if (this.isCurrentPlaylistInDeletedFolder(folderToRemove)) {
         this.navigationService.home();
       }

@@ -7,6 +7,7 @@ import { CustomButtonComponent } from '../../../components/buttons/custom-button
 import { Playlist } from '../../../models';
 import { PlaylistManagerService } from '../../services/playlist-manager.service';
 import { DrawerService, LayoutService, UserService } from '../../../services';
+import { SnackbarService } from '../../../services/snackbar.service';
 
 @Component({
   selector: 'app-nav-header',
@@ -24,6 +25,7 @@ export class NavHeaderComponent {
   private userService = inject(UserService);
   private drawerService = inject(DrawerService);
   private layoutService = inject(LayoutService);
+  private snackbar = inject(SnackbarService);
 
   @Input() drawerSidenav!: MatDrawer;
   @Input() sidenavExpanded!: boolean;
@@ -47,12 +49,18 @@ export class NavHeaderComponent {
 
   public async createNewPlaylist(): Promise<void> {
     const user = this.userService.user()!;
-    await this.playlistManager.createPlaylist(user.id);
+    await this.snackbar.runWithSnackbar(
+      this.playlistManager.createPlaylist(user.id),
+      'Playlist created successfully!'
+    );
   }
 
-  public createPlaylistFolder(): void {
+  public async createPlaylistFolder(): Promise<void> {
     const user = this.userService.user()!;
-    this.playlistManager.createPlaylistFolder(user.id);
+    await this.snackbar.runWithSnackbar(
+      this.playlistManager.createPlaylistFolder(user.id),
+      'Folder created successfully!'
+    );
   }
 
   public isWindowWidthLessThan(value: number): boolean {

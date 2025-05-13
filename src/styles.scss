@@ -1,4 +1,13 @@
+@use '@angular/material' as mat;
+
 :root {
+  @include mat.snack-bar-overrides((
+    container-color: #2EFA94,
+    supporting-text-color: #010704,
+    button-color: #075033,
+    supporting-text-font: "Montserrat",
+    supporting-text-weight: bold,
+  ));
   /* Greens */
   --green-color: #1db954;
   --hover-green-color: #2aa03b;
