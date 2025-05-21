@@ -52,6 +52,7 @@ export class PlaylistComponent implements OnInit {
   private store = inject(PlaylistStore);
 
   private destroyEffect!: EffectRef;
+  private playlistChangedEffect!: EffectRef;
   private currentIndex: number = 0;
   displayedTracks: Track[] = [];
 
@@ -65,13 +66,29 @@ export class PlaylistComponent implements OnInit {
         );
       }
     });
+    this.playlistChangedEffect = effect(() => {
+      const playlist = this.store.playlist();
+      if (!playlist) return;
+
+      this.displayedTracks = this.playlistManager.updateVisibleTracksOnChange(
+        this.displayedTracks,
+        playlist.tracks,
+        this.currentIndex
+      );
+    });
   }
 
   ngOnInit(): void {
     this.route.params.subscribe(async (params) => {
       const id = params['id'];
       if (id) {
-        await this.store.loadPlaylist(id);
+        const result = await this.store.loadPlaylist(id);
+        if (result === 'api') {
+          const updated = this.store.playlist();
+          if (updated) {
+            this.playlistManager.updateMyPlaylist(updated);
+          }
+        }
         this.resetTrackView();
         this.loadMoreTracks();
       }
@@ -80,6 +97,7 @@ export class PlaylistComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.destroyEffect.destroy();
+    this.playlistChangedEffect.destroy();
   }
 
   @HostListener('window:resize')
@@ -88,12 +106,16 @@ export class PlaylistComponent implements OnInit {
   }
 
   private loadMoreTracks(): void {
-    const newTracks = this.playlist.tracks.slice(
+    const newTracks = this.getNextTrackChunk();
+    this.displayedTracks = [...this.displayedTracks, ...newTracks];
+    this.currentIndex += this.visibleTracks;
+  }
+
+  private getNextTrackChunk(): Track[] {
+    return this.playlist.tracks.slice(
       this.currentIndex,
       this.currentIndex + this.visibleTracks
     );
-    this.displayedTracks = [...this.displayedTracks, ...newTracks];
-    this.currentIndex += this.visibleTracks;
   }
 
   private resetTrackView(): void {

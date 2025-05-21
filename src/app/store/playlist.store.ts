@@ -19,12 +19,14 @@ export const PlaylistStore = signalStore(
         cache: {} as PlaylistCache,
     })),
     withMethods((store, spotifyService = inject(SpotifyService)) => ({
-        async loadPlaylist(id: string): Promise<void> {
+        async loadPlaylist(id: string): Promise<'cache' | 'api'> {
             this.setLoading(true);
             const inCache = await this.loadFromCache(id);
             if (!inCache) {
                 await this.loadFromApi(id);
+                return 'api';
             }
+            return 'cache';
         },
 
         async loadFromCache(id: string): Promise<boolean> {

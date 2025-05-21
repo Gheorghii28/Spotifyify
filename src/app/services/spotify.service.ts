@@ -16,6 +16,7 @@ import { Album, Artist, Playlist, Track, User } from '../models';
 import { SpotifyAlbumDto, SpotifyArtistAlbumsDto } from '../dto/spotify-album.dto';
 import { SpotifySearchedResultDto } from '../dto/spotify-search-results.dto';
 import { SpotifyPlaylistTracksDto } from '../dto/spotify-track.dto';
+import { SpotifyUserPlaylistItemDto } from '../dto/spotify-playlist.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -206,7 +207,13 @@ export class SpotifyService {
   public getUsersPlaylists(): Observable<Playlist[]> {
     const url: string = `${this.apiUrl}me/playlists`;
     return this.http.get<SpotifyUserPlaylistsDto>(url).pipe(
-      map((userPlaylistsDto) => userPlaylistsDto.items.map(PlaylistMapper.toModel)),
+      map(
+        (userPlaylistsDto: SpotifyUserPlaylistsDto) => {
+          return userPlaylistsDto.items.map(
+            (playlistItemDto: SpotifyUserPlaylistItemDto) => PlaylistMapper.toModel(playlistItemDto)
+          )
+        }
+      ),
       catchError((error) => {
         console.error('Error Get Current Users Playlists:', error);
         return throwError(

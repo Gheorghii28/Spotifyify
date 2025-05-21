@@ -14,9 +14,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { lastValueFrom } from 'rxjs';
 import { Playlist } from '../../../models';
-import { SpotifyService } from '../../../services';
+import { AudioService, SpotifyService } from '../../../services';
 import { PlaylistManagerService } from '../../../layout/services/playlist-manager.service';
 import { SnackbarService } from '../../../services/snackbar.service';
+import { PlaylistStore } from '../../../store/playlist.store';
 
 @Component({
   selector: 'app-dialog-add-track',
@@ -36,6 +37,8 @@ export class DialogAddTrackComponent {
   private spotifyService = inject(SpotifyService);
   private playlistManager = inject(PlaylistManagerService);
   private snackbar = inject(SnackbarService);
+  private audioService = inject(AudioService);
+  private store = inject(PlaylistStore);
 
   playlistControl = new FormControl<Playlist | null>(null, Validators.required);
   selectFormControl = new FormControl('', Validators.required);
@@ -49,17 +52,27 @@ export class DialogAddTrackComponent {
     this.dialogRef.close();
   }
 
-  public async addTrack(playlistId: string): Promise<void> {
+  public async addTrack(playlist: Playlist): Promise<void> {
     try {
+      const track = this.data.track;
+      track.playlistId = playlist.id;
       await lastValueFrom(
         this.spotifyService.addItemsToPlaylist(
-          playlistId, 
-          {uri: this.data.uri, position: this.data.position}
+          playlist.id,
+          { uri: this.data.uri, position: this.data.position }
         )
       );
       await this.snackbar.runWithSnackbar(
-        this.playlistManager.addTrackToPlaylist(playlistId, this.data.track),
+        this.playlistManager.addTrackToPlaylist(playlist.id, track),
         `Track added to playlist successfully!`
+      );
+      const updatedTracks = [...playlist.tracks, track];
+      this.store.updateCachedPlaylist(playlist.id, {
+        tracks: updatedTracks
+      });
+      // Keep playing playlist in sync
+      this.audioService.updatePlayingPlaylistIfNeeded(
+        updatedTracks
       );
       this.dialogRef.close();
     } catch (error) {

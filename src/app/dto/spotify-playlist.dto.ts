@@ -29,6 +29,26 @@ export interface SpotifyPlaylistDto {
   uri: string;
 }
 
+export interface SpotifyUserPlaylistItemDto {
+  collaborative: boolean;
+  description: string;
+  external_urls: SpotifyExternalUrlsDto | null;
+  href: string;
+  id: string;
+  images: SpotifyImageDto[] | null;
+  name: string;
+  owner: SpotifyOwnerDto | null;
+  primary_color: string | null;
+  public: boolean;
+  snapshot_id: string;
+  tracks: {
+    href: string;
+    total: number;
+  };
+  type: string;
+  uri: string;
+}
+
 interface SpotifyPlaylistTrackItemDto {
   added_at: string;
   added_by: {

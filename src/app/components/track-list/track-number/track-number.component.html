@@ -3,8 +3,7 @@
     <ng-container
       *ngIf="
         state.playing &&
-          playingTrack?.index === trackIndex &&
-          playingTrack?.id === track.playlistId;
+          playingTrack?.id === track.id;
         else soundNr
       "
     >
@@ -23,7 +22,6 @@
     <ng-container
       *ngIf="
         state.playing &&
-          playingTrack?.index === trackIndex &&
           playingTrack?.id === track.id;
         else playIcon
       "

@@ -1,8 +1,8 @@
-import { SpotifyPlaylistDto } from "./spotify-playlist.dto";
+import { SpotifyUserPlaylistItemDto } from "./spotify-playlist.dto";
 
 export interface SpotifyUserPlaylistsDto {
     href: string;
-    items: SpotifyPlaylistDto[];
+    items: SpotifyUserPlaylistItemDto[];
     limit: number;
     next: string;
     offset: number;

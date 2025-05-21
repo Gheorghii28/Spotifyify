@@ -270,4 +270,25 @@ export class AudioService {
       this.nextTrack();
     }
   }
+
+  public updatePlayingPlaylistIfNeeded(
+    updatedTracks: Track[]
+  ): void {
+    const currentPlaylist = this.playingPlaylist();
+
+    if (currentPlaylist.length === 0) return;
+
+    const currentPlaylistId = currentPlaylist[0].playlistId;
+    const updatedPlaylistId = updatedTracks[0]?.playlistId;
+
+    if (currentPlaylistId && updatedPlaylistId && currentPlaylistId === updatedPlaylistId) {
+      // Update playing playlist with reindexed tracks
+      this.playingPlaylist.update(() =>
+        updatedTracks.map((track, idx) => ({
+          ...track,
+          index: idx,
+        }))
+      );
+    }
+  }
 }

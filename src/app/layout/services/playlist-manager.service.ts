@@ -41,6 +41,16 @@ export class PlaylistManagerService {
     this.myPlaylists.set(playlists);
   }
 
+  public updateMyPlaylist(updated: Playlist): void {
+    const current = this.myPlaylists();
+    const index = current.findIndex(p => p.id === updated.id);
+    if (index === -1) return;
+
+    const updatedPlaylists = [...current];
+    updatedPlaylists[index] = updated;
+    this.myPlaylists.set(updatedPlaylists);
+  }
+
   async loadArtists(track: Track): Promise<Artist[]> {
     const artistIds: string[] = track.artists.map(
       (artist: { name: string; id: string }) => artist.id
@@ -204,5 +214,34 @@ export class PlaylistManagerService {
         return playlist;
       })
     );
+  }
+
+  public getMyPlaylistTracksById(playlistId: string): Track[] {
+    const myPlaylists = this.myPlaylists();
+    const playlist = myPlaylists.find(p => p.id === playlistId);
+    return playlist?.tracks ?? [];
+  }
+
+  public updateVisibleTracksOnChange(
+    currentDisplayed: Track[],
+    updatedAllTracks: Track[],
+    maxVisible: number
+  ): Track[] {
+    const visibleTracks = updatedAllTracks.slice(0, maxVisible);
+    const visibleMap = new Map(visibleTracks.map((t) => [t.id, t]));
+
+    // Keep all tracks that are still visible (i.e., not deleted)
+    const result: Track[] = currentDisplayed.filter((track) =>
+      visibleMap.has(track.id)
+    );
+
+    // Add any newly visible tracks that aren't already displayed
+    visibleTracks.forEach((track) => {
+      if (!result.some((t) => t.id === track.id)) {
+        result.push(track);
+      }
+    });
+
+    return result;
   }
 }
