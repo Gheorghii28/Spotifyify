@@ -1,9 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { SearchService } from '../../services';
+import { AutofocusDirective } from '../../directives/autofocus.directive';
 
 @Component({
   selector: 'app-search-bar',
-  imports: [],
+  imports: [AutofocusDirective],
   templateUrl: './search-bar.component.html',
   styleUrl: './search-bar.component.scss',
 })
