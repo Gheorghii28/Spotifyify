@@ -1,24 +1,64 @@
-<app-header resizeObserver (resize)="onResize($event)" [user]="user"
-  ><app-search-bar
-    class="search-bar"
-  ></app-search-bar
-></app-header>
+<app-header resizeObserver (resize)="onResize($event)" [user]="user">
+  <mat-toolbar>
+    <app-search-bar class="search-bar"></app-search-bar>
+  </mat-toolbar>
+</app-header>
+
 <div class="container">
-  <div class="section-playlists">
-    <ng-container *ngFor="let playlist of playlists">
-      <app-card [playlist]="playlist"></app-card
-    ></ng-container>
-  </div>
-  <div class="section-tracks">
-    <app-track-list-header *ngIf="tracks.length > 0"></app-track-list-header>
-    <ng-container *ngFor="let track of tracks; let i = index">
-      <app-track-list
-        [track]="track"
-        [trackIndex]="i"
-        [playlist]="searchResultPlaylist"
-        [playingTrack]="playingTrack"
-        [state]="state"
-      ></app-track-list>
+  
+  <ng-container *ngIf="isLoading; else showResults">
+      <app-skeleton
+        [count]="2" 
+        [height]="cardHeight" 
+        [width]="cardWidth" 
+        [appearance]="'circle'">
+      </app-skeleton>
+      <app-skeleton 
+        [count]="10" 
+        [height]="trackListHeight">
+      </app-skeleton>
+  </ng-container>
+
+  <ng-template #showResults>
+    <ng-container *ngIf="searchResults as results">
+
+      <div class="section-playlists">
+        <ng-container *ngIf="(results.playlists?.length ?? 0) > 0; else noPlaylists">
+          <ng-container *ngFor="let playlist of results.playlists; trackBy: trackByPlaylistId">
+            <app-card [playlist]="playlist"></app-card>
+          </ng-container>
+        </ng-container>
+      </div>
+
+      <div class="section-tracks">
+        <ng-container *ngIf="(results.tracks?.length ?? 0) > 0; else noTracks">
+          <app-track-list-header></app-track-list-header>
+          <ng-container *ngFor="let track of results.tracks; let i = index; trackBy: trackByTrackId">
+            <app-track-list
+              [track]="track"
+              [trackIndex]="i"
+              [playlist]="searchResultPlaylist"
+              [playingTrack]="playingTrack"
+              [state]="state"
+            ></app-track-list>
+          </ng-container>
+        </ng-container>
+      </div>
+
     </ng-container>
-  </div>
+  </ng-template>
+
 </div>
+
+<ng-template #noPlaylists>
+  <div class="empty-state">
+    <mat-icon>queue_music</mat-icon>
+    <span>No playlists found</span>
+  </div>
+</ng-template>
+<ng-template #noTracks>
+  <div class="empty-state">
+    <mat-icon>music_off</mat-icon>
+    <span>No tracks found</span>
+  </div>
+</ng-template>

@@ -1,11 +1,41 @@
-<div class="search">
+<div 
+  class="search" 
+  cdkOverlayOrigin  
+  #overlayPosition="cdkOverlayOrigin"
+  [ngClass]="{ 'opened mat-elevation-z2': overlayOpen }"
+>
+  <button 
+    mat-icon-button 
+    (click)="search(inputValue.value)"
+    class="search-button"
+  >
+    <mat-icon>search</mat-icon>
+  </button>
   <input
+    #inputValue
     type="text"
-    (input)="onSearch($event)"
+    [value]="searchTerm"
+    (keydown.ENTER)="search(inputValue.value)"
+    (click)="onInputClick()"
     placeholder="What do you want to play?"
     autofocusDirective
   />
-  <div class="search-img">
-    <span class="material-symbols-outlined"> search </span>
-  </div>
+  @if(searchTerm) {
+    <button 
+      mat-icon-button 
+      class="close-button"
+      (click)="clearSearch()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  }
 </div>
+<ng-template 
+  cdkConnectedOverlay 
+  [cdkConnectedOverlayOrigin]="overlayPosition" 
+  [cdkConnectedOverlayOpen]="overlayOpen"
+  (overlayOutsideClick)="toggleSearchOverlay(false)"
+>
+  <app-search-overlay></app-search-overlay>
+</ng-template>
+

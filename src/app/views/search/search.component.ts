@@ -13,24 +13,31 @@ import { TrackListComponent } from '../../components/track-list/track-list.compo
 import { CardComponent } from '../../components/card/card.component';
 import { TrackListHeaderComponent } from '../../components/track-list-header/track-list-header.component';
 import { ResizeObserverDirective } from '../../directives/resize-observer.directive';
-import { Playlist, Track, User } from '../../models';
-import { AudioService, SearchService } from '../../services';
+import { Playlist, SearchResults, Track, User } from '../../models';
+import { AudioService, LayoutService, SearchService } from '../../services';
 import { StreamState } from '../../models/stream-state.model';
+import { MatToolbar } from '@angular/material/toolbar';
+import { SkeletonComponent } from '../../components/skeleton/skeleton.component';
+import { MatIconModule } from '@angular/material/icon';
 
 interface ElementConfig {
   nativeElement: HTMLElement | undefined;
   threshold: number;
 }
 @Component({
+  standalone: true,
   selector: 'app-search',
   imports: [
     HeaderComponent,
     SearchBarComponent,
     CommonModule,
+    MatIconModule,
     TrackListComponent,
     CardComponent,
     TrackListHeaderComponent,
     ResizeObserverDirective,
+    MatToolbar,
+    SkeletonComponent,
   ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.scss',
@@ -39,6 +46,7 @@ export class SearchComponent implements OnInit, AfterViewInit {
   private location = inject(Location);
   private searchService = inject(SearchService);
   private audioService = inject(AudioService);
+  private layoutService = inject(LayoutService);
 
   @ViewChild(HeaderComponent) headerComponent!: HeaderComponent;
   public user!: User;
@@ -63,20 +71,16 @@ export class SearchComponent implements OnInit, AfterViewInit {
     this.user = state?.user;
   }
 
-  public get tracks(): Track[] {
-    return this.searchService.searchResults().tracks;
+  public trackByPlaylistId(index: number, playlist: Playlist): string {
+    return playlist?.id;
   }
 
-  public get playlists(): Playlist[] {
-    return this.searchService.searchResults().playlists;
+  public trackByTrackId(index: number, track: Track): string {
+    return track.id;
   }
 
   public get searchResultPlaylist(): Playlist {
     return this.searchService.searchResultPlaylist() as Playlist;
-  }
-
-  public get searchQuery(): string {
-    return this.searchService.searchQuery();
   }
 
   private initializeElements(): void {
@@ -113,5 +117,25 @@ export class SearchComponent implements OnInit, AfterViewInit {
 
   public get state(): StreamState {
     return this.audioService.state()!;
+  }
+
+  public get isLoading(): boolean {
+    return this.searchService.isLoading();
+  }
+
+  public get searchResults(): SearchResults {
+    return this.searchService.searchResults();
+  }
+
+  public get cardHeight(): number {
+    return this.layoutService.cardHeight;
+  }
+
+  public get cardWidth(): number {
+    return this.layoutService.cardWidth;
+  }
+
+  public get trackListHeight(): number {
+    return this.layoutService.trackListHeight;
   }
 }
